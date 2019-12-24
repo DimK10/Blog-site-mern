@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const crypto =require('crypto');
 const uuidv1 = require('uuid');
+const { objectId } = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
 
@@ -26,8 +27,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     about: {
-        type: String,
-        trim: true
+        type: String
     },
     salt: String,
     role: {
@@ -37,7 +37,11 @@ const userSchema = new mongoose.Schema({
     history: {
         type: Array,
         default: []
-    }
+    },
+    interests: [{
+        type: objectId,
+        ref: "Category"
+    }]
     }, { timestamps: true }
 );
 
