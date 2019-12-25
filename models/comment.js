@@ -1,5 +1,5 @@
 const mongoose = require ('mongoose');
-const {objectId} = mongoose.Schema;
+const {ObjectId} = mongoose.Schema;
 
 const CommentSchema = new mongoose.Schema ({
   text: {
@@ -17,7 +17,7 @@ const CommentSchema = new mongoose.Schema ({
         required: true
     },
     replies: [{
-        type: objectId,
+        type: ObjectId,
         ref: "Reply"
     }]
 }, { timestamps: { createdAt: 'created_at' } });

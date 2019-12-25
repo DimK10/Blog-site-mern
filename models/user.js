@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const crypto =require('crypto');
 const uuidv1 = require('uuid');
-const { objectId } = mongoose.Schema;
+const { ObjectId } = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
 
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
         default: []
     },
     interests: [{
-        type: objectId,
+        type: ObjectId,
         ref: "Category"
     }]
     }, { timestamps: true }
@@ -65,9 +65,10 @@ userSchema.methods = {
     encryptPassword: function(password) {
         if(!password) return '';
         try {
-            return cryptocreateHmac('sha1', this.salt)
-                                    .update(password)
-                                    .digest('hex')
+            return crypto
+                    .createHmac('sha1', this.salt)
+                    .update(password)
+                    .digest('hex')
         } catch (err) {
             return ''; 
         }

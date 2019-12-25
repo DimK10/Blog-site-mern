@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const { objectId } = mongoose.Schema;
+const { ObjectId } = mongoose.Schema;
 
 const replySchema = new mongoose.Schema({
     _comment: {
-        type: objectId,
+        type: ObjectId,
         ref: "Comment",
         required: true
     },

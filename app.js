@@ -8,8 +8,8 @@ const expressValidator = require('express-validator');
 require('dotenv').config();
 
 // Import routes 
-// const authRoutes = require('./routes/auth');
-// const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
 // const categoryRoutes = require('./routes/category');
 // const postRoutes = require('./routes/post');
 // const submitRoutes = require('./routes/submit');
@@ -30,8 +30,8 @@ app.use(cookieParser());
 app.use(expressValidator());
 app.use(cors());
 
-// app.use("/api", authRoutes);
-// app.use("/api", userRoutes);
+app.use("/api", authRoutes);
+app.use("/api", userRoutes);
 // app.use("/api", categoryRoutes);
 // app.use("/api", productRoutes);
 // app.use("/api", braintreeRoutes);

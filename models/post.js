@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { objectId } = mongoose.Schema;
+const { ObjectId } = mongoose.Schema;
 
 const postSchema = new mongoose.Schema({
 
@@ -13,16 +13,16 @@ const postSchema = new mongoose.Schema({
         required: true,
     },
     author: {
-        type: objectId,
+        type: ObjectId,
         ref: "User",
          required: true
     },
     comments: [{
-        type: objectId,
+        type: ObjectId,
         ref: "Comment"
     }],
     categories: [{
-        type: objectId,
+        type: ObjectId,
         ref: "Category"
     }],
     upvotes: { type: Number },
