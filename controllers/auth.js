@@ -50,7 +50,7 @@ exports.signin = (req, res) => {
                 })
             };
         };
-
+        // console.log('user.id in signin ', user.id);
         // Generate a signed token with user id and secret
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET)
 
@@ -72,14 +72,17 @@ exports.signout = (req, res) => {
 };
 
 exports.requireSignin = expressJwt({
+    credentialsRequired: true,
     secret: process.env.JWT_SECRET,
     userProperty: 'auth'
 });
 
+
 exports.isAuth = (req, res, next) => {
-    console.log('req.auth ', req.auth);
-    console.log('req.profile.id ', req.profile._id);
-    console.log('req.auth.id ', req.auth.id);
+    // console.log('req.auth ', req.auth);
+    // console.log('req.profile.id ', req.profile._id);
+    // console.log('req.auth.id ', req.auth.id);
+    // console.log('req.profile ', req.profile);
 
     let user = req.profile && req.auth && req.profile._id == req.auth.id
     if(!user) {
@@ -108,6 +111,25 @@ exports.isAdmin = (req, res, next) => {
         };
         next();
     })
-    
+};
 
+exports.isAllowed = (req, res, next) => {
+    const category = req.category;
+    const profile = req.profile;
+    console.log('category ', category);
+    console.log('profile', profile);
+    console.log('profile._id !== category.createdFrom) || profile.role != 1 ', (profile._id !== category.createdFrom) || profile.role != 1);
+
+    if((profile._id !== category.createdFrom)) {
+        if(profile.role !== 1) {
+            // User is not allowed to delete this category and also not admin user
+            return res.status(400).json({
+                err: 'You haven\'t created this category, therefore you can\'t delete it'
+            });
+        } else {
+            // User is admin, he is allowed to delete
+            req.isAllowed = true;
+        };
+    };
+    next();
 };

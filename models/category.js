@@ -13,7 +13,7 @@ const categorySchema = new mongoose.Schema({
         required: true
     },
     _createdFrom: {
-        type: Number,
+        type: String,
         ref: "User",
         required: true
     }

@@ -63,7 +63,7 @@ exports.resetUserPassword = (req, res, next) => {
         };
 
         console.log('user ', user);
-        user.password = '1234567'
+        user.password = '123456'
         user.save();
 
         return res.json({
