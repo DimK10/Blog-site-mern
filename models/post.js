@@ -3,6 +3,11 @@ const { ObjectId } = mongoose.Schema;
 
 const postSchema = new mongoose.Schema({
 
+    photoId: {
+        type: ObjectId,
+        ref: "Photo"
+    },
+
     title: {
         type: String,
         required: true,
@@ -17,10 +22,10 @@ const postSchema = new mongoose.Schema({
         ref: "User",
          required: true
     },
-    comments: [{
-        type: ObjectId,
-        ref: "Comment"
-    }],
+    // comments: [{
+    //     type: ObjectId,
+    //     ref: "Comment"
+    // }],
     categories: [{
         type: ObjectId,
         ref: "Category"

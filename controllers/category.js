@@ -75,7 +75,7 @@ exports.remove = (req, res) => {
 };
 
 exports.list = (req, res) => {
-    Category.find().exec((err, categories) => {
+    Category.find().populate('_createdFrom', 'name email', User).exec((err, categories) => {
         if(err) {
             return res.status(400).json({
                 err: errorHandler(err)

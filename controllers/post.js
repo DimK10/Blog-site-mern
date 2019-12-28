@@ -1,15 +1,19 @@
 const formidable = require('formidable');
 const _ = require('lodash');
 const fs = require('fs');
+const { createReadStream } = require('fs');
+const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Category = require('../models/category');
+const { createModel } = require('mongoose-gridfs');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.postById = (req, res, next, id) => {
     Post.findById(id)
     .populate('author')
     .populate('comments')
-    .populate('categories')
+    // .populate('categories')
+    .populate('photoId')
     .exec((err, post) => {
         if(err || !post) {
             return res.status(400).json({
@@ -22,16 +26,18 @@ exports.postById = (req, res, next, id) => {
 };
 
 exports.read = (req, res) => {
-    return res.json(req.product);
+    return res.json(req.post);
 };
 
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
-    form.parse(req, (err, fields) => {
+
+
+    form.parse(req, (err, fields, files) => {
         if(err) {
             return res.status(400).json({
-                err: 'Unexpected error. error: ' + err
+                err: 'Imge could not be uploaded. Err: ' + err
             });
         };
 
@@ -48,15 +54,58 @@ exports.create = (req, res) => {
         fields.description = JSON.stringify(description);
 
         let post = new Post(fields);
+        post.author = req.params.userId;
 
-        post.save((err, result) => {
-            if(err) {
-                return res.status(400).json({
-                    err: errorHandler(err)
+        // Photo
+        if(files.photo) {
+            console.log('files photo: ', files.photo);
+            // console.log('mongoose connection: ', mongoose.connection);
+
+            const Attachment = createModel({
+                modelName: 'Photo',
+                connection: mongoose.connection
+            });
+
+            // Write file to gridfs
+            const readStream = createReadStream(files.photo.path);
+            const options = ({ filename: files.photo.name, contentType: files.photo.type });
+            Attachment.write(options, readStream, (err, file) => {
+                if(err) {
+                    return res.status(500).json({
+                        err: 'Could not write to gridfs model. Reason: ' + err
+                    });
+                };
+
+                console.log('file._id ', file._id);
+
+                // Save id to post document
+                post.photoId = file._id;
+                console.log('post.photoId inside block ', post.photoId);
+
+                post.save((err, result) => {
+                    if(err) {
+                        return res.status(400).json({
+                            err: err
+                        });
+                    };
+                    res.json(result);
                 });
-            };
-            res.json(result);
-        });
+            });
+        } else {
+            post.save((err, result) => {
+                if(err) {
+                    return res.status(400).json({
+                        err: err
+                    });
+                };
+                res.json(result);
+            });
+        };
+
+        console.log('post.photoId outside block ', post.photoId);
+
+
+        
     });
 };
 
@@ -98,6 +147,15 @@ exports.update = (req, res) => {
     });
 };
 
+exports.photo = (req, res, next) => {
+    if(req.product.photo.data) {
+        res.set('Content-Type', req.product.photo.contentType);
+        return res.send(req.product.photo.data);
+    };
+
+    next();
+};
+
 exports.listByInterests= (req, res) => {
     let order = req.body.order ? req.body.order : 'asc';
     // let sortBy = req.body.sortBy ? req.body.sortBy : 'createdAt'
@@ -126,12 +184,13 @@ exports.listAll = (req, res) => {
 
     Post.find()
     .populate('author')
-    .populate('comments')
+    // .populate('comments')
     .populate('categories')
+    .populate('photoId')
     .exec((err, posts) => {
         if(err) {
             return res.status(400).json({
-                err: errorHandler(err)
+                err
             });
         };
 
@@ -175,4 +234,4 @@ exports.listExploreNew = (req, res) => {
         });
     });
    
-}
+};

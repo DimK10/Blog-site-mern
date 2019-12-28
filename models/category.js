@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Schema;
+
 
 const categorySchema = new mongoose.Schema({
     title: {
@@ -13,7 +15,7 @@ const categorySchema = new mongoose.Schema({
         required: true
     },
     _createdFrom: {
-        type: String,
+        type: ObjectId,
         ref: "User",
         required: true
     }
