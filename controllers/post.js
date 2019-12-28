@@ -5,6 +5,7 @@ const { createReadStream } = require('fs');
 const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Category = require('../models/category');
+// const Photo = require('../models/photo');
 const { createModel } = require('mongoose-gridfs');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
@@ -12,8 +13,7 @@ exports.postById = (req, res, next, id) => {
     Post.findById(id)
     .populate('author')
     .populate('comments')
-    // .populate('categories')
-    .populate('photoId')
+    .populate('categories')
     .exec((err, post) => {
         if(err || !post) {
             return res.status(400).json({
@@ -37,7 +37,7 @@ exports.create = (req, res) => {
     form.parse(req, (err, fields, files) => {
         if(err) {
             return res.status(400).json({
-                err: 'Imge could not be uploaded. Err: ' + err
+                err: 'Image could not be uploaded. Err: ' + err
             });
         };
 
@@ -54,17 +54,20 @@ exports.create = (req, res) => {
         fields.description = JSON.stringify(description);
 
         let post = new Post(fields);
+        console.log('post ', post);
         post.author = req.params.userId;
 
         // Photo
         if(files.photo) {
-            console.log('files photo: ', files.photo);
+            // console.log('files photo: ', files.photo);
             // console.log('mongoose connection: ', mongoose.connection);
 
             const Attachment = createModel({
                 modelName: 'Photo',
                 connection: mongoose.connection
             });
+
+            console.log('Attachment: ', Attachment);
 
             // Write file to gridfs
             const readStream = createReadStream(files.photo.path);
@@ -80,7 +83,6 @@ exports.create = (req, res) => {
 
                 // Save id to post document
                 post.photoId = file._id;
-                console.log('post.photoId inside block ', post.photoId);
 
                 post.save((err, result) => {
                     if(err) {
@@ -100,12 +102,7 @@ exports.create = (req, res) => {
                 };
                 res.json(result);
             });
-        };
-
-        console.log('post.photoId outside block ', post.photoId);
-
-
-        
+        };        
     });
 };
 
@@ -186,7 +183,6 @@ exports.listAll = (req, res) => {
     .populate('author')
     // .populate('comments')
     .populate('categories')
-    .populate('photoId')
     .exec((err, posts) => {
         if(err) {
             return res.status(400).json({
