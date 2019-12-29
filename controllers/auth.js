@@ -118,9 +118,9 @@ exports.isAllowedToDeleteCategory = (req, res, next) => {
     const profile = req.profile;
     console.log('category ', category);
     console.log('profile', profile);
-    console.log('profile._id !== category.createdFrom) || profile.role != 1 ', (profile._id !== category.createdFrom) || profile.role != 1);
+    // console.log('profile._id !== category.createdFrom) || profile.role != 1 ', (profile._id !== category.createdFrom) || profile.role != 1);
 
-    if((profile._id !== category.createdFrom)) {
+    if((String(profile._id) !== String(category._createdFrom._id))) {
         if(profile.role !== 1) {
             // User is not allowed to delete this category and also not admin user
             return res.status(400).json({
@@ -130,6 +130,8 @@ exports.isAllowedToDeleteCategory = (req, res, next) => {
             // User is admin, he is allowed to delete
             req.isAllowed = true;
         };
+    }else {
+        req.isAllowed = true;
     };
     next();
 };
@@ -140,11 +142,7 @@ exports.isAllowedToDeletePost = (req, res, next) => {
     // console.log('post ', post);
     // console.log('profile', profile);
     // console.log('profile._id !== post.author) || profile.role != 1 ', (profile._id !== post.author) || profile.role != 1);
-    console.log('profile._id', profile._id);
-    console.log('post.author._id', post.author._id);
-    console.log('compare 1==', profile._id !== post.author._id);
-    console.log('TYPEOF PROFILE._ID', typeof profile._id);
-    console.log('typeof post.author._id ', typeof post.author._id);
+    
     if(String(profile._id) !== String(post.author._id)) {
         if(profile.role !== 1) {
             // User is not allowed to delete this category and also not admin user

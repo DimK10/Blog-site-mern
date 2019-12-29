@@ -1,4 +1,5 @@
 const Category = require('../models/category');
+const Post = require('../models/post');
 const User = require('../models/user');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
@@ -61,10 +62,25 @@ exports.remove = (req, res) => {
     const isAllowed = req.isAllowed;
     console.log('isAllowed ', isAllowed);
     if(isAllowed) {
+
+        // Remove the category id from all the categories array in Post
+        console.log('category id', category._id);
+        console.log('typeof categoryId ', typeof category._id);
+        Post.updateMany({ }, { $pull: { categories: String(category._id) }}, { multi: true }, (err, data) => {
+            if(err) {
+                return res.status(500).json({
+                    err
+                });
+            };
+
+            console.log(data);
+        });
+
+        // Remove category
         category.remove((err, result) => {
             if(err) {
                 return res.status(400).json({
-                    err: errorHandler(err)
+                    err
                 });
             };
 
