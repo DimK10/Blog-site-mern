@@ -25,6 +25,15 @@ exports.postById = (req, res, next, id) => {
     });
 };
 
+exports.createAttachment = (req, res, next) => {
+    const Attachment = createModel({
+        modelName: 'Photo',
+        connection: mongoose.connection
+    });
+    req.Attachment = Attachment;
+    next();
+};
+
 exports.read = (req, res) => {
     return res.json(req.post);
 };
@@ -32,6 +41,7 @@ exports.read = (req, res) => {
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
+    form.hash = 'md5';
 
 
     form.parse(req, (err, fields, files) => {
@@ -54,18 +64,15 @@ exports.create = (req, res) => {
         fields.description = JSON.stringify(description);
 
         let post = new Post(fields);
-        console.log('post ', post);
+        // console.log('post ', post);
         post.author = req.params.userId;
 
         // Photo
         if(files.photo) {
-            // console.log('files photo: ', files.photo);
+            console.log('files photo: ', files.photo);
             // console.log('mongoose connection: ', mongoose.connection);
 
-            const Attachment = createModel({
-                modelName: 'Photo',
-                connection: mongoose.connection
-            });
+            const Attachment = req.Attachment;
 
             console.log('Attachment: ', Attachment);
 
@@ -122,26 +129,93 @@ exports.remove = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    const { title, description, categories } = fields;
 
-    if(!title || !description || !categories) {
-        return res.status(400).json({
-            err: 'All fileds are required'
-        });
-    };
+    let form = formidable.IncomingForm();
+    form.keepExtensions = true;
 
-    let post = req.post;
-    post = _.extend(post, fields);
-
-    post.save((err, result) => {
+    form.parse(req, (err, fields, files) => {
         if(err) {
             return res.status(400).json({
-                err: errorHandler(err)
+                error: 'Image could not be uploaded'
+            });
+        };
+        const { title, description, categories } = fields;
+
+        if(!title || !description || !categories) {
+            return res.status(400).json({
+                err: 'All fileds are required'
             });
         };
 
-        res.json(result);
-    });
+        let post = req.post;
+        post = _.extend(post, fields);
+    
+        // Photo 
+        if(files.photo) {
+            // Check if files.photo.hash (md5) is the same as the md5 hash of new photo submitted
+            // Read file from gridfs
+            const Attachment = req.Attachment;
+            const { photoId } = post;
+            console.log('photoId of post: ', photoId);
+            const fileFromDb = Attachment.read({ _id: photoId });
+            console.log('filefromDb: ', fileFromDb);
+
+            if(files.photo.hash !== fileFromDb.md5) {
+                
+                // New photo is different that the one stored, delete old and add new
+                // Remove file and its content 
+                Attachment.unlink(photoId, (err) => {
+                    if(err) {
+                        return res.status(500).json({ 
+                            err: 'File could not be deleted. Reason: ' + err
+                        });
+                    };
+                });
+
+                // Save new photo to gridfs
+                const readStream = createReadStream(files.photo.path);
+                const options = ({ filename: files.photo.name, contentType: files.photo.type });
+                Attachment.write(options, readStream, (err, file) => {
+                    if(err) {
+                        return res.status(500).json({
+                            err: 'Could not write to gridfs model. Reason: ' + err
+                        });
+                    };
+
+                    // console.log('file._id ', file._id);
+
+                    // Save id to post document
+                    post.photoId = file._id;
+
+                    post.save((err, result) => {
+                        if(err) {
+                            return res.status(400).json({
+                                err
+                            });
+                        };
+                        res.json(result);
+                    });
+                });
+
+            };
+
+        }
+
+
+
+        post.save((err, result) => {
+            if(err) {
+                return res.status(400).json({
+                    err: errorHandler(err)
+                });
+            };
+    
+            res.json(result);
+        });
+
+
+
+    })
 };
 
 exports.photo = (req, res, next) => {

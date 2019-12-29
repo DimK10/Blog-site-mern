@@ -10,7 +10,7 @@ const {
   listByInterests,
   listAll,
   listExploreNew,
-  photo,
+  createAttachment,
 } = require ('../controllers/post');
 
 const {
@@ -23,7 +23,7 @@ const {userById} = require ('../controllers/user');
 
 router.get ('/post/:postId', read);
 
-router.post ('/post/create/:userId', requireSignin, create);
+router.post ('/post/create/:userId', requireSignin, createAttachment, create);
 
 router.delete (
   '/post/:postId/:userId',
@@ -33,7 +33,7 @@ router.delete (
   remove
 );
 
-router.put ('/post/:postId/:userId', requireSignin, isAuth, update);
+router.put ('/post/:postId/:userId', requireSignin, isAuth, createAttachment, update);
 
 router.get("/posts/by-interest", listByInterests);
 router.get("/posts/all", listAll);
