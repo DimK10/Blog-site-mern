@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2fc20f7a-031a-4158-99ce-8955caa5d2b2",
+		"_postman_id": "bd3cb30f-e477-4794-b52f-cd9a98be1161",
 		"name": "BLOG",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -262,16 +262,16 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDhiNmFlODA2N2M1MTVlNjY0OGIwMiIsImlhdCI6MTU3NzYyOTM4MH0.sXzHdZaViNBkRdhGLa28vmbnpV4yg-DXGUcn0DG1EuE",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"title\": \"Science_II\",\n\t\"about\": \"Blogs about science II\"\n}"
+					"raw": "{\n\t\"title\": \"Science II\",\n\t\"about\": \"Blogs about science II\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/category/create/5e08b6ae8067c515e6648b02",
+					"raw": "http://localhost:8000/api/category/create/5e039411d44268085aa67121",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -281,7 +281,7 @@
 						"api",
 						"category",
 						"create",
-						"5e08b6ae8067c515e6648b02"
+						"5e039411d44268085aa67121"
 					]
 				}
 			},
@@ -289,6 +289,9 @@
 		},
 		{
 			"name": "CATEGORY LIST",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -299,10 +302,14 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDhiNmFlODA2N2M1MTVlNjY0OGIwMiIsImlhdCI6MTU3NzYyOTM4MH0.sXzHdZaViNBkRdhGLa28vmbnpV4yg-DXGUcn0DG1EuE",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzM4ODk5OH0.x1gCSAeI3SSMoM3H6ZWN6361sCMf5tBrI15Eh9OUBZI",
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"General\",\n\t\"about\": \"Blogs about general stuff\"\n}"
+				},
 				"url": {
 					"raw": "http://localhost:8000/api/categories",
 					"protocol": "http",
@@ -400,7 +407,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDhiNmFlODA2N2M1MTVlNjY0OGIwMiIsImlhdCI6MTU3NzYyOTM4MH0.sXzHdZaViNBkRdhGLa28vmbnpV4yg-DXGUcn0DG1EuE",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
 						"type": "text"
 					}
 				],
@@ -411,34 +418,28 @@
 							"key": "photo",
 							"contentType": "image/jpeg",
 							"type": "file",
-							"src": "/home/dk23/Pictures/stock_photos/zane-lee-9hrhtTlv2og-unsplash.jpg"
+							"src": "/Users/dimitriskaitatzidis/Downloads/testImg.jpg"
 						},
 						{
 							"key": "title",
-							"value": "test Post 1",
+							"value": "test Post 3",
 							"type": "text"
 						},
 						{
 							"key": "description",
-							"value": "This is a test post 1",
+							"value": "This is a test post 3",
 							"type": "text"
 						},
 						{
 							"key": "categories",
-							"value": "5e08bd23e4818a1cd7df101e",
+							"value": "5e05161ee7fb25109ef4cfed",
 							"description": "General category",
 							"type": "text"
-						},
-						{
-							"key": "categories",
-							"value": "aaa",
-							"type": "text",
-							"disabled": true
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/post/create/5e08b6ae8067c515e6648b02",
+					"raw": "http://localhost:8000/api/post/create/5e039411d44268085aa67121",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -448,7 +449,7 @@
 						"api",
 						"post",
 						"create",
-						"5e08b6ae8067c515e6648b02"
+						"5e039411d44268085aa67121"
 					]
 				}
 			},
@@ -516,6 +517,9 @@
 		},
 		{
 			"name": "POST READ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -526,12 +530,16 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDhiNmFlODA2N2M1MTVlNjY0OGIwMiIsImlhdCI6MTU3NzYyOTM4MH0.sXzHdZaViNBkRdhGLa28vmbnpV4yg-DXGUcn0DG1EuE",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzM4ODk5OH0.x1gCSAeI3SSMoM3H6ZWN6361sCMf5tBrI15Eh9OUBZI",
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"General\",\n\t\"about\": \"Blogs about general stuff\"\n}"
+				},
 				"url": {
-					"raw": "http://localhost:8000/api/post/5e08c4c24fe16d1f02a4338c",
+					"raw": "http://localhost:8000/api/post/5e07dbeea7d2a82179a8e369",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -540,7 +548,7 @@
 					"path": [
 						"api",
 						"post",
-						"5e08c4c24fe16d1f02a4338c"
+						"5e07dbeea7d2a82179a8e369"
 					]
 				}
 			},
@@ -558,7 +566,7 @@
 					},
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDhiNmFlODA2N2M1MTVlNjY0OGIwMiIsImlhdCI6MTU3NzYyOTM4MH0.sXzHdZaViNBkRdhGLa28vmbnpV4yg-DXGUcn0DG1EuE",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
 						"type": "text"
 					}
 				],
@@ -569,28 +577,28 @@
 							"key": "photo",
 							"contentType": "image/jpeg",
 							"type": "file",
-							"src": "/home/dk23/Pictures/stock_photos/photography-of-person-walking-on-road-1236701.jpg"
+							"src": "/Users/dimitriskaitatzidis/Downloads/testImg.jpg"
 						},
 						{
 							"key": "title",
-							"value": "test Post 2",
+							"value": "test Post 3",
 							"type": "text"
 						},
 						{
 							"key": "description",
-							"value": "This is a test post 2",
+							"value": "This is a test post 3",
 							"type": "text"
 						},
 						{
 							"key": "categories",
-							"value": "5e08bd23e4818a1cd7df101e",
+							"value": "5e05161ee7fb25109ef4cfed",
 							"description": "General category",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/post/5e08c4c24fe16d1f02a4338c/5e08b6ae8067c515e6648b02",
+					"raw": "http://localhost:8000/api/post/5e0877bca87c8c03b934f9b1/5e039411d44268085aa67121",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -599,8 +607,68 @@
 					"path": [
 						"api",
 						"post",
-						"5e08c4c24fe16d1f02a4338c",
-						"5e08b6ae8067c515e6648b02"
+						"5e0877bca87c8c03b934f9b1",
+						"5e039411d44268085aa67121"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST DELETE",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "photo",
+							"contentType": "image/jpeg",
+							"type": "file",
+							"src": "/Users/dimitriskaitatzidis/Downloads/photography-of-person-walking-on-road-1236701.jpg"
+						},
+						{
+							"key": "title",
+							"value": "test Post 3",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a test post 3",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "5e05161ee7fb25109ef4cfed",
+							"description": "General category",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/post/5e0881a4199a99054914fc29/5e039411d44268085aa67121",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"post",
+						"5e0881a4199a99054914fc29",
+						"5e039411d44268085aa67121"
 					]
 				}
 			},
