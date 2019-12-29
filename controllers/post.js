@@ -5,6 +5,7 @@ const { createReadStream } = require('fs');
 const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Category = require('../models/category');
+const Comment = require('../models/comment');
 const  Reply = require('../models/reply');
 // const Photo = require('../models/photo');
 const { createModel } = require('mongoose-gridfs');
@@ -18,7 +19,7 @@ exports.postById = (req, res, next, id) => {
     .exec((err, post) => {
         if(err || !post) {
             return res.status(400).json({
-                err: 'Post not found'
+                err: 'Post not found. Error ' + err
             });
         };
         req.post = post;
@@ -53,17 +54,16 @@ exports.create = (req, res) => {
         };
 
         // Check for all fields
-        const { title, description, categories } = fields;
+        let { title, description, categories } = fields;
 
         if(!title || !description || !categories) {
             return res.status(400).json({
-                err: 'All fileds are required'
+                err: 'All fields are required'
             });
         };
 
         // Change description to json data cause it will be rich text with/or videos and/or images
         fields.description = JSON.stringify(description);
-
         let post = new Post(fields);
         // console.log('post ', post);
         post.author = req.params.userId;
@@ -319,5 +319,4 @@ exports.listExploreNew = (req, res) => {
             res.json(posts);
         });
     });
-   
 };
