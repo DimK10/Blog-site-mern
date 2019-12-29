@@ -1,0 +1,619 @@
+{
+	"info": {
+		"_postman_id": "bd3cb30f-e477-4794-b52f-cd9a98be1161",
+		"name": "BLOG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SIGNUP",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"test\",\n\t\"email\": \"test@gmail.com\",\n\t\"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SIGNIN",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"test\",\n\t\"email\": \"test@gmail.com\",\n\t\"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SIGNIN Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"user\",\n\t\"email\": \"user@gmail.com\",\n\t\"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SIGNOUT",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/signout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"signout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "USER READ",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM4MTIxNmQ4N2VjMDU0ZjQxOTgwMyIsImlhdCI6MTU3NzI5NjU3N30.XeAilJ0Ey3AKbnQk7IAoG7Ri_Hg_OREfRrI7acs-mN4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/user/5e039411d44268085aa67121",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"5e039411d44268085aa67121"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "USER UPDATE",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM4MTIxNmQ4N2VjMDU0ZjQxOTgwMyIsImlhdCI6MTU3NzI5NjU3N30.XeAilJ0Ey3AKbnQk7IAoG7Ri_Hg_OREfRrI7acs-mN4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"newName\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/5e0381216d87ec054f419803",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"5e0381216d87ec054f419803"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADMIN USER RESET PASSWORD",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzMwNTMyNn0.swOb6D8pmouxEiYk7GtrYMA2BxPLPka3ZYPZezqo-5Q",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"_id\": \"5e039411d44268085aa67121\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/user/reset-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CATEGORY CREATE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Science II\",\n\t\"about\": \"Blogs about science II\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/category/create/5e039411d44268085aa67121",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"category",
+						"create",
+						"5e039411d44268085aa67121"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CATEGORY LIST",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzM4ODk5OH0.x1gCSAeI3SSMoM3H6ZWN6361sCMf5tBrI15Eh9OUBZI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"General\",\n\t\"about\": \"Blogs about general stuff\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/categories",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CATEGORY UPDATE",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzM4ODk5OH0.x1gCSAeI3SSMoM3H6ZWN6361sCMf5tBrI15Eh9OUBZI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"General II\",\n\t\"about\" : \"Blogs about general stuff\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/category/5e050c07fc7fa00ee58170d2/5e039411d44268085aa67121",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"category",
+						"5e050c07fc7fa00ee58170d2",
+						"5e039411d44268085aa67121"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CATEGORY REMOVE",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM4MTIxNmQ4N2VjMDU0ZjQxOTgwMyIsImlhdCI6MTU3NzM5MTY4MX0.LWS2hOQqSeAcntXmfnGODNGlj1SsNv-LAFYVRDTb7Vs",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/category/5e05161ee7fb25109ef4cfed/5e0381216d87ec054f419803",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"category",
+						"5e05161ee7fb25109ef4cfed",
+						"5e0381216d87ec054f419803"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST CREATE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "photo",
+							"contentType": "image/jpeg",
+							"type": "file",
+							"src": "/Users/dimitriskaitatzidis/Downloads/testImg.jpg"
+						},
+						{
+							"key": "title",
+							"value": "test Post 3",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a test post 3",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "5e05161ee7fb25109ef4cfed",
+							"description": "General category",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/post/create/5e039411d44268085aa67121",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"post",
+						"create",
+						"5e039411d44268085aa67121"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POSTS LIST ALL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/posts/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"posts",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CATEGORY READ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzM4ODk5OH0.x1gCSAeI3SSMoM3H6ZWN6361sCMf5tBrI15Eh9OUBZI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"General\",\n\t\"about\": \"Blogs about general stuff\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/category/5e05161ee7fb25109ef4cfed",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"category",
+						"5e05161ee7fb25109ef4cfed"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST READ",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzM4ODk5OH0.x1gCSAeI3SSMoM3H6ZWN6361sCMf5tBrI15Eh9OUBZI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"General\",\n\t\"about\": \"Blogs about general stuff\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/post/5e07dbeea7d2a82179a8e369",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"post",
+						"5e07dbeea7d2a82179a8e369"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST UPDATE",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMDM5NDExZDQ0MjY4MDg1YWE2NzEyMSIsImlhdCI6MTU3NzU2NTIzNH0.vR9WGq9PYjaqkrhp_qenNt0I2zEVdI6HSF8pQ3gZ_Yc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "photo",
+							"contentType": "image/jpeg",
+							"type": "file",
+							"src": "/Users/dimitriskaitatzidis/Downloads/testImg.jpg"
+						},
+						{
+							"key": "title",
+							"value": "test Post 3",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a test post 3",
+							"type": "text"
+						},
+						{
+							"key": "categories",
+							"value": "5e05161ee7fb25109ef4cfed",
+							"description": "General category",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/post/5e0877bca87c8c03b934f9b1/5e039411d44268085aa67121",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"post",
+						"5e0877bca87c8c03b934f9b1",
+						"5e039411d44268085aa67121"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
