@@ -147,7 +147,8 @@ exports.remove = (req, res) => {
             });
 
             Comment.remove({ _id: { $in: doc.comments } });
-        })
+        });
+
         post.remove((err, removedPost) => {
             if(err) {
                 return res.status(400).json({
@@ -238,7 +239,7 @@ exports.update = (req, res) => {
 
                 post.save((err, result) => {
                     if(err) {
-                        return res.status(400).json({
+                        return res.status(500).json({
                             err
                         });
                     };

@@ -12,7 +12,7 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const categoryRoutes = require('./routes/category');
 const postRoutes = require('./routes/post');
-// const submitRoutes = require('./routes/submit');
+const commentRoutes = require('./routes/comment');
 
 // Express 
 const app = express();
@@ -35,8 +35,8 @@ app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", postRoutes);
-// app.use("/api", braintreeRoutes);
-// app.use("/api", orderRoutes);
+app.use("/api", commentRoutes);
+
 
 const port = process.env.PORT || 8000;
 
