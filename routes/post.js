@@ -17,7 +17,7 @@ const {
   requireSignin,
   isAuth,
   isAdmin,
-  isAllowed,
+  isAllowedToDeletePost,
 } = require ('../controllers/auth');
 const {userById} = require ('../controllers/user');
 
@@ -29,7 +29,8 @@ router.delete (
   '/post/:postId/:userId',
   requireSignin,
   isAuth,
-  isAllowed,
+  isAllowedToDeletePost,
+  createAttachment,
   remove
 );
 

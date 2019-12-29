@@ -67,6 +67,9 @@ exports.remove = (req, res) => {
                     err: errorHandler(err)
                 });
             };
+
+            // make isAllowed default to false
+            req.isAllowed = false;
     
             res.json({
                 message: 'Category deleted successfully'

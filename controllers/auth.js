@@ -113,7 +113,7 @@ exports.isAdmin = (req, res, next) => {
     })
 };
 
-exports.isAllowed = (req, res, next) => {
+exports.isAllowedToDeleteCategory = (req, res, next) => {
     const category = req.category;
     const profile = req.profile;
     console.log('category ', category);
@@ -131,5 +131,32 @@ exports.isAllowed = (req, res, next) => {
             req.isAllowed = true;
         };
     };
+    next();
+};
+
+exports.isAllowedToDeletePost = (req, res, next) => {
+    const post = req.post;
+    const profile = req.profile;
+    // console.log('post ', post);
+    // console.log('profile', profile);
+    // console.log('profile._id !== post.author) || profile.role != 1 ', (profile._id !== post.author) || profile.role != 1);
+    console.log('profile._id', profile._id);
+    console.log('post.author._id', post.author._id);
+    console.log('compare 1==', profile._id !== post.author._id);
+    console.log('TYPEOF PROFILE._ID', typeof profile._id);
+    console.log('typeof post.author._id ', typeof post.author._id);
+    if(String(profile._id) !== String(post.author._id)) {
+        if(profile.role !== 1) {
+            // User is not allowed to delete this category and also not admin user
+            return res.status(400).json({
+                err: 'You haven\'t created this post, therefore you can\'t delete it'
+            });
+        } else {
+            // User is admin, he is allowed to delete
+            req.isAllowed = true;
+        };
+    } else {
+        req.isAllowed = true;
+    }
     next();
 };

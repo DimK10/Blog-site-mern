@@ -115,38 +115,53 @@ exports.create = (req, res) => {
 };
 
 exports.remove = (req, res) => {
-    let post = req.post;
-    post.remove((err, removedPost) => {
-        if(err) {
-            return res.status(400).json({
-                err: errorHandler(err)
-            });
-        };        
-        res.json({
-            'message': 'Post deleted successfully'
-        });
-    });
+    const isAllowed = req.isAllowed;
 
-    Post.post('remove', (doc) => {
-
-        // Remove photo linked to post in gridfs
-        const Attachment = req.Attachment;
-        Attachment.unlink({ _id: doc.photoId }, (err) => {
+    if(isAllowed) {
+        const post = req.post;
+        Post.findById(post._id, (err, doc) => {
             if(err) {
-                return res.status(500).json({ 
-                    err: 'File could not be deleted. Reason: ' + err
+                return res.status(500).json({
+                    err: 'Post not found. This shouldnt happen. Error ' + err
                 });
             };
+
+            // Remove photo linked to post in gridfs
+            const Attachment = req.Attachment;
+            Attachment.unlink(doc.photoId, (err) => {
+                if(err) {
+                    return res.status(500).json({ 
+                        err: 'Photo could not be deleted. Reason: ' + err
+                    });
+                };
+            });
+    
+            // Remove all associated comments and replies with this post
+            Comment.find({ _id: { $in: doc.comments } }, (err, doc) => {
+                if(err) {
+                    return res.status(500).json({ 
+                        err: 'Comment could not be found. This shouldnt happen. Reason: ' + err
+                    });
+                };
+                Reply.remove({ _id: { $in:  doc.replies } });
+            });
+
+            Comment.remove({ _id: { $in: doc.comments } });
+        })
+        post.remove((err, removedPost) => {
+            if(err) {
+                return res.status(400).json({
+                    err
+                });
+            };
+            
+            // Default isAllowed to false
+            req.listAllowed = false;
+            res.json({
+                'message': 'Post deleted successfully'
+            });
         });
-
-        // Remove all associated comments and replies with this post
-        Comment.remove({ _id: { $in: doc.comments } });
-        Comment.post('remove', (doc) => {
-            Reply.remove({ _id: { $in:  doc.replies } });
-        });
-    });
-
-
+    };
 };
 
 exports.update = (req, res) => {
