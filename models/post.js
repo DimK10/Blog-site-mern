@@ -22,10 +22,10 @@ const postSchema = new mongoose.Schema({
         ref: "User",
          required: true
     },
-    // comments: [{
-    //     type: ObjectId,
-    //     ref: "Comment"
-    // }],
+    comments: [{
+        type: ObjectId,
+        ref: "Comment"
+    }],
     categories: [{
         type: ObjectId,
         ref: "Category"

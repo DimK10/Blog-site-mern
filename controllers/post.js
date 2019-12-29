@@ -5,6 +5,7 @@ const { createReadStream } = require('fs');
 const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Category = require('../models/category');
+const  Reply = require('../models/reply');
 // const Photo = require('../models/photo');
 const { createModel } = require('mongoose-gridfs');
 const { errorHandler } = require('../helpers/dbErrorHandler');
@@ -120,12 +121,32 @@ exports.remove = (req, res) => {
             return res.status(400).json({
                 err: errorHandler(err)
             });
-        };
-
+        };        
         res.json({
             'message': 'Post deleted successfully'
         });
     });
+
+    Post.post('remove', (doc) => {
+
+        // Remove photo linked to post in gridfs
+        const Attachment = req.Attachment;
+        Attachment.unlink({ _id: doc.photoId }, (err) => {
+            if(err) {
+                return res.status(500).json({ 
+                    err: 'File could not be deleted. Reason: ' + err
+                });
+            };
+        });
+
+        // Remove all associated comments and replies with this post
+        Comment.remove({ _id: { $in: doc.comments } });
+        Comment.post('remove', (doc) => {
+            Reply.remove({ _id: { $in:  doc.replies } });
+        });
+    });
+
+
 };
 
 exports.update = (req, res) => {
@@ -161,6 +182,7 @@ exports.update = (req, res) => {
             console.log('filefromDb: ', fileFromDb);
 
             if(files.photo.hash !== fileFromDb.md5) {
+                console.log('Photo is not the same -- save new photo');
                 
                 // New photo is different that the one stored, delete old and add new
                 // Remove file and its content 
@@ -196,26 +218,20 @@ exports.update = (req, res) => {
                         res.json(result);
                     });
                 });
+            } else {
+                console.log('Photo was the same -- not saved');
 
-            };
-
-        }
-
-
-
-        post.save((err, result) => {
-            if(err) {
-                return res.status(400).json({
-                    err: errorHandler(err)
+                post.save((err, result) => {
+                    if(err) {
+                        return res.status(400).json({
+                            err
+                        });
+                    };
+                    res.json(result);
                 });
             };
-    
-            res.json(result);
-        });
-
-
-
-    })
+        };
+    });
 };
 
 exports.photo = (req, res, next) => {
@@ -255,7 +271,7 @@ exports.listAll = (req, res) => {
 
     Post.find()
     .populate('author')
-    // .populate('comments')
+    .populate('comments')
     .populate('categories')
     .exec((err, posts) => {
         if(err) {
