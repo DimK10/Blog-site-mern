@@ -7,7 +7,7 @@ const Reply = require('../models/reply');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.commentById = (req, res, next, id) => {
-    comment.findById(id)
+    Comment.findById(id)
     .populate("_postId")
     .populate("_userId")
     .exec((err, comment) => {
@@ -73,6 +73,7 @@ exports.create = (req, res) => {
 exports.remove = (req, res) => {
 
     const isAllowed = req.isAllowed;
+    
     if(isAllowed) {
         const comment = req.comment;
         

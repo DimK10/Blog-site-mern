@@ -22,7 +22,7 @@ router.post ('/comment/create/:postId/:userId', requireSignin, isAuth, create);
 
 router.put ('/comment/update/:commentId', requireSignin, isAuth, update);
 router.delete (
-  '/comment/delete/:commentId',
+  '/comment/delete/:commentId/:userId',
   requireSignin,
   isAuth,
   isAllowedToDeleteComment,

@@ -162,22 +162,21 @@ exports.isAllowedToDeletePost = (req, res, next) => {
 exports.isAllowedToDeleteComment = (req, res, next) => {
     const comment = req.comment;
     const profile = req.profile;
-    // console.log('post ', post);
+    // console.log('comment ', comment);
     // console.log('profile', profile);
     // console.log('profile._id !== post.author) || profile.role != 1 ', (profile._id !== post.author) || profile.role != 1);
     
-    if(String(profile._id) !== String(comment._userId)) {
+    if(String(profile._id) !== String(comment._userId._id)) {
         if(profile.role !== 1) {
             // User is not allowed to delete this category and also not admin user
             return res.status(400).json({
                 err: 'You haven\'t created this post, therefore you can\'t delete it'
             });
-        } else {
-            // User is admin, he is allowed to delete
-            req.isAllowed = true;
         };
     } else {
         req.isAllowed = true;
-    }
+    };
+
+    req.isAllowed = true;
     next();
 };
