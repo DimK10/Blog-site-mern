@@ -289,6 +289,7 @@ exports.listByInterests= (req, res) => {
         path: 'comments',
         populate: {
             path: '_userId',
+            select: '_id name',
             model: 'User'
         }
     })
@@ -296,6 +297,7 @@ exports.listByInterests= (req, res) => {
         path: 'categories',
         populate: {
             path: '_createdFrom',
+            select: '_id name',
             model: 'User'
         }
     })
@@ -318,15 +320,38 @@ exports.listAll = (req, res, next) => {
     .populate('author')
     .populate({ 
         path: 'comments',
-        populate: {
-            path: '_userId',
-            model: 'User'
-        }
+        populate: [
+            {
+                path: '_userId',
+                select: '_id name',
+                model: 'User'
+            },
+            {
+                path: 'replies',
+                select: 'text',
+                model: 'Reply',
+                populate: [
+                    {
+                        path: '_userId',
+                        select: '_id name',
+                        model: 'User',
+                    },
+                    {
+                        
+                        path: 'replies',
+                        select: 'text',
+                        model: 'Reply',
+                    
+                    }
+                ]
+            }
+        ]
     })
     .populate({
         path: 'categories',
         populate: {
             path: '_createdFrom',
+            select: '_id name',
             model: 'User'
         }
     })

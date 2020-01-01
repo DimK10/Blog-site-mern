@@ -8,8 +8,8 @@ const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.replyById = (req, res, next, id) => {
     Reply.findById(id)
-    .populate('_rootId')
-    .populate('replies')
+    // .populate('_rootId')
+    // .populate('replies')
     .exec((err, reply) => {
         if(err) {
             return res.status(400).json({
@@ -24,7 +24,7 @@ exports.replyById = (req, res, next, id) => {
 exports.createToComment = (req, res) => {
     let form = formidable.IncomingForm();
 
-    form.parse = (req, res) => {
+    form.parse(req, (err, fields) => {
         if(err) {
             return res.status(400).json({
                 err
@@ -41,7 +41,7 @@ exports.createToComment = (req, res) => {
         
         let reply = new Reply({ text });
         reply._rootId = req.comment._id;
-        reply._userId = req.user._id;
+        reply._userId = req.profile._id;
 
         // Add this reply to comment - reply it was written
         Comment.update({ _id: req.comment._id }, { $push: { replies: reply._id } }, (err, result) => {
@@ -54,7 +54,17 @@ exports.createToComment = (req, res) => {
             console.log('Result of adding reply to comment: ', result);
         });
 
-    };
+        reply.save((err, result) => {
+            if(err) {
+                return res.status(400).json({
+                    err
+                });
+            };
+    
+            res.json(result);
+        });
+
+    });
 };
 
 exports.createToReply = (req, res) => {

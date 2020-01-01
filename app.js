@@ -13,6 +13,7 @@ const userRoutes = require('./routes/user');
 const categoryRoutes = require('./routes/category');
 const postRoutes = require('./routes/post');
 const commentRoutes = require('./routes/comment');
+const replyRoutes = require('./routes/reply');
 
 // Express 
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api", userRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", postRoutes);
 app.use("/api", commentRoutes);
+app.use("/api", replyRoutes);
 
 
 const port = process.env.PORT || 8000;

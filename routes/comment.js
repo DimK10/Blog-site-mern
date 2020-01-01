@@ -14,20 +14,27 @@ const {
   requireSignin,
   isAllowedToDeleteComment,
   isAuth,
-  isAllowed
+  isAllowed,
 } = require ('../controllers/auth');
 
 const {userById} = require ('../controllers/user');
 
 router.post ('/comment/create/:postId/:userId', requireSignin, isAuth, create);
 
-router.put ('/comment/update/:commentId', requireSignin, isAuth, update);
+router.put (
+  '/comment/update/:commentId',
+  requireSignin,
+  isAuth,
+  isAllowed ({type: 'comment', action: 'update'}),
+  update
+);
+
 router.delete (
   '/comment/delete/:commentId/:userId',
   requireSignin,
   isAuth,
   // isAllowedToDeleteComment,
-  isAllowed({ type: 'comment', action: 'delete' }),
+  isAllowed ({type: 'comment', action: 'delete'}),
   remove
 );
 
