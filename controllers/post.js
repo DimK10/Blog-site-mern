@@ -184,87 +184,89 @@ exports.remove = (req, res) => {
 
 exports.update = (req, res) => {
 
-    let form = formidable.IncomingForm();
-    form.keepExtensions = true;
+    if(req.isAllowed) {
+        let form = formidable.IncomingForm();
+        form.keepExtensions = true;
 
-    form.parse(req, (err, fields, files) => {
-        if(err) {
-            return res.status(400).json({
-                error: 'Image could not be uploaded'
-            });
-        };
-        const { title, description, categories } = fields;
-
-        if(!title || !description || !categories) {
-            return res.status(400).json({
-                err: 'All fileds are required'
-            });
-        };
-
-        let post = req.post;
-        post = _.extend(post, fields);
-    
-        // Photo 
-        if(files.photo) {
-            // Check if files.photo.hash (md5) is the same as the md5 hash of new photo submitted
-            // Read file from gridfs
-            const Attachment = req.Attachment;
-            const { photoId } = post;
-            console.log('photoId of post: ', photoId);
-            const fileFromDb = Attachment.read({ _id: photoId });
-            console.log('filefromDb: ', fileFromDb);
-
-            if(files.photo.hash !== fileFromDb.md5) {
-                console.log('Photo is not the same -- save new photo');
-                
-                // New photo is different that the one stored, delete old and add new
-                // Remove file and its content 
-                Attachment.unlink(photoId, (err) => {
-                    if(err) {
-                        return res.status(500).json({ 
-                            err: 'File could not be deleted. Reason: ' + err
-                        });
-                    };
+        form.parse(req, (err, fields, files) => {
+            if(err) {
+                return res.status(400).json({
+                    error: 'Image could not be uploaded'
                 });
+            };
+            const { title, description, categories } = fields;
 
-                // Save new photo to gridfs
-                const readStream = createReadStream(files.photo.path);
-                const options = ({ filename: files.photo.name, contentType: files.photo.type });
-                Attachment.write(options, readStream, (err, file) => {
-                    if(err) {
-                        return res.status(500).json({
-                            err: 'Could not write to gridfs model. Reason: ' + err
+            if(!title || !description || !categories) {
+                return res.status(400).json({
+                    err: 'All fileds are required'
+                });
+            };
+
+            let post = req.post;
+            post = _.extend(post, fields);
+        
+            // Photo 
+            if(files.photo) {
+                // Check if files.photo.hash (md5) is the same as the md5 hash of new photo submitted
+                // Read file from gridfs
+                const Attachment = req.Attachment;
+                const { photoId } = post;
+                console.log('photoId of post: ', photoId);
+                const fileFromDb = Attachment.read({ _id: photoId });
+                console.log('filefromDb: ', fileFromDb);
+
+                if(files.photo.hash !== fileFromDb.md5) {
+                    console.log('Photo is not the same -- save new photo');
+                    
+                    // New photo is different that the one stored, delete old and add new
+                    // Remove file and its content 
+                    Attachment.unlink(photoId, (err) => {
+                        if(err) {
+                            return res.status(500).json({ 
+                                err: 'File could not be deleted. Reason: ' + err
+                            });
+                        };
+                    });
+
+                    // Save new photo to gridfs
+                    const readStream = createReadStream(files.photo.path);
+                    const options = ({ filename: files.photo.name, contentType: files.photo.type });
+                    Attachment.write(options, readStream, (err, file) => {
+                        if(err) {
+                            return res.status(500).json({
+                                err: 'Could not write to gridfs model. Reason: ' + err
+                            });
+                        };
+
+                        // console.log('file._id ', file._id);
+
+                        // Save id to post document
+                        post.photoId = file._id;
+
+                        post.save((err, result) => {
+                            if(err) {
+                                return res.status(400).json({
+                                    err
+                                });
+                            };
+                            res.json(result);
                         });
-                    };
-
-                    // console.log('file._id ', file._id);
-
-                    // Save id to post document
-                    post.photoId = file._id;
+                    });
+                } else {
+                    console.log('Photo was the same -- not saved');
 
                     post.save((err, result) => {
                         if(err) {
-                            return res.status(400).json({
+                            return res.status(500).json({
                                 err
                             });
                         };
                         res.json(result);
                     });
-                });
-            } else {
-                console.log('Photo was the same -- not saved');
-
-                post.save((err, result) => {
-                    if(err) {
-                        return res.status(500).json({
-                            err
-                        });
-                    };
-                    res.json(result);
-                });
+                };
             };
-        };
-    });
+        });
+    }; 
 };
 
 exports.photo = (req, res, next) => {
