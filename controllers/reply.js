@@ -8,7 +8,7 @@ const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.replyById = (req, res, next, id) => {
     Reply.findById(id)
-    .populate('_userId')
+    .populate('_rootId')
     .populate('replies')
     .exec((err, reply) => {
         if(err) {

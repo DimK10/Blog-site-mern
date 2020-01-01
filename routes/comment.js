@@ -13,7 +13,8 @@ const {
 const {
   requireSignin,
   isAllowedToDeleteComment,
-  isAuth
+  isAuth,
+  isAllowed
 } = require ('../controllers/auth');
 
 const {userById} = require ('../controllers/user');
@@ -25,7 +26,8 @@ router.delete (
   '/comment/delete/:commentId/:userId',
   requireSignin,
   isAuth,
-  isAllowedToDeleteComment,
+  // isAllowedToDeleteComment,
+  isAllowed({ type: 'comment', action: 'delete' }),
   remove
 );
 

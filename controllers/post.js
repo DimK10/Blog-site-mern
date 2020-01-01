@@ -22,6 +22,19 @@ exports.postById = (req, res, next, id) => {
                 err: 'Post not found. Error ' + err
             });
         };
+        Comment.populate(post.comments, { path: '_userId' }, (err, doc) => {
+            if(err) {
+                return res.status(500).json({
+                    err
+                });
+            };
+
+            Reply.populate(comment.replies, { path:'_userId' }, (err, doc) => {
+                return res.status(500).json({
+                    err
+                });
+            });
+        })
         req.post = post;
         next();
     });
@@ -127,14 +140,18 @@ exports.remove = (req, res) => {
             };
 
             // Remove photo linked to post in gridfs
-            const Attachment = req.Attachment;
-            Attachment.unlink(doc.photoId, (err) => {
-                if(err) {
-                    return res.status(500).json({ 
-                        err: 'Photo could not be deleted. Reason: ' + err
-                    });
-                };
-            });
+            // Check if thre is a photo linked with this post
+            if(post.photoId) {
+                const Attachment = req.Attachment;
+                Attachment.unlink(doc.photoId, (err) => {
+                    if(err) {
+                        return res.status(500).json({ 
+                            err: 'Photo could not be deleted. Reason: ' + err
+                        });
+                    };
+                });
+            };
+            
     
             // Remove all associated comments and replies with this post
             Comment.find({ _id: { $in: doc.comments } }, (err, doc) => {
@@ -268,8 +285,20 @@ exports.listByInterests= (req, res) => {
 
     Post.find({ "categories": { "$in": interests } })
     .populate('author')
-    .populate('comments')
-    .populate('categories')
+    .populate({ 
+        path: 'comments',
+        populate: {
+            path: '_userId',
+            model: 'User'
+        }
+    })
+    .populate({
+        path: 'categories',
+        populate: {
+            path: '_createdFrom',
+            model: 'User'
+        }
+    })
     .exec((err, posts) => {
         if(err) {
             return res.status(400).json({
@@ -281,14 +310,26 @@ exports.listByInterests= (req, res) => {
     });
 };
 
-exports.listAll = (req, res) => {
+exports.listAll = (req, res, next) => {
     let order = req.body.order ? req.body.order : 'asc';
     let limit = req.body.limit ? req.body.limit : 6;
 
     Post.find()
     .populate('author')
-    .populate('comments')
-    .populate('categories')
+    .populate({ 
+        path: 'comments',
+        populate: {
+            path: '_userId',
+            model: 'User'
+        }
+    })
+    .populate({
+        path: 'categories',
+        populate: {
+            path: '_createdFrom',
+            model: 'User'
+        }
+    })
     .exec((err, posts) => {
         if(err) {
             return res.status(400).json({
