@@ -24,12 +24,16 @@ const userSchema = new mongoose.Schema({
     },
     hashed_password: {
         type: String,
+        select: false,
         required: true
     },
     about: {
         type: String
     },
-    salt: String,
+    salt: {
+        type: String,
+        select: false
+    },
     role: {
         type: Number,
         default: 0

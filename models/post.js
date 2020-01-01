@@ -24,7 +24,8 @@ const postSchema = new mongoose.Schema({
     },
     comments: [{
         type: ObjectId,
-        ref: "Comment"
+        ref: "Comment",
+        autopopulate: true
     }],
     categories: [{
         type: ObjectId,
@@ -36,5 +37,6 @@ const postSchema = new mongoose.Schema({
 
 }, { timestamps: { createdAt: 'created_at' } });
 
+postSchema.plugin(require('mongoose-autopopulate'));
 
 module.exports = mongoose.model("Post", postSchema);

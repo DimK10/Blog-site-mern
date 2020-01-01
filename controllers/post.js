@@ -22,19 +22,19 @@ exports.postById = (req, res, next, id) => {
                 err: 'Post not found. Error ' + err
             });
         };
-        Comment.populate(post.comments, { path: '_userId' }, (err, doc) => {
-            if(err) {
-                return res.status(500).json({
-                    err
-                });
-            };
+        // Comment.populate(post.comments, { path: '_userId' }, (err, doc) => {
+        //     if(err) {
+        //         return res.status(500).json({
+        //             err
+        //         });
+        //     };
 
-            Reply.populate(comment.replies, { path:'_userId' }, (err, doc) => {
-                return res.status(500).json({
-                    err
-                });
-            });
-        })
+        //     Reply.populate(comment.replies, { path:'_userId' }, (err, doc) => {
+        //         return res.status(500).json({
+        //             err
+        //         });
+        //     });
+        // })
         req.post = post;
         next();
     });
@@ -320,7 +320,8 @@ exports.listAll = (req, res, next) => {
     .populate('author')
     .populate({ 
         path: 'comments',
-        populate: [
+        model: 'Comment'
+        /* populate: [
             {
                 path: '_userId',
                 select: '_id name',
@@ -345,7 +346,7 @@ exports.listAll = (req, res, next) => {
                     }
                 ]
             }
-        ]
+        ] */
     })
     .populate({
         path: 'categories',

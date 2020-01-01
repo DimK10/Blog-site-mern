@@ -70,7 +70,7 @@ exports.createToComment = (req, res) => {
 exports.createToReply = (req, res) => {
     let form = formidable.IncomingForm();
 
-    form.parse = (req, res) => {
+    form.parse(req, (err, fields) => {
         if(err) {
             return res.status(400).json({
                 err
@@ -87,7 +87,7 @@ exports.createToReply = (req, res) => {
         
         let reply = new Reply({ text });
         reply._rootId = req.reply._id;
-        reply._userId = req.user._id;
+        reply._userId = req.profile._id;
 
         // Add this reply to reply it was written
         Reply.update({ _id: req.reply._id }, { $push: { replies: reply._id } }, (err, result) => {
@@ -100,7 +100,17 @@ exports.createToReply = (req, res) => {
             console.log('Result of adding reply to reply: ', result);
         });
 
-    };
+        reply.save((err, result) => {
+            if(err) {
+                return res.status(400).json({
+                    err
+                });
+            };
+    
+            res.json(result);
+        });
+
+    });
 };
 
 exports.update = (req, res) => {
