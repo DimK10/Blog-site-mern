@@ -153,71 +153,110 @@ exports.remove = (req, res) => {
     if(isAllowed) {
         const reply = req.reply;
 
+        // Delete descendants first
+        console.log('reply: ', reply);
+        console.log('reply.parents before ', reply.parents);
+        reply.parents.push(reply._id);
+        console.log('reply.parents after: ', reply.parents);
 
         // Check if parents array in reply, is one element, and so is a reply to comment. If not, it is a reply on a reply 
-        if(reply.parents.length === 1) {
-            // reply on a comment
+        Reply.find().exec((err, replies) => {
+            if(err || !replies) {
+                return res.status(400).json({
+                    err: 'Replies not found. Error ' + err
+                });
+            };
 
-            // Delete all replies saring that one element
-            Reply.find().exec((err, replies) => {
-                if(err || !replies) {
-                    res.status(400).json({
-                        err: 'No replies found to delete'
-                    });
-                };
-                console.log('replies ', replies);
-                
-                replies.forEach(doc => {
-                    console.log('doc ', doc);
-                    console.log('doc.parents[0] ', doc.parents[0]);
-                    console.log('reply.parents[0] ', reply.parents[0]);
-
-                    if(String(doc.parents[0]) === String(reply.parents[0])){
-                        // Remove
+            replies.forEach(doc => {
+                if (doc.parents.length >= reply.parents.length) {
+                    // Might be a child of reply we want to delete
+                    // Check
+                    if(reply.parents.every(element => doc.parents.includes(element))) {
+                        // remove
                         doc.remove();
                     };
-                });
-
-                return res.status(200).json({
-                    message: 'Reaplies have been deleted successfully!'
-                })
-            });
-        } else {
-            // Reply is inside a reply 
-
-            // Delete all replies that the reply.parents array as subset
-
-            Reply.find().exec((err, replies) => {
-                if(err || !replies) {
-                    res.status(400).json({
-                        err: 'No replies found to delete'
-                    });
                 };
-                console.log('replies ', replies);
-
-                replies.forEach(doc => {
-                    console.log('doc ', doc);
-                    // console.log('doc.parents[0] ', doc.parents[0]);
-                    // console.log('reply.parents[0] ', reply.parents[0]);
-                    
-                    // add _id of curent reply to parent, to avoid deleting a reply that is not a reply to this reply
-                    reply.parents.push(reply._id);
-
-                    if(doc.parents.length >= reply.parents.length) {
-                        // doc might be child
-                        // Check
-                        if(reply.parents.every(element => doc.parents.includes(element))) {
-                            // remove
-                            doc.remove();
-                        };
-                    };
-                });
-
-                return res.status(200).json({
-                    message: 'Replies have been deleted successfully!'
-                });
             });
-        };
+
+            // Remove the reply that needs to be removed
+            reply.remove();
+
+            return res.status(200).json({
+                message: 'Replies deleted successfully'
+            });
+        });
+
+        
+        
+        // if(reply.parents.length === 1) {
+        //     // reply on a comment
+
+        //     // Delete all replies sharing that one element
+        //     Reply.find().exec((err, replies) => {
+        //         if(err || !replies) {
+        //             res.status(400).json({
+        //                 err: 'No replies found to delete'
+        //             });
+        //         };
+        //         console.log('replies ', replies);
+                
+        //         replies.forEach(doc => {
+        //             console.log('doc ', doc);
+        //             console.log('doc.parents[0] ', doc.parents[0]);
+        //             console.log('reply.parents[0] ', reply.parents[0]);
+
+        //             // Check if there is a reply that is child to comment, but not connected with the reply 
+        //             // that needs to be deleted
+        //             if(doc._id !== reply._id && String(doc.parents[0]))
+
+        //             if((String(doc._id) === String(reply._id)) && (String(doc.parents[0]) === String(reply.parents[0]))){
+        //                 // Remove
+        //                 doc.remove();
+        //             };
+        //         });
+
+        //         return res.status(200).json({
+        //             message: 'Reaplies have been deleted successfully!'
+        //         })
+        //     });
+        // } else {
+        //     // Reply is inside a reply 
+
+        //     // Delete all replies that the reply.parents array as subset
+
+        //     // add _id of curent reply to parent, to avoid deleting a reply that is not a reply to this reply
+        //     console.log('reply.parents before: ', reply.parents);
+        //     reply.parents.push(reply._id);
+        //     console.log('reply.parents after: ', reply.parents);
+
+        //     Reply.find().exec((err, replies) => {
+        //         if(err || !replies) {
+        //             res.status(400).json({
+        //                 err: 'No replies found to delete'
+        //             });
+        //         };
+        //         console.log('replies ', replies);
+
+        //         replies.forEach(doc => {
+        //             console.log('doc ', doc);
+        //             // console.log('doc.parents[0] ', doc.parents[0]);
+        //             // console.log('reply.parents[0] ', reply.parents[0]);
+                    
+        //             if(doc.parents.length > reply.parents.length) {
+        //                 // doc might be child
+        //                 // Check
+        //                 if(reply.parents.every(element => doc.parents.includes(element))) {
+        //                     // remove
+        //                     doc.remove();
+        //                 };
+        //             };
+        //         });
+
+        //         return res.status(200).json({
+        //             message: 'Replies have been deleted successfully!'
+        //         });
+        //     });
+        // };
         req.isAllowed = false;
     };
 };
