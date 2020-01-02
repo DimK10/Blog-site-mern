@@ -7,9 +7,8 @@ const Reply = require('../models/reply');
 // This is done so that there is the ability to write nested replies - replies to replies
 
 const replySchema = new mongoose.Schema({
-    _rootId: {
-        type: ObjectId,
-        ref: "Comment",
+    parents: {
+        type: Array,
         required: true
     },
     _userId: {
@@ -33,4 +32,6 @@ const replySchema = new mongoose.Schema({
 
 replySchema.plugin(require('mongoose-autopopulate'));
 
-module.exports = mongoose.model("Reply", replySchema);
+let replyModel = mongoose.model("Reply", replySchema)
+
+module.exports = replyModel;

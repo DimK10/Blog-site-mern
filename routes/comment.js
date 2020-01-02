@@ -34,7 +34,7 @@ router.delete (
   requireSignin,
   isAuth,
   // isAllowedToDeleteComment,
-  isAllowed ({type: 'comment', action: 'delete'}),
+  isAllowed ({type: 'comment'}),
   remove
 );
 

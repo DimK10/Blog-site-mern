@@ -88,14 +88,28 @@ exports.remove = (req, res) => {
         });
 
         // Remove all the replies too
-        Reply.remove({ _id: { $in: comment.replies} }, (err, result) => {
+        Reply.find().exec((err, replies) => {
             if(err) {
-                return res.status(500).json({
+                res.status(500).json({
                     err
                 });
-
             };
-            console.log('result in replies remove:', result);
+            // console.log('replies ', replies);
+
+            if(replies) {
+                replies.forEach(doc => {
+                    // console.log('doc ', doc);
+                    // console.log('doc.parents[0] ', doc.parents[0]);
+                    // console.log('reply.parents[0] ', reply.parents[0]);
+    
+                    if(String(doc.parents[0]) === String(comment._id)){
+                        // Remove
+                        doc.remove();
+                    };
+                });
+            };
+
+            
         });
 
         // Remove comment

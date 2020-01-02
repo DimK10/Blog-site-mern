@@ -40,7 +40,9 @@ exports.createToComment = (req, res) => {
         };
         
         let reply = new Reply({ text });
-        reply._rootId = req.comment._id;
+        let parentsArr = [];
+        parentsArr.push(req.comment._id);
+        reply.parents = parentsArr;
         reply._userId = req.profile._id;
 
         // Add this reply to comment - reply it was written
@@ -86,7 +88,7 @@ exports.createToReply = (req, res) => {
         };
         
         let reply = new Reply({ text });
-        reply._rootId = req.reply._id;
+        reply.parents = [...req.reply.parents, req.reply._id];
         reply._userId = req.profile._id;
 
         // Add this reply to reply it was written
@@ -150,58 +152,69 @@ exports.remove = (req, res) => {
 
     if(isAllowed) {
         const reply = req.reply;
-        
-        // Delete reply in replies filed in the post that this comment - reply is written 
-        Comment.update({ _id: req.reply._rootId }, { $pull: { replies:  String(reply._id)  } }, (err, result) => {
-            if(err) {
-                return res.status(500).json({
-                    err
-                });
-            };
 
-            console.log('Result in removing reply: ', result);
-            if(!result) {
 
-                // This reply was not in a comment, so it must be a reply to a reply
-                // Try to repmove from replies array in reply model, if found
+        // Check if parents array in reply, is one element, and so is a reply to comment. If not, it is a reply on a reply 
+        if(reply.parents.length === 1) {
+            // reply on a comment
+
+            // Delete all replies saring that one element
+            Reply.find().exec((err, replies) => {
+                if(err || !replies) {
+                    res.status(400).json({
+                        err: 'No replies found to delete'
+                    });
+                };
+                console.log('replies ', replies);
                 
-                Reply.update({ _id: req.reply._rootId }, { $pull: { replies: String(reply._id) } }, (err, result) => {
-                    if(err) {
-                        return res.status(500).json({
-                            err
-                        });
+                replies.forEach(doc => {
+                    console.log('doc ', doc);
+                    console.log('doc.parents[0] ', doc.parents[0]);
+                    console.log('reply.parents[0] ', reply.parents[0]);
+
+                    if(String(doc.parents[0]) === String(reply.parents[0])){
+                        // Remove
+                        doc.remove();
                     };
-
-                    console.log('Result in removing reply: ', result);
-                });
-            };
-        });
-
-        // Remove all the replies too
-        Reply.remove({ _id: { $in: comment.replies} }, (err, result) => {
-            if(err) {
-                return res.status(500).json({
-                    err
                 });
 
-            };
-            console.log('result in replies remove:', result);
-        });
-
-        // Remove comment
-
-        comment.remove((err) => {
-            if(err) {
-                return res.status(500).json({
-                    err
-                });
-            };
-            
-            // Default isAllowed to false
-            req.listAllowed = false;
-            res.json({
-                'message': 'Comment deleted successfully'
+                return res.status(200).json({
+                    message: 'Reaplies have been deleted successfully!'
+                })
             });
-        });
+        } else {
+            // Reply is inside a reply 
+
+            // Delete all replies that the reply.parents array as subset
+
+            Reply.find().exec((err, replies) => {
+                if(err || !replies) {
+                    res.status(400).json({
+                        err: 'No replies found to delete'
+                    });
+                };
+                console.log('replies ', replies);
+
+                replies.forEach(doc => {
+                    console.log('doc ', doc);
+                    // console.log('doc.parents[0] ', doc.parents[0]);
+                    // console.log('reply.parents[0] ', reply.parents[0]);
+
+                    if(doc.parents.length >= reply.parents.length) {
+                        // doc might be child
+                        // Check
+                        if(reply.parents.every(element => doc.parents.includes(element))) {
+                            // remove
+                            doc.remove();
+                        };
+                    };
+                });
+
+                return res.status(200).json({
+                    message: 'Replies have been deleted successfully!'
+                });
+            });
+        };
+        re.isAllowed = false;
     };
 };

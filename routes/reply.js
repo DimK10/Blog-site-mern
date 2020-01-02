@@ -33,14 +33,14 @@ router.put (
   '/reply/update/:replyId',
   requireSignin,
   isAuth,
-  isAllowed ({type: 'reply', action: 'update'})
+  isAllowed ({type: 'reply'})
 );
 
 router.delete (
   '/reply/delete/:replyId/:userId',
   requireSignin,
   isAuth,
-  isAllowed ({type: 'reply', action: 'delete'}),
+  isAllowed ({type: 'reply'}),
   remove
 );
 

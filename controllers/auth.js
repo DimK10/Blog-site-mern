@@ -184,10 +184,6 @@ exports.isAllowedToDeleteCategory = (req, res, next) => {
 //     next();
 // };
 
-exports.isAllowedToDeleteReply = () => {
-    
-};
-
 // TODO 
 // Create isAllowed for update methods
 
@@ -244,11 +240,11 @@ exports.isAllowed = ({ type }) => (req, res, next) => {
         
         case 'reply':
             const reply = req.reply;
-            console.log('reply ', reply);
-            console.log('profile', profile);
+            // console.log('reply.__id ', reply);
+            // console.log('profile', profile);
             // console.log('profile._id !== post.author) || profile.role != 1 ', (profile._id !== post.author) || profile.role != 1);
             
-            if(String(profile._id) !== String(reply._rootId._id)) {
+            if(String(profile._id) !== String(reply._userId._id)) {
                 if(profile.role !== 1) {
                     // User is not allowed to delete this category and also not admin user
                     return res.status(400).json({
