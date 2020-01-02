@@ -89,7 +89,7 @@ exports.remove = (req, res) => {
 
         // Remove all the replies too
         Reply.find().exec((err, replies) => {
-            if(err) {
+            if(err || !replies) {
                 res.status(500).json({
                     err
                 });
