@@ -11,7 +11,7 @@ exports.commentById = (req, res, next, id) => {
     .populate("_postId")
     .populate("_userId")
     .exec((err, comment) => {
-        if(err) {
+        if(err || !comment) {
             return res.status(400).json({
                 err: 'Comment not found. Error ' + err
             });

@@ -11,7 +11,7 @@ exports.replyById = (req, res, next, id) => {
     // .populate('_rootId')
     // .populate('replies')
     .exec((err, reply) => {
-        if(err) {
+        if(err || !reply) {
             return res.status(400).json({
                 err: 'Reply not found. Error ' + err
             });
@@ -199,6 +199,9 @@ exports.remove = (req, res) => {
                     console.log('doc ', doc);
                     // console.log('doc.parents[0] ', doc.parents[0]);
                     // console.log('reply.parents[0] ', reply.parents[0]);
+                    
+                    // add _id of curent reply to parent, to avoid deleting a reply that is not a reply to this reply
+                    reply.parents.push(reply._id);
 
                     if(doc.parents.length >= reply.parents.length) {
                         // doc might be child
@@ -215,6 +218,6 @@ exports.remove = (req, res) => {
                 });
             });
         };
-        re.isAllowed = false;
+        req.isAllowed = false;
     };
 };
