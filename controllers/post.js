@@ -405,3 +405,18 @@ exports.listExploreNew = (req, res) => {
         });
     });
 };
+
+exports.readImg = (req, res) => {
+    const post = req.post;
+    const Attachment = req.Attachment;
+    let photo = [];
+
+    const readStream = Attachment.read({ _id: post.photoId });
+
+    readStream.pipe(res);
+
+    // console.log('readStream: ', readStream);
+
+    // photo = [...readStream];
+    // res.send(photo);
+};

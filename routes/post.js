@@ -5,6 +5,7 @@ const {
   create,
   postById,
   read,
+  readImg,
   remove,
   update,
   listByInterests,
@@ -22,6 +23,8 @@ const {
 const {userById} = require ('../controllers/user');
 
 router.get ('/post/:postId', read);
+
+router.get('/post/image/:postId', createAttachment, readImg);
 
 router.post ('/post/create/:userId', requireSignin, createAttachment, create);
 
