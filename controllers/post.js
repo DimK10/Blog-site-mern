@@ -69,7 +69,9 @@ exports.create = (req, res) => {
         // Check for all fields
         let { title, description, categories } = fields;
 
-        if(!title || !description || !categories) {
+        console.log('form fields: ', fields);
+        // TODO - add !categories
+        if(!title || !description) {
             return res.status(400).json({
                 err: 'All fields are required'
             });
