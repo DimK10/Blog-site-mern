@@ -24,6 +24,8 @@ exports.create = (req, res) => {
     // console.log('req.profile ', req.profile);
     // console.log('spread ', {...req.body, _createdFrom: req.profile._id});
 
+    //TODO -Add check for category name and send proper error
+
     const category = new Category({...req.body, _createdFrom: req.profile._id});
     category.save((err, data) => {
         if(err) {
