@@ -69,6 +69,8 @@ exports.create = (req, res) => {
         // Check for all fields
         let { title, description, categories } = fields;
 
+        //
+
         console.log('form fields: ', fields);
         // TODO - add !categories
         if(!title || !description) {
@@ -79,6 +81,10 @@ exports.create = (req, res) => {
 
         // Change description to json data cause it will be rich text with/or videos and/or images
         fields.description = JSON.stringify(description);
+
+        // Modify categories, because it will be sent as an array
+        fields.categories = JSON.parse(fields.categories);
+
         let post = new Post(fields);
         // console.log('post ', post);
         post.author = req.params.userId;
