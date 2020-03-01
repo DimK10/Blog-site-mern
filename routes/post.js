@@ -29,7 +29,7 @@ router.get('/post/image/:postId', createAttachment, readImg);
 router.post ('/post/create/:userId', requireSignin, createAttachment, create);
 
 router.delete (
-  '/post/:postId/:userId',
+  '/delete-post/:postId/:userId',
   requireSignin,
   isAuth,
   isAllowed({ type: 'post', action: 'delete' }),

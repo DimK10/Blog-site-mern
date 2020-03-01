@@ -8,7 +8,7 @@ const Category = require('../models/category');
 const Comment = require('../models/comment');
 const  Reply = require('../models/reply');
 // const Photo = require('../models/photo');
-const { createModel } = require('mongoose-gridfs');
+const { createModel, createBucket } = require('mongoose-gridfs');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.postById = (req, res, next, id) => {
@@ -71,7 +71,7 @@ exports.create = (req, res) => {
 
         //
 
-        console.log('form fields: ', fields);
+        // console.log('form fields: ', fields);
         // TODO - add !categories
         if(!title || !description) {
             return res.status(400).json({
@@ -91,12 +91,12 @@ exports.create = (req, res) => {
 
         // Photo
         if(files.photo) {
-            console.log('files photo: ', files.photo);
+            // console.log('files photo: ', files.photo);
             // console.log('mongoose connection: ', mongoose.connection);
 
             const Attachment = req.Attachment;
 
-            console.log('Attachment: ', Attachment);
+            // console.log('Attachment: ', Attachment);
 
             // Write file to gridfs
             const readStream = createReadStream(files.photo.path);
@@ -119,7 +119,25 @@ exports.create = (req, res) => {
                             err: err
                         });
                     };
-                    res.json(result);
+
+
+                   // Populate necessary data
+                   Post.findById(result._id)
+                   .populate('comments')
+                   .populate('categories')
+                   .populate('author')
+                   .populate('photoId')
+                   .exec((err, newResult) => {
+                       if(err) {
+                           return res.status(400).json({
+                               err: err
+                           });
+                       };
+
+                       console.log(newResult)
+                       
+                       res.json(newResult);
+                   });
                 });
             });
         } else {
@@ -129,7 +147,28 @@ exports.create = (req, res) => {
                         err: err
                     });
                 };
-                res.json(result);
+
+                // console.log(result);
+
+                 // Populate necessary data
+                    Post.findById(result._id)
+                    .populate('comments')
+                    .populate('categories')
+                    .populate('author')
+                    .exec((err, newResult) => {
+                        if(err) {
+                            return res.status(400).json({
+                                err: err
+                            });
+                        };
+
+                        // console.log(newResult)
+                        
+                        res.json(newResult);
+                    })
+
+
+                // res.json(result);
             });
         };        
     });
@@ -150,6 +189,19 @@ exports.remove = (req, res) => {
             // Remove photo linked to post in gridfs
             // Check if thre is a photo linked with this post
             if(post.photoId) {
+
+                // Remove chunks of photo
+                const bucket = createBucket();
+                bucket.deleteFile(doc.photoId, (error, results) => { 
+                    if(err) {
+                        return res.status(500).json({ 
+                            err: 'Photo could not be deleted. Reason: ' + err
+                        });
+                    };
+
+                    // console.log('Chunks of photo should now be successfully deleted');
+                 });
+
                 const Attachment = req.Attachment;
                 Attachment.unlink(doc.photoId, (err) => {
                     if(err) {
@@ -219,9 +271,9 @@ exports.update = (req, res) => {
                 // Read file from gridfs
                 const Attachment = req.Attachment;
                 const { photoId } = post;
-                console.log('photoId of post: ', photoId);
+                // console.log('photoId of post: ', photoId);
                 const fileFromDb = Attachment.read({ _id: photoId });
-                console.log('filefromDb: ', fileFromDb);
+                // console.log('filefromDb: ', fileFromDb);
 
                 if(files.photo.hash !== fileFromDb.md5) {
                     console.log('Photo is not the same -- save new photo');
@@ -398,7 +450,7 @@ exports.listExploreNew = (req, res) => {
         };
 
         const { _id } = category;
-        console.log('category _id: ', _id);
+        // console.log('category _id: ', _id);
 
         // Show posts based on category chosen to explore
         // Find post or posts that have a category that is the same with the chosen one
