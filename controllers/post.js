@@ -309,7 +309,24 @@ exports.update = (req, res) => {
                                     err
                                 });
                             };
-                            res.json(result);
+
+                            // Populate necessary data
+                            Post.findById(result._id)
+                            .populate('comments')
+                            .populate('categories')
+                            .populate('author')
+                            .exec((err, newResult) => {
+                                if(err) {
+                                    return res.status(400).json({
+                                        err: err
+                                    });
+                                };
+
+                                // console.log(newResult)
+                                
+                                res.json(newResult);
+                            });
+                            // res.json(result);
                         });
                     });
                 } else {
@@ -321,7 +338,24 @@ exports.update = (req, res) => {
                                 err
                             });
                         };
-                        res.json(result);
+
+                        // Populate necessary data
+                        Post.findById(result._id)
+                        .populate('comments')
+                        .populate('categories')
+                        .populate('author')
+                        .exec((err, newResult) => {
+                            if(err) {
+                                return res.status(400).json({
+                                    err: err
+                                });
+                            };
+
+                            // console.log(newResult)
+                            
+                            res.json(newResult);
+                        });
+                        // res.json(result);
                     });
                 };
             };
