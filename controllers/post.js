@@ -247,6 +247,7 @@ exports.update = (req, res) => {
     if(req.isAllowed) {
         let form = formidable.IncomingForm();
         form.keepExtensions = true;
+        form.hash = 'md5';
 
         form.parse(req, (err, fields, files) => {
             if(err) {
@@ -262,8 +263,18 @@ exports.update = (req, res) => {
                 });
             };
 
-            let post = req.post;
-            post = _.extend(post, fields);
+             // Change description to json data cause it will be rich text with/or videos and/or images
+            fields.description = JSON.stringify(description);
+
+            // Modify categories, because it will be sent as an array
+            fields.categories = JSON.parse(fields.categories);
+
+            // let post = req.post;
+            // post = _.extend(post, fields);
+
+            let post = new Post(fields);
+            console.log('post ', post);
+            post.author = req.params.userId;
         
             // Photo 
             if(files.photo) {
