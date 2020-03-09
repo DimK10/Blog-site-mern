@@ -245,9 +245,11 @@ exports.remove = (req, res) => {
 exports.update = (req, res) => {
 
     if(req.isAllowed) {
-        let form = formidable.IncomingForm();
+        let form = formidable.IncomingForm({ multiples: true });
         form.keepExtensions = true;
         form.hash = 'md5';
+
+        // console.log('form before parse ', ...form);
 
         form.parse(req, (err, fields, files) => {
             if(err) {
@@ -255,6 +257,9 @@ exports.update = (req, res) => {
                     error: 'Image could not be uploaded'
                 });
             };
+
+            console.log('form fields ', fields);
+
             const { title, description, categories } = fields;
 
             if(!title || !description || !categories) {
@@ -278,6 +283,8 @@ exports.update = (req, res) => {
         
             // Photo 
             if(files.photo) {
+
+                console.log('inside photo checking');
                 // Check if files.photo.hash (md5) is the same as the md5 hash of new photo submitted
                 // Read file from gridfs
                 const Attachment = req.Attachment;
@@ -314,15 +321,17 @@ exports.update = (req, res) => {
                         // Save id to post document
                         post.photoId = file._id;
 
-                        post.save((err, result) => {
+                      
+
+                        // Populate necessary data
+                        Post.findOneAndUpdate({_id: post._id}, post, (err, doc) => {
                             if(err) {
                                 return res.status(400).json({
-                                    err
+                                    err: err
                                 });
                             };
 
-                            // Populate necessary data
-                            Post.findById(result._id)
+                            Post.findById(doc._id)
                             .populate('comments')
                             .populate('categories')
                             .populate('author')
@@ -334,24 +343,23 @@ exports.update = (req, res) => {
                                 };
 
                                 // console.log(newResult)
+                                newResult.save();
                                 
                                 res.json(newResult);
                             });
-                            // res.json(result);
                         });
                     });
                 } else {
                     console.log('Photo was the same -- not saved');
 
-                    post.save((err, result) => {
+                    Post.findOneAndUpdate({_id: post._id}, post, (err, doc) => {
                         if(err) {
-                            return res.status(500).json({
-                                err
+                            return res.status(400).json({
+                                err: err
                             });
                         };
 
-                        // Populate necessary data
-                        Post.findById(result._id)
+                        Post.findById(doc._id)
                         .populate('comments')
                         .populate('categories')
                         .populate('author')
@@ -363,12 +371,45 @@ exports.update = (req, res) => {
                             };
 
                             // console.log(newResult)
+                            newResult.save();
                             
                             res.json(newResult);
                         });
-                        // res.json(result);
                     });
                 };
+            } else {
+                console.log('req.post ', req.post);
+
+               
+
+                // const newPost = Post.findById(req.post._id);
+                
+                Post.findOneAndUpdate({_id: req.post._id}, {$set: { title: post.title, description: post.description, categories: post.categories }}, (err, doc) => {
+                    if(err) {
+                        return res.status(400).json({
+                            err: err
+                        });
+                    };
+
+                    console.log('doc ', doc);
+
+                    Post.findById(doc._id)
+                    .populate('comments')
+                    .populate('categories')
+                    .populate('author')
+                    .exec((err, newResult) => {
+                        if(err) {
+                            return res.status(400).json({
+                                err: err
+                            });
+                        };
+
+                        // console.log(newResult)
+                        newResult.save();
+                        
+                        res.json(newResult);
+                    });
+                });
             };
         });
     }; 
