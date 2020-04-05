@@ -37,7 +37,7 @@ router.delete (
   remove
 );
 
-router.put ('/update-post/:postId/:userId', requireSignin, isAuth, createAttachment, update);
+router.put ('/update-post/:postId/:userId', requireSignin, isAuth, isAllowed({ type: 'post', action: 'delete' }), createAttachment, update);
 
 router.get("/posts/by-interest", listByInterests);
 router.get("/posts/all", listAll);
