@@ -44,13 +44,14 @@ exports.userSigninValidator = (req, res, next) => {
         .withMessage('Password must contain a number');
 
     const errors = req.validationErrors();
-    // console.log('errors ', errors);
-    let errorMsgs = [];
 
     if (errors) {
-        // const firstError = errors.map(error => error.msg)[0];
-        errors.map((error) => errorMsgs.push(error.msg));
-        return res.status(400).json({ error: errorMsgs });
+        let errorMessages = {
+            errors: [],
+        };
+
+        errors.map((error) => errorMessages.errors.push({ msg: error.msg }));
+        return res.status(400).json(errorMessages);
     }
     next();
 };
