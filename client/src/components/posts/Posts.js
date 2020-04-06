@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { getPosts } from '../../actions/post';
+import { connect } from 'react-redux';
 
-const Posts = (props) => {
+const Posts = ({ getPosts, post: { posts, loading } }) => {
+    useEffect(() => {
+        getPosts();
+    }, [getPosts]);
     return <div>Posts page</div>;
 };
 
-Posts.propTypes = {};
+Posts.propTypes = {
+    getPosts: PropTypes.func.isRequired,
+    post: PropTypes.object.isRequired,
+};
 
-export default Posts;
+const mpaStateToProps = (state) => ({
+    post: state.post,
+});
+
+export default connect(mpaStateToProps, { getPosts })(Posts);
