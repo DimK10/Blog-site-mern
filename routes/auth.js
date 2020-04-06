@@ -1,17 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 
-const { 
+const {
     signup,
-    signin, 
-    signout, 
-    requireSignin
+    signin,
+    signout,
+    requireSignin,
 } = require('../controllers/auth');
-const { userSignupValidator, userSigninValidator } = require('../validator');
 
-router.post("/signup", userSignupValidator, signup);
-router.post("/signin", userSigninValidator, signin);
-router.get("/signout", signout);
+const {
+    userSignupValidator,
+    userSigninValidator,
+} = require('../validator/userValidator');
 
+router.post('/signup', userSignupValidator, signup);
+router.post('/signin', userSigninValidator, signin);
+router.get('/signout', signout);
 
 module.exports = router;

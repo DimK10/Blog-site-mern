@@ -2,11 +2,11 @@
  *  N & LW Lawn Care - Landscaping Bootstrap4 HTML5 Responsive Template
  */
 
-@import url("https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800");
+/* @import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800'); */
 
 body {
     padding-top: 54px;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     color: #4e3914;
 }
@@ -100,7 +100,7 @@ button.btn-secondary:hover {
 }
 
 .slider-main .carousel .carousel-inner .carousel-item:before {
-    content: "";
+    content: '';
     position: absolute;
     background: rgba(0, 0, 0, 0.5);
     top: 0px;
@@ -162,8 +162,8 @@ button.btn-secondary:hover {
     line-height: 29px;
 }
 .about-main ul li:before {
-    content: "\f0da";
-    font-family: "Font Awesome 5 Free";
+    content: '\f0da';
+    font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     position: absolute;
     left: -15px;
@@ -369,7 +369,7 @@ footer p {
     position: relative;
 }
 .full-title:before {
-    content: "";
+    content: '';
     background: rgba(0, 0, 0, 0.5);
     top: 0px;
     left: 0px;
@@ -547,10 +547,10 @@ footer p {
     color: #4eae3a;
     text-decoration: none;
 }
-.accordion-single h5 a[aria-expanded="false"]::before {
+.accordion-single h5 a[aria-expanded='false']::before {
     position: absolute;
-    content: "\f0dd";
-    font-family: "Font Awesome 5 Free";
+    content: '\f0dd';
+    font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     right: 10px;
     top: 50%;
@@ -559,10 +559,10 @@ footer p {
     transform: translateY(-50%);
     color: #4e3914;
 }
-.accordion-single h5 a[aria-expanded="true"]::before {
+.accordion-single h5 a[aria-expanded='true']::before {
     position: absolute;
-    content: "\f0de";
-    font-family: "Font Awesome 5 Free";
+    content: '\f0de';
+    font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     right: 10px;
     top: 50%;
