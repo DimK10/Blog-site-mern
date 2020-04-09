@@ -478,16 +478,17 @@ const listByInterests = (req, res) => {
         });
 };
 
-const listAll = (req, res, next) => {
+const listAll = async (req, res, next) => {
     let order = req.body.order ? req.body.order : 'asc';
     let limit = req.body.limit ? req.body.limit : 6;
 
-    Post.find()
-        .populate('author')
-        .populate({
-            path: 'comments',
-            model: 'Comment',
-            /* populate: [
+    try {
+        let posts = await Post.find()
+            .populate('author')
+            .populate({
+                path: 'comments',
+                model: 'Comment',
+                /* populate: [
             {
                 path: '_userId',
                 select: '_id name',
@@ -513,24 +514,21 @@ const listAll = (req, res, next) => {
                 ]
             }
         ] */
-        })
-        .populate({
-            path: 'categories',
-            populate: {
-                path: '_createdFrom',
-                select: '_id name',
-                model: 'User',
-            },
-        })
-        .exec((err, posts) => {
-            if (err) {
-                return res.status(400).json({
-                    err,
-                });
-            }
+            })
+            .populate({
+                path: 'categories',
+                populate: {
+                    path: '_createdFrom',
+                    select: '_id name',
+                    model: 'User',
+                },
+            });
 
-            res.json(posts);
-        });
+        res.send(posts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
 };
 
 const listExploreNew = (req, res) => {
