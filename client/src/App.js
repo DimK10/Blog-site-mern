@@ -2,6 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Posts from './components/posts/Posts';
+import Alert from './components/layout/Alert';
 import Routes from './components/routing/Routes';
 import Signin from './components/auth/Signin';
 
@@ -15,6 +16,7 @@ const App = () => {
             <Router>
                 <Fragment>
                     <Navbar />
+                    <Alert />
                     <Switch>
                         <Route exact path='/' component={Posts} />
                         <Route component={Routes} />

@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL } from './types';
+import {
+    USER_LOADED,
+    AUTH_ERROR,
+    LOGIN_SUCCESS,
+    LOGIN_FAIL,
+    LOGOUT,
+} from './types';
 import { setAlert } from './alert';
 
 // Helper function to set up token in Authorization header once
@@ -55,4 +61,12 @@ export const login = (email, password) => async (dispatch) => {
             type: LOGIN_FAIL,
         });
     }
+};
+
+// Log out
+export const logout = () => (dispatch) => {
+    dispatch({
+        type: LOGOUT,
+    });
+    dispatch(setAlert('You have been logged out successfully!', 'success'));
 };

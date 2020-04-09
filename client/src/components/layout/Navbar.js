@@ -3,14 +3,16 @@ import { Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import logo from '../../images/logo-made/logo.jpg';
 import Signin from '../auth/Signin';
+import PropTypes from 'prop-types';
+import { logout } from '../../actions/auth';
 
-const Navbar = (props) => {
+const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
     const guestLinks = (
         <ul className='navbar-nav ml-auto'>
             <li className='nav-item'>
-                <a className='nav-link' href='./nature-blog-home.html'>
+                <Link className='nav-link' to='/'>
                     Home
-                </a>
+                </Link>
             </li>
             <li className='nav-item'>
                 <a className='nav-link' href='./nature-blog-about.html'>
@@ -26,6 +28,48 @@ const Navbar = (props) => {
                 <a className='nav-link' href='./nature-sign-up.html'>
                     Sign Up
                 </a>
+            </li>
+        </ul>
+    );
+
+    const userLinks = (
+        <ul className='navbar-nav ml-auto'>
+            <li className='nav-item'>
+                <Link className='nav-link' to='/'>
+                    Home
+                </Link>
+            </li>
+            <li className='nav-item'>
+                <a className='nav-link' href='./nature-blog-view-profiles.html'>
+                    Community
+                </a>
+            </li>
+            <li className='nav-item'>
+                <a className='nav-link' href='./nature-blog-about.html'>
+                    About
+                </a>
+            </li>
+            <li className='nav-item'>
+                <a className='nav-link' href='./nature-blog-create-post.html'>
+                    Create a Post
+                </a>
+            </li>
+            <li className='nav-item'>
+                <a
+                    className='nav-link'
+                    href='./nature-blog-create-category.html'
+                >
+                    Create a Category
+                </a>
+            </li>
+            <li className='nav-item'>
+                <div
+                    style={{ cursor: 'pointer' }}
+                    className='nav-link'
+                    onClick={logout}
+                >
+                    Log Out
+                </div>
             </li>
         </ul>
     );
@@ -62,13 +106,26 @@ const Navbar = (props) => {
                 </button>
                 <div className='collapse navbar-collapse' id='navbarResponsive'>
                     {/* //TODO - Add the links for user and admin */}
-                    {<Fragment>{guestLinks}</Fragment>}
+                    {/* {<Fragment>{guestLinks}</Fragment>} */}
+                    {!loading && (
+                        <Fragment>
+                            {isAuthenticated ? userLinks : guestLinks}
+                        </Fragment>
+                    )}
                 </div>
             </div>
         </nav>
     );
 };
 
-Navbar.propTypes = {};
+Navbar.propTypes = {
+    isAuthenticated: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
+    logout: PropTypes.func.isRequired,
+};
 
-export default Navbar;
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps, { logout })(Navbar);

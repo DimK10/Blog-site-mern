@@ -3,12 +3,18 @@ import {
     LOGIN_FAIL,
     USER_LOADED,
     AUTH_ERROR,
+    LOGOUT,
 } from '../actions/types';
 
+const token = JSON.parse(localStorage.getItem('jwt'))
+    ? JSON.parse(localStorage.getItem('jwt')).token
+    : null;
+
+// FIXME - Maybe i need to have the user data persist after reload
 const initialState = {
-    token: localStorage.getItem('token'),
-    isAuthenticated: null,
-    loading: true,
+    token,
+    isAuthenticated: token ? true : false,
+    loading: false,
     user: null,
 };
 
@@ -32,12 +38,13 @@ export default function (state = initialState, action) {
                 loading: false,
             };
         case LOGIN_FAIL:
+        case LOGOUT:
         case AUTH_ERROR:
             localStorage.removeItem('jwt');
             return {
                 ...state,
                 token: null,
-                id: null,
+                user: null,
                 isAuthenticated: false,
                 loading: false,
             };

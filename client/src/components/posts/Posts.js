@@ -11,6 +11,7 @@ const Posts = ({ getPosts, post: { posts, loading } }) => {
 
     return (
         <Fragment>
+            {/* TODO - Make this a static component so that alerts are shown under it */}
             {/* <!-- full Title --> */}
             <div className='full-title'>
                 <div className='container'>
