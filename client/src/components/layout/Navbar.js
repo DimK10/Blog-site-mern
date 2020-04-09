@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import logo from '../../images/logo-made/logo.jpg';
+import Signin from '../auth/Signin';
 
 const Navbar = (props) => {
     const guestLinks = (
@@ -17,9 +18,9 @@ const Navbar = (props) => {
                 </a>
             </li>
             <li className='nav-item'>
-                <a className='nav-link' href='./nature-sign-in.html'>
+                <Link className='nav-link' to='/signin'>
                     Sign In
-                </a>
+                </Link>
             </li>
             <li className='nav-item'>
                 <a className='nav-link' href='./nature-sign-up.html'>

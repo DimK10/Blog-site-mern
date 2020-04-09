@@ -57,7 +57,7 @@ async function signin(req, res) {
             '+salt +hashed_password'
         );
 
-        console.log('user object ', user);
+        // console.log('user object ', user);
 
         if (!user) {
             return res
@@ -79,15 +79,13 @@ async function signin(req, res) {
         };
 
         // TODO - Change expiresIn value
-        jwt.sign(
-            payload,
-            config.get('jwtsecret'),
-            { expiresIn: 360000 },
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token });
-            }
-        );
+        const token = jwt.sign(payload, config.get('jwtsecret'), {
+            expiresIn: 360000,
+        });
+
+        console.log('token ', token);
+
+        return res.json({ token, user: user.id });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
