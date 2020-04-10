@@ -24,9 +24,9 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
                 </Link>
             </li>
             <li className='nav-item'>
-                <a className='nav-link' href='./nature-sign-up.html'>
+                <Link className='nav-link' to='/signup'>
                     Sign Up
-                </a>
+                </Link>
             </li>
         </ul>
     );

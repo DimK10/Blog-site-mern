@@ -2,7 +2,7 @@ import { GET_POSTS, POST_ERROR } from '../actions/types';
 const initialState = {
     posts: [],
     post: null,
-    loading: false,
+    loading: true,
     error: {},
 };
 

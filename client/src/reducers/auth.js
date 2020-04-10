@@ -14,7 +14,7 @@ const token = JSON.parse(localStorage.getItem('jwt'))
 const initialState = {
     token,
     isAuthenticated: null,
-    loading: false,
+    loading: true,
     user: null,
 };
 
