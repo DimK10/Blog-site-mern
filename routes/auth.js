@@ -15,7 +15,9 @@ const {
     userSigninValidator,
 } = require('../validator/userValidator');
 
-router.post('/signup', userSignupValidator, signup);
+const { createAttachment } = require('../middlewares');
+
+router.post('/signup', userSignupValidator, createAttachment, signup);
 // TODO - maybe remove signin?
 router.post('/auth', findUser, signin);
 router.post('/signin', userSigninValidator, signin);

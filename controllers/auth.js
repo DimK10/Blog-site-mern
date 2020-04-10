@@ -4,6 +4,7 @@ const expressJwt = require('express-jwt');
 const config = require('config');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 const { validationResult } = require('express-validator');
+const { createReadStream } = require('fs');
 
 // TODO - Remove dotenv -- using config now
 
@@ -36,7 +37,50 @@ async function signup(req, res) {
                 .json({ errors: [{ msg: 'User already exists' }] });
         }
 
-        user = new User(req.body);
+        const {
+            name,
+            email,
+            password,
+            photo = null,
+            about = '',
+            interests = [],
+        } = req.body;
+
+        // TODO - Add promote user to admin
+        user = new User({
+            name,
+            email,
+            password,
+            photoId: null,
+            about,
+            interests,
+            role: 0,
+        });
+
+        // Check if there is a photo
+        if (photo) {
+            const Attachment = req.Attachment;
+
+            // Write image to gridFS
+            // for photo i need path
+            const readStream = createReadStream(photo.path);
+            const options = {
+                filename: user.name,
+                contentType: photo.type,
+            };
+
+            Attachment.write(options, readStream, (err, file) => {
+                if (err) {
+                    console.error(err.message);
+                    return res
+                        .status(500)
+                        .json({ msg: "Can't upload profile image" });
+                }
+
+                // Save photo id to user
+                user.photoId = file._id;
+            });
+        }
 
         await user.save();
 

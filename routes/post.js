@@ -11,8 +11,9 @@ const {
     listByInterests,
     listAll,
     listExploreNew,
-    createAttachment,
 } = require('../controllers/post');
+
+const { createAttachment } = require('../middlewares');
 
 const {
     requireSignin,

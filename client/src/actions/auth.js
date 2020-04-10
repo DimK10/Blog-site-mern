@@ -5,6 +5,7 @@ import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT,
+    REGISTER_SUCCESS,
 } from './types';
 import { setAlert } from './alert';
 
@@ -62,6 +63,20 @@ export const login = (email, password) => async (dispatch) => {
             type: LOGIN_FAIL,
         });
     }
+};
+
+// Sign up user
+export const registerUser = (formData) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    // dispatch({
+    //   type: REGISTER_SUCCESS,
+    //   payload:
+    // })
 };
 
 // Log out

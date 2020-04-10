@@ -40,14 +40,15 @@ const postById = (req, res, next, id) => {
         });
 };
 
-const createAttachment = (req, res, next) => {
-    const Attachment = createModel({
-        modelName: 'Photo',
-        connection: mongoose.connection,
-    });
-    req.Attachment = Attachment;
-    next();
-};
+// TODO - Delete - moved to Middlewares folder
+// const createAttachment = (req, res, next) => {
+//     const Attachment = createModel({
+//         modelName: 'Photo',
+//         connection: mongoose.connection,
+//     });
+//     req.Attachment = Attachment;
+//     next();
+// };
 
 const read = (req, res) => {
     return res.json(req.post);
@@ -585,7 +586,6 @@ const readImg = (req, res) => {
 
 module.exports = {
     postById,
-    createAttachment,
     read,
     create,
     update,
