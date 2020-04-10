@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { createModel } = require('mongoose-gridfs');
 
 // This middleware allows to use Attachent for storing and reading images from gridfs gloabally via request
