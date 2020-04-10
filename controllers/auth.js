@@ -7,10 +7,28 @@ const { validationResult } = require('express-validator');
 
 // TODO - Remove dotenv -- using config now
 
+const findUser = (req, res, next) => {
+    const token = req.header('authorization').replace('Bearer ', '');
+
+    // Check if no token
+    if (!token) {
+        return res.status(401).json({ msg: 'No token, authorization denied' });
+    }
+    // Verify token
+    try {
+        const decoded = jwt.verify(token, config.get('jwtsecret'));
+
+        req.profile = decoded.user;
+        next();
+    } catch (err) {
+        res.status(401).json({ msg: 'Token is not valid' });
+    }
+};
+
 async function signup(req, res) {
     try {
         // See if user exists
-        let user = User.findOne({ email: req.body.email });
+        user = User.findOne({ email: req.body.email });
 
         if (user) {
             return res
@@ -45,7 +63,7 @@ async function signup(req, res) {
 
         res.json({ user });
     } catch (err) {
-        console.error(error.message);
+        console.error(err.message);
         res.status(500).send('Server error');
     }
 }
@@ -53,6 +71,15 @@ async function signin(req, res) {
     const { email, password } = req.body;
 
     try {
+        if (req.profile) {
+            // Check if there is a user found from a provided Token
+            let user = await User.findById(req.profile.id).select(
+                '-salt -hashed_password'
+            );
+            // User is already authenticated
+            return res.json(user);
+        }
+
         let user = await User.findOne({ email }).select(
             '+salt +hashed_password'
         );
@@ -82,8 +109,6 @@ async function signin(req, res) {
         const token = jwt.sign(payload, config.get('jwtsecret'), {
             expiresIn: 360000,
         });
-
-        console.log('token ', token);
 
         return res.json({ token, user: user.id });
     } catch (err) {
@@ -268,6 +293,7 @@ const isAllowed = ({ type }) => (req, res, next) => {
 };
 
 module.exports = {
+    findUser,
     signin,
     signup,
     signout,

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
 import Moment from 'react-moment';
 import stripHtml from 'string-strip-html';
 import PropTypes from 'prop-types';
@@ -30,14 +30,10 @@ const PostItem = ({
                     <img
                         className='card-img-top'
                         src={`/api/post/image/${_id}`}
-                        alt='Card image Blog'
+                        alt=''
                     />
                 ) : (
-                    <img
-                        className='card-img-top'
-                        src={noImg}
-                        alt='Card image Blog'
-                    />
+                    <img className='card-img-top' alt='' src={noImg} />
                 )}
                 <div className='card-body'>
                     <h2 className='card-title'>{title}</h2>
@@ -51,13 +47,13 @@ const PostItem = ({
                         ))}
                     </p>
                     {/* TODO - Convert to Link */}
-                    <a href='#' className='btn btn-primary'>
+                    <a href='#/' className='btn btn-primary'>
                         Read More &rarr;
                     </a>
                 </div>
                 <div className='card-footer text-muted'>
                     Posted on <Moment format='YYYY/MM/DD' /> by{' '}
-                    <a href='#'>{name}</a>
+                    <a href='#/'>{name}</a>
                 </div>
             </div>
         </Fragment>

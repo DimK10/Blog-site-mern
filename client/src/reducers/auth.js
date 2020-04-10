@@ -13,7 +13,7 @@ const token = JSON.parse(localStorage.getItem('jwt'))
 // FIXME - Maybe i need to have the user data persist after reload
 const initialState = {
     token,
-    isAuthenticated: token ? true : false,
+    isAuthenticated: null,
     loading: false,
     user: null,
 };

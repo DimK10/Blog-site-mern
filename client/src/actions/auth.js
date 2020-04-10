@@ -12,21 +12,22 @@ import { setAlert } from './alert';
 import setAuthToken from '../utils/setAuthToken';
 
 // Load user
-export const loadUser = (userId) => async (dispatch) => {
+export const loadUser = () => async (dispatch) => {
     if (localStorage.getItem('jwt')) {
         const jwt = localStorage.getItem('jwt');
-        const { token, id } = JSON.parse(jwt);
+        const token = JSON.parse(jwt).token;
         setAuthToken(token);
     }
 
     try {
-        const res = await axios.get(`/api/user/${userId}`);
+        const res = await axios.post('/api/auth');
 
         dispatch({
             type: USER_LOADED,
             payload: res.data,
         });
     } catch (err) {
+        console.error(err.message);
         dispatch({
             type: AUTH_ERROR,
         });
@@ -50,7 +51,7 @@ export const login = (email, password) => async (dispatch) => {
             type: LOGIN_SUCCESS,
             payload: res.data,
         });
-        dispatch(loadUser(res.data.user));
+        // dispatch(loadUser());
     } catch (err) {
         const errors = err.response.data.errors;
 

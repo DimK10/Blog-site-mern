@@ -3,6 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
 const {
+    findUser,
     signup,
     signin,
     signout,
@@ -15,6 +16,8 @@ const {
 } = require('../validator/userValidator');
 
 router.post('/signup', userSignupValidator, signup);
+// TODO - maybe remove signin?
+router.post('/auth', findUser, signin);
 router.post('/signin', userSigninValidator, signin);
 router.get('/signout', signout);
 
