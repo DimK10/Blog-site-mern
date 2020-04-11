@@ -6,6 +6,7 @@ import {
     LOGIN_FAIL,
     LOGOUT,
     REGISTER_SUCCESS,
+    REGISTER_FAIL,
 } from './types';
 import { setAlert } from './alert';
 
@@ -66,17 +67,25 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 // Sign up user
-export const registerUser = (formData) => (dispatch) => {
+export const registerUser = (formData) => async (dispatch) => {
     const config = {
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
         },
     };
 
-    // dispatch({
-    //   type: REGISTER_SUCCESS,
-    //   payload:
-    // })
+    try {
+        const res = await axios.post('/api/signup', formData, config);
+
+        dispatch({
+            type: REGISTER_SUCCESS,
+            payload: res.data,
+        });
+    } catch (err) {
+        dispatch({
+            type: REGISTER_FAIL,
+        });
+    }
 };
 
 // Log out

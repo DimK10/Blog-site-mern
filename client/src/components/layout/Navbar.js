@@ -5,7 +5,7 @@ import logo from '../../images/logo-made/logo.jpg';
 import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
 
-const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
     const guestLinks = (
         <ul className='navbar-nav ml-auto'>
             <li className='nav-item'>

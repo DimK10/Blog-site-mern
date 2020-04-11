@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const formidable = require('formidable');
 const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt');
 const config = require('config');
@@ -6,10 +6,14 @@ const { errorHandler } = require('../helpers/dbErrorHandler');
 const { validationResult } = require('express-validator');
 const { createReadStream } = require('fs');
 
+const User = require('../models/user');
+
 // TODO - Remove dotenv -- using config now
 
 const findUser = (req, res, next) => {
-    const token = req.header('authorization').replace('Bearer ', '');
+    const token = req.header('authorization')
+        ? req.header('authorization').replace('Bearer ', '')
+        : null;
 
     // Check if no token
     if (!token) {
@@ -37,21 +41,16 @@ async function signup(req, res) {
                 .json({ errors: [{ msg: 'User already exists' }] });
         }
 
-        const {
-            name,
-            email,
-            password,
-            photo = null,
-            about = '',
-            interests = [],
-        } = req.body;
+        // Check for all fields
+
+        const { name, email, password, about = '', interests = [] } = req.body;
 
         // TODO - Add promote user to admin
         user = new User({
             name,
             email,
             password,
-            photoId: null,
+            avatarId: null,
             about,
             interests,
             role: 0,
@@ -78,7 +77,7 @@ async function signup(req, res) {
                 }
 
                 // Save photo id to user
-                user.photoId = file._id;
+                user.avatarId = file._id;
             });
         }
 
