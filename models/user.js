@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
             maxlength: 32,
             unique: true,
         },
-        photoId: {
+        avatarId: {
             type: ObjectId,
             ref: 'Photo',
         },

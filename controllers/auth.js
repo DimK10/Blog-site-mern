@@ -6,6 +6,8 @@ const { errorHandler } = require('../helpers/dbErrorHandler');
 const { validationResult } = require('express-validator');
 const { createReadStream } = require('fs');
 
+const stream = require('stream');
+
 const User = require('../models/user');
 
 // TODO - Remove dotenv -- using config now
@@ -33,7 +35,7 @@ const findUser = (req, res, next) => {
 async function signup(req, res) {
     try {
         // See if user exists
-        user = User.findOne({ email: req.body.email });
+        user = await User.findOne({ email: req.body.email });
 
         if (user) {
             return res
@@ -43,18 +45,10 @@ async function signup(req, res) {
 
         // Check for all fields
 
-        const { name, email, password, about = '', interests = [] } = req.body;
-
-        // TODO - Add promote user to admin
-        user = new User({
-            name,
-            email,
-            password,
-            avatarId: null,
-            about,
-            interests,
-            role: 0,
-        });
+        let { name, email, password, about = '' } = req.body;
+        let interests = JSON.parse(req.body.interests);
+        let photo = req.file;
+        let avatarId = null;
 
         // Check if there is a photo
         if (photo) {
@@ -62,24 +56,73 @@ async function signup(req, res) {
 
             // Write image to gridFS
             // for photo i need path
-            const readStream = createReadStream(photo.path);
+            // const readStream = createReadStream(photo.orinalname);
+            const readStream = new stream.PassThrough();
+            readStream.end(photo.buffer);
+
             const options = {
-                filename: user.name,
+                filename: name,
                 contentType: photo.type,
             };
 
-            Attachment.write(options, readStream, (err, file) => {
+            await Attachment.write(options, readStream, async (err, file) => {
+                // Either Attacchment.write is buggy, or im cant code
+                // Cant get any value using await like
+                // const result = await Attachment.write(...)
+                // so i ll stick with this code block, so that i can save avatarId
                 if (err) {
                     console.error(err.message);
-                    return res
-                        .status(500)
-                        .json({ msg: "Can't upload profile image" });
+                    res.status(500).json({
+                        msg: "Can't upload profile image",
+                    });
+                    return;
                 }
 
                 // Save photo id to user
-                user.avatarId = file._id;
+                avatarId = file._id.toString();
+                // TODO - Add promote user to admin
+                user = new User({
+                    name,
+                    email,
+                    password,
+                    avatarId,
+                    about,
+                    interests,
+                    role: 0,
+                });
+
+                await user.save();
+
+                // Return jsonwebtoken
+                let payload = {
+                    user: {
+                        id: user.id,
+                    },
+                };
+
+                // TODO - Reduce time of expiresIn
+                const token = await jwt.sign(payload, config.get('jwtsecret'), {
+                    expiresIn: 360000,
+                });
+
+                user.salt = undefined;
+                user.hashed_password = undefined;
+
+                return res.json({ token, user: user.id });
             });
+            return;
         }
+
+        // TODO - Add promote user to admin
+        user = new User({
+            name,
+            email,
+            password,
+            avatarId,
+            about,
+            interests,
+            role: 0,
+        });
 
         await user.save();
 
@@ -91,7 +134,7 @@ async function signup(req, res) {
         };
 
         // TODO - Reduce time of expiresIn
-        jwt.sign(
+        const token = jwt.sign(
             payload,
             config.get('jwtsecret'),
             { expiresIn: 360000 },
@@ -104,12 +147,13 @@ async function signup(req, res) {
         user.salt = undefined;
         user.hashed_password = undefined;
 
-        res.json({ user });
+        return res.json({ token, user: user.id });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
     }
 }
+
 async function signin(req, res) {
     const { email, password } = req.body;
 

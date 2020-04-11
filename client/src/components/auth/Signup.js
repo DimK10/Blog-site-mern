@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { setAlert } from '../../actions/alert';
 import { connect } from 'react-redux';
@@ -8,8 +9,10 @@ import { registerUser } from '../../actions/auth';
 
 const Signup = ({
     getAllCategories,
+    registerUser,
     setAlert,
     category: { categories, options, loading },
+    auth: { isAuthenticated },
 }) => {
     const [formValues, setFormValues] = useState({
         avatar: {},
@@ -37,9 +40,27 @@ const Signup = ({
         getAllCategories();
     }, [getAllCategories]);
 
-    // const onSelectChange = (categories) => console.log(categories);
+    const onSelectChange = (categories) => {
+        if (categories && categories.length > 0) {
+            setFormValues({
+                ...formValues,
+                ...{
+                    interests: [
+                        ...categories.map((category) => category.value),
+                    ],
+                },
+            });
+        } else {
+            setFormValues({
+                ...formValues,
+                ...{ interests: [] },
+            });
+        }
+    };
 
-    // const onFileChange = (e) => console.log(e.target.files[0]);
+    const onAvatarChange = (e) => {
+        setFormValues({ ...formValues, avatar: e.target.files[0] });
+    };
 
     const onChange = (e) =>
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -47,7 +68,7 @@ const Signup = ({
     const onSubmit = async (e) => {
         e.preventDefault();
         if (password !== password2) {
-            setAlert('Password do not match', 'danger');
+            setAlert('Passwords do not match', 'danger');
         } else {
             // TODO - regiterUser
             // Creat formData object and add values
@@ -57,11 +78,17 @@ const Signup = ({
             formData.append('email', email);
             formData.append('password', password);
             formData.append('about', about);
-            formData.append('interests', interests);
+            formData.append('interests', JSON.stringify(interests));
+
+            console.log(...formData);
 
             registerUser(formData);
         }
     };
+
+    if (isAuthenticated) {
+        return <Redirect to='/' />;
+    }
 
     return (
         <Fragment>
@@ -73,7 +100,7 @@ const Signup = ({
                         Create A New Account
                     </p>
                 </div>
-                <form className='form'>
+                <form className='form' onSubmit={(e) => onSubmit(e)}>
                     <div className='form-group'>
                         {imagePreview && (
                             <Fragment>
@@ -126,10 +153,14 @@ const Signup = ({
                                 id='avatar'
                                 aria-describedby='inputGroupFileAddon01'
                                 onChange={(e) => {
-                                    setImagePreview(
-                                        URL.createObjectURL(e.target.files[0])
-                                    );
-                                    onChange(e);
+                                    if (e.target.files[0]) {
+                                        setImagePreview(
+                                            URL.createObjectURL(
+                                                e.target.files[0]
+                                            )
+                                        );
+                                        onAvatarChange(e);
+                                    }
                                 }}
                             ></input>
                             <label
@@ -147,6 +178,7 @@ const Signup = ({
                             className='form-control'
                             placeholder='Profile Name'
                             name='name'
+                            onChange={(e) => onChange(e)}
                         ></input>
                     </div>
                     <div className='form-group'>
@@ -157,6 +189,7 @@ const Signup = ({
                             className='form-control'
                             placeholder='Email Address'
                             name='email'
+                            onChange={(e) => onChange(e)}
                         ></input>
                     </div>
                     <div className='form-group'>
@@ -167,6 +200,7 @@ const Signup = ({
                             className='form-control'
                             placeholder='Password'
                             name='password'
+                            onChange={(e) => onChange(e)}
                         ></input>
                     </div>
                     <div className='form-group'>
@@ -179,6 +213,7 @@ const Signup = ({
                             className='form-control'
                             placeholder='Confirm Password'
                             name='password2'
+                            onChange={(e) => onChange(e)}
                         ></input>
                     </div>
                     <div className='form-group'>
@@ -190,6 +225,7 @@ const Signup = ({
                             id='aboutTextarea'
                             name='about'
                             rows='3'
+                            onChange={(e) => onChange(e)}
                         ></textarea>
                     </div>
                     <div className='form-group'>
@@ -202,9 +238,7 @@ const Signup = ({
                                 isSearchable={true}
                                 name='interests'
                                 onChange={(categories) => {
-                                    categories.map((category) =>
-                                        onChange(category.value)
-                                    );
+                                    onSelectChange(categories);
                                 }}
                                 options={options}
                             />
@@ -237,12 +271,18 @@ const Signup = ({
 
 Signup.propTypes = {
     getAllCategories: PropTypes.func.isRequired,
+    registerUser: PropTypes.func.isRequired,
     setAlert: PropTypes.func.isRequired,
     category: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     category: state.category,
+    auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getAllCategories, setAlert })(Signup);
+export default connect(mapStateToProps, {
+    getAllCategories,
+    registerUser,
+    setAlert,
+})(Signup);
