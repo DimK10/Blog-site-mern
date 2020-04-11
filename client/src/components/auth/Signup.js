@@ -31,7 +31,7 @@ const Signup = ({
         interests,
     } = formValues;
 
-    const [categoriesSelected, setSelected] = useState([]);
+    const [imagePreview, setImagePreview] = useState('');
 
     useEffect(() => {
         getAllCategories();
@@ -75,6 +75,49 @@ const Signup = ({
                 </div>
                 <form className='form'>
                     <div className='form-group'>
+                        {imagePreview && (
+                            <Fragment>
+                                <label htmlFor='img-preview'>
+                                    Image to upload
+                                </label>
+                                <div className=''>
+                                    <div className='text-center col-xxs-12 col-xs-10'>
+                                        <img
+                                            src={imagePreview}
+                                            id='img-preview'
+                                            className='rounded '
+                                            style={{
+                                                width: '200px',
+                                                height: '200px',
+                                            }}
+                                            alt='img_preview'
+                                        ></img>
+
+                                        <i
+                                            className='fas fa-times-circle fa-2x'
+                                            style={{
+                                                position: 'absolute',
+                                                color: 'Tomato',
+                                            }}
+                                            onClick={() => {
+                                                setImagePreview('');
+                                                setFormValues({
+                                                    ...formValues,
+                                                    avatar: null,
+                                                });
+                                            }}
+                                        ></i>
+
+                                        {/* <div className='col-auto pl-0'>
+                                            {' '}
+                                            <i className='fas fa-times-circle'></i>
+                                        </div> */}
+                                    </div>
+                                </div>
+                            </Fragment>
+                        )}
+                    </div>
+                    <div className='form-group'>
                         <label>Profile Picture (optional)</label>
                         <div className='custom-file'>
                             <input
@@ -82,7 +125,12 @@ const Signup = ({
                                 className='custom-file-input'
                                 id='avatar'
                                 aria-describedby='inputGroupFileAddon01'
-                                onChange={(e) => onChange(e)}
+                                onChange={(e) => {
+                                    setImagePreview(
+                                        URL.createObjectURL(e.target.files[0])
+                                    );
+                                    onChange(e);
+                                }}
                             ></input>
                             <label
                                 className='custom-file-label'
