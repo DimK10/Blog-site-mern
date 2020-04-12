@@ -87,6 +87,11 @@ export const registerUser = (formData) => async (dispatch) => {
         dispatch({
             type: REGISTER_FAIL,
         });
+        const errors = err.response.data.errors;
+
+        if (errors) {
+            errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+        }
     }
 };
 

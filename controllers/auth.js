@@ -134,15 +134,9 @@ async function signup(req, res) {
         };
 
         // TODO - Reduce time of expiresIn
-        const token = jwt.sign(
-            payload,
-            config.get('jwtsecret'),
-            { expiresIn: 360000 },
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token });
-            }
-        );
+        const token = await jwt.sign(payload, config.get('jwtsecret'), {
+            expiresIn: 360000,
+        });
 
         user.salt = undefined;
         user.hashed_password = undefined;
