@@ -257,7 +257,7 @@ const isAuth = (req, res, next) => {
     // console.log('req.auth.id ', req.auth.id);
     // console.log('req.profile ', req.profile);
 
-    let user = req.profile && req.auth && req.profile._id == req.auth.id;
+    let user = req.profile && req.auth && req.profile._id == req.auth.user.id;
     if (!user) {
         return res.status(403).json({
             err: 'Access Denied',

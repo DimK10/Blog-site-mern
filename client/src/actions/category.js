@@ -11,9 +11,12 @@ export const getAllCategories = () => async (dispatch) => {
             payload: res.data,
         });
     } catch (err) {
-        console.error(err.message);
         dispatch({
             type: CATEGORY_ERROR,
+            payload: {
+                msg: err.response.statusText,
+                status: err.response.status,
+            },
         });
     }
 };

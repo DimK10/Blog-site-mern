@@ -3,6 +3,7 @@ import Moment from 'react-moment';
 import stripHtml from 'string-strip-html';
 import PropTypes from 'prop-types';
 import noImg from '../../images/no-thumbnail-medium.png';
+import { Link } from 'react-router-dom';
 
 const PostItem = ({
     post: {
@@ -46,14 +47,13 @@ const PostItem = ({
                             </Fragment>
                         ))}
                     </p>
-                    {/* TODO - Convert to Link */}
-                    <a href='#/' className='btn btn-primary'>
+                    <Link to={`/post/${_id}`} className='btn btn-primary'>
                         Read More &rarr;
-                    </a>
+                    </Link>
                 </div>
                 <div className='card-footer text-muted'>
-                    Posted on <Moment format='YYYY/MM/DD' /> by{' '}
-                    <a href='#/'>{name}</a>
+                    Posted on <Moment format='YYYY/MM/DD'>{created_at}</Moment>{' '}
+                    by <a href='#/'>{name}</a>
                 </div>
             </div>
         </Fragment>
