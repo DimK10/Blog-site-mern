@@ -1,16 +1,19 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
-exports.userById = (req, res, next, id) => {
-    User.findById(id).exec((err, user) => {
-        if (err || !user) {
-            return res.status(400).json({
-                error: "User not found",
-            });
+exports.userById = async (req, res, next, id) => {
+    try {
+        let user = await User.findById(id);
+
+        if (!user) {
+            return res.status(400).json({ msg: 'User not found' });
         }
-
+        // TODO - Maybe repname to user?
         req.profile = user;
         next();
-    });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
 exports.read = (req, res) => {
@@ -22,12 +25,12 @@ exports.read = (req, res) => {
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find()
-            .populate("categories_used")
-            .select("-hashed_password -salt");
+            .populate('interests')
+            .select('-hashed_password -salt');
         return res.json(users);
     } catch (err) {
         console.error(err.message);
-        return res.status(500).json({ msg: err.message });
+        return res.status(500).send('Server error');
     }
 };
 
@@ -39,7 +42,7 @@ exports.update = (req, res) => {
         (err, user) => {
             if (err) {
                 return res.status(400).json({
-                    error: "You are not authorized to perform this action",
+                    error: 'You are not authorized to perform this action',
                 });
             }
 
@@ -65,16 +68,16 @@ exports.addCommentToUserHistory = (req, res, next) => {
 
 exports.resetUserPassword = (req, res, next) => {
     const { _id } = req.body;
-    console.log("_id ", _id);
+    console.log('_id ', _id);
     User.findById(_id, (err, user) => {
         if (err) {
-            return res.status(400).json({
-                error: "You are not authorized to perform this action",
+            return res.status(403).json({
+                error: 'You are not authorized to perform this action',
             });
         }
 
-        console.log("user ", user);
-        user.password = "123456";
+        console.log('user ', user);
+        user.password = '123456';
         user.save();
 
         return res.json({

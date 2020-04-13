@@ -8,8 +8,8 @@ const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.commentById = (req, res, next, id) => {
     Comment.findById(id)
-        .populate('_postId')
-        .populate('_userId')
+        .populate('postId')
+        .populate('userId')
         .exec((err, comment) => {
             if (err || !comment) {
                 return res.status(400).json({

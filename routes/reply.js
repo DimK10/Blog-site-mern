@@ -1,47 +1,34 @@
-const express = require ('express');
-const router = express.Router ();
+const express = require('express');
+const router = express.Router();
 
 const { commentById } = require('../controllers/comment');
 
 const {
-  replyById,
-  createToComment,
-  createToReply,
-  update,
-  remove,
-} = require ('../controllers/reply');
+    replyById,
+    createReply,
+    update,
+    remove,
+} = require('../controllers/reply');
 
-const {requireSignin, isAllowed, isAuth} = require ('../controllers/auth');
+const { requireSignin, isAllowed, isAuth } = require('../controllers/auth');
 
-const {userById} = require ('../controllers/user');
+const { userById } = require('../controllers/user');
 
-router.post (
-  '/reply/create-to-comment/:commentId/:userId',
-  requireSignin,
-  isAuth,
-  createToComment
+router.post('/reply/:commentId/:userId', requireSignin, isAuth, createReply);
+
+router.put(
+    '/reply/update/:replyId',
+    requireSignin,
+    isAuth,
+    isAllowed({ type: 'reply' })
 );
 
-router.post (
-  '/reply/create-to-reply/:replyId/:userId',
-  requireSignin,
-  isAuth,
-  createToReply
-);
-
-router.put (
-  '/reply/update/:replyId',
-  requireSignin,
-  isAuth,
-  isAllowed ({type: 'reply'})
-);
-
-router.delete (
-  '/reply/delete/:replyId/:userId',
-  requireSignin,
-  isAuth,
-  isAllowed ({type: 'reply'}),
-  remove
+router.delete(
+    '/reply/delete/:commentId/:replyId/:userId',
+    requireSignin,
+    isAuth,
+    isAllowed({ type: 'reply' }),
+    remove
 );
 
 router.param('commentId', commentById);

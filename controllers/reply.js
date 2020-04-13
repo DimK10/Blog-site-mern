@@ -4,259 +4,95 @@ const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Reply = require('../models/reply');
-const { errorHandler } = require('../helpers/dbErrorHandler');
 
-exports.replyById = (req, res, next, id) => {
-    Reply.findById(id)
-    // .populate('_rootId')
-    // .populate('replies')
-    .exec((err, reply) => {
-        if(err || !reply) {
-            return res.status(400).json({
-                err: 'Reply not found. Error ' + err
-            });
-        };
+const replyById = async (req, res, next, id) => {
+    try {
+        const reply = await Reply.findById(id);
         req.reply = reply;
         next();
-    });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
-exports.createToComment = (req, res) => {
-    let form = formidable.IncomingForm();
+const createReply = async (req, res) => {
+    try {
+        const { text } = req.body;
 
-    form.parse(req, (err, fields) => {
-        if(err) {
-            return res.status(400).json({
-                err
-            });
-        };
+        if (!text || !text.trim() || text.length === 0) {
+            return res.status(400).json({ msg: 'A reply cannot be empty' });
+        }
 
-        let { text } = fields;
+        let reply = await new Reply({ text, userId: req.profile._id });
 
-        if(!text || !text.trim() || text.length === 0) {
-            return res.status(400).json({
-                err: 'Reply cannot be empty'
-            });
-        };
-        
-        let reply = new Reply({ text });
-        let parentsArr = [];
-        parentsArr.push(req.comment._id);
-        reply.parents = parentsArr;
-        reply._userId = req.profile._id;
+        await reply.save();
 
-        // Add this reply to comment - reply it was written
-        Comment.update({ _id: req.comment._id }, { $push: { replies: reply._id } }, (err, result) => {
-            if(err){
-                return res.status(500).json({
-                    err
-                });
-            };
+        // Add to replies array in comment
+        let comment = await Comment.findById(req.comment._id);
+        comment.replies.unshift(reply.id);
+        await comment.save();
 
-            console.log('Result of adding reply to comment: ', result);
-        });
-
-        reply.save((err, result) => {
-            if(err) {
-                return res.status(400).json({
-                    err
-                });
-            };
-    
-            res.json(result);
-        });
-
-    });
+        res.json(comment);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
-exports.createToReply = (req, res) => {
-    let form = formidable.IncomingForm();
+const update = async (req, res) => {
+    try {
+        let { text } = req.body;
 
-    form.parse(req, (err, fields) => {
-        if(err) {
-            return res.status(400).json({
-                err
-            });
-        };
+        if (!text || !text.trim() || text.length === 0) {
+            return res.status(400).json({ msg: 'A reply cannot be empty' });
+        }
 
-        let { text } = fields;
+        let reply = await Reply.findById(req.reply._id);
 
-        if(!text || !text.trim() || text.length === 0) {
-            return res.status(400).json({
-                err: 'Reply cannot be empty'
-            });
-        };
-        
-        let reply = new Reply({ text });
-        reply.parents = [...req.reply.parents, req.reply._id];
-        reply._userId = req.profile._id;
+        reply.text = text;
 
-        // Add this reply to reply it was written
-        Reply.update({ _id: req.reply._id }, { $push: { replies: reply._id } }, (err, result) => {
-            if(err){
-                return res.status(500).json({
-                    err
-                });
-            };
+        await reply.save();
 
-            console.log('Result of adding reply to reply: ', result);
-        });
-
-        reply.save((err, result) => {
-            if(err) {
-                return res.status(400).json({
-                    err
-                });
-            };
-    
-            res.json(result);
-        });
-
-    });
+        res.json(reply);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
-exports.update = (req, res) => {
-    let form = formidable.IncomingForm();
+const remove = async (req, res) => {
+    try {
+        const isAllowed = req.isAllowed;
 
-    form.parse = (req, res) => {
-        if(err) {
-            return res.status(400).json({
-                err
-            });
-        };
+        if (!isAllowed) {
+            return res
+                .status(403)
+                .json({ msg: 'You are not allowed to perform this action' });
+        }
 
-        let { text } = fields;
+        let reply = await Reply.findById(req.reply._id);
 
-        if(!text || !text.trim() || text.length === 0) {
-            return res.status(400).json({
-                err: 'Reply cannot be empty'
-            });
-        };
-        
-        let reply = req.reply;
-        reply = _.extend(reply, fields);
+        // Remove from comment's replies array
+        let comment = req.comment;
+        comment.replies.splice(comment.replies.indexOf(reply.id), 1);
+        comment.save();
 
-        reply.save((err, result) => {
-            if(err) {
-                return res.status(500).json({
-                    err
-                });
-            };
-            res.json(result);
-        });
-    };
-};
+        // Remove reply
+        reply.remove();
 
-exports.remove = (req, res) => {
-    const isAllowed = req.isAllowed;
+        res.json(comment);
 
-    if(isAllowed) {
-        const reply = req.reply;
-
-        // Delete descendants first
-        console.log('reply: ', reply);
-        console.log('reply.parents before ', reply.parents);
-        reply.parents.push(reply._id);
-        console.log('reply.parents after: ', reply.parents);
-
-        // Check if parents array in reply, is one element, and so is a reply to comment. If not, it is a reply on a reply 
-        Reply.find().exec((err, replies) => {
-            if(err || !replies) {
-                return res.status(400).json({
-                    err: 'Replies not found. Error ' + err
-                });
-            };
-
-            replies.forEach(doc => {
-                if (doc.parents.length >= reply.parents.length) {
-                    // Might be a child of reply we want to delete
-                    // Check
-                    if(reply.parents.every(element => doc.parents.includes(element))) {
-                        // remove
-                        doc.remove();
-                    };
-                };
-            });
-
-            // Remove the reply that needs to be removed
-            reply.remove();
-
-            return res.status(200).json({
-                message: 'Replies deleted successfully'
-            });
-        });
-
-        
-        
-        // if(reply.parents.length === 1) {
-        //     // reply on a comment
-
-        //     // Delete all replies sharing that one element
-        //     Reply.find().exec((err, replies) => {
-        //         if(err || !replies) {
-        //             res.status(400).json({
-        //                 err: 'No replies found to delete'
-        //             });
-        //         };
-        //         console.log('replies ', replies);
-                
-        //         replies.forEach(doc => {
-        //             console.log('doc ', doc);
-        //             console.log('doc.parents[0] ', doc.parents[0]);
-        //             console.log('reply.parents[0] ', reply.parents[0]);
-
-        //             // Check if there is a reply that is child to comment, but not connected with the reply 
-        //             // that needs to be deleted
-        //             if(doc._id !== reply._id && String(doc.parents[0]))
-
-        //             if((String(doc._id) === String(reply._id)) && (String(doc.parents[0]) === String(reply.parents[0]))){
-        //                 // Remove
-        //                 doc.remove();
-        //             };
-        //         });
-
-        //         return res.status(200).json({
-        //             message: 'Reaplies have been deleted successfully!'
-        //         })
-        //     });
-        // } else {
-        //     // Reply is inside a reply 
-
-        //     // Delete all replies that the reply.parents array as subset
-
-        //     // add _id of curent reply to parent, to avoid deleting a reply that is not a reply to this reply
-        //     console.log('reply.parents before: ', reply.parents);
-        //     reply.parents.push(reply._id);
-        //     console.log('reply.parents after: ', reply.parents);
-
-        //     Reply.find().exec((err, replies) => {
-        //         if(err || !replies) {
-        //             res.status(400).json({
-        //                 err: 'No replies found to delete'
-        //             });
-        //         };
-        //         console.log('replies ', replies);
-
-        //         replies.forEach(doc => {
-        //             console.log('doc ', doc);
-        //             // console.log('doc.parents[0] ', doc.parents[0]);
-        //             // console.log('reply.parents[0] ', reply.parents[0]);
-                    
-        //             if(doc.parents.length > reply.parents.length) {
-        //                 // doc might be child
-        //                 // Check
-        //                 if(reply.parents.every(element => doc.parents.includes(element))) {
-        //                     // remove
-        //                     doc.remove();
-        //                 };
-        //             };
-        //         });
-
-        //         return res.status(200).json({
-        //             message: 'Replies have been deleted successfully!'
-        //         });
-        //     });
-        // };
         req.isAllowed = false;
-    };
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
+module.exports = {
+    replyById,
+    createReply,
+    update,
+    remove,
 };
