@@ -21,11 +21,12 @@ const categoryById = async (req, res, next, id) => {
 
 const create = async (req, res) => {
     try {
-        let { title, about } = req.body;
+        let { title, about, createdFrom } = req.body;
 
         let category = new Category({
             title,
             about,
+            createdFrom,
         });
 
         await category.save();
