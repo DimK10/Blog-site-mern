@@ -9,22 +9,29 @@ const User = require('../models/user');
 // TODO - Remove dotenv -- using config now
 
 const findUser = (req, res, next) => {
-    const token = req.header('authorization')
-        ? req.header('authorization').replace('Bearer ', '')
-        : null;
-
-    // Check if no token
-    if (!token) {
-        return res.status(401).json({ msg: 'No token, authorization denied' });
-    }
-    // Verify token
     try {
-        const decoded = jwt.verify(token, config.get('jwtsecret'));
+        const token = req.header('authorization')
+            ? req.header('authorization').replace('Bearer ', '')
+            : null;
 
-        req.profile = decoded.user;
-        next();
+        // Check if no token
+        if (!token) {
+            return res
+                .status(401)
+                .json({ msg: 'No token, authorization denied' });
+        }
+        // Verify token
+        try {
+            const decoded = jwt.verify(token, config.get('jwtsecret'));
+
+            req.profile = decoded.user;
+            next();
+        } catch (err) {
+            res.status(401).json({ msg: 'Token is not valid' });
+        }
     } catch (err) {
-        res.status(401).json({ msg: 'Token is not valid' });
+        console.error(err.message);
+        return res.status(500).send('Server error');
     }
 };
 
@@ -206,46 +213,50 @@ const requireSignin = expressJwt({
 });
 
 const isAuth = (req, res, next) => {
-    // console.log('req.auth ', req.auth);
-    // console.log('req.profile.id ', req.profile._id);
-    // console.log('req.auth.id ', req.auth.id);
-    // console.log('req.profile ', req.profile);
+    try {
+        // console.log('req.auth ', req.auth);
+        // console.log('req.profile.id ', req.profile._id);
+        // console.log('req.auth.id ', req.auth.id);
+        // console.log('req.profile ', req.profile);
 
-    let user = req.profile && req.auth && req.profile._id == req.auth.user.id;
-    if (!user) {
-        return res.status(403).json({
-            err: 'Access Denied',
-        });
-    }
-    next();
-};
-
-const isAdmin = (req, res, next) => {
-    console.log('req.auth ', req.auth);
-    User.findById(req.auth.id).exec((err, userInSession) => {
-        if (err) {
-            return res.status(500).json({
-                err: 'Cannot find user authenticated by id',
+        let user =
+            req.profile && req.auth && req.profile._id == req.auth.user.id;
+        if (!user) {
+            return res.status(403).json({
+                err: 'Access Denied',
             });
         }
+        next();
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
 
-        console.log('userInSession ', userInSession);
+// TODO - Might need to remove
+const isAdmin = async (req, res, next) => {
+    try {
+        let user = await User.findById(req.auth.user.id);
 
-        if (userInSession.role !== 1) {
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        if (user.role !== 1) {
             return res.status(403).json({
                 err: 'Admin resource! Access denied',
             });
         }
         next();
-    });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
 const isAllowedToDeleteCategory = (req, res, next) => {
     const category = req.category;
     const profile = req.profile;
-    console.log('category ', category);
-    console.log('profile', profile);
-    // console.log('profile._id !== category.createdFrom) || profile.role != 1 ', (profile._id !== category.createdFrom) || profile.role != 1);
 
     if (String(profile._id) !== String(category._createdFrom._id)) {
         if (profile.role !== 1) {

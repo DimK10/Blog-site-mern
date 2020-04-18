@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const connectDB = require('./config/db');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -19,19 +19,16 @@ const replyRoutes = require('./routes/reply');
 const app = express();
 
 // Db
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-});
+connectDB();
 
 // Middlewares
 app.use(morgan('dev'));
 // TODO - is bodyparser needed?
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 // TODO - Is it needed?
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(express.json({ extended: false }));
 app.use(expressValidator());
 app.use(cors());
 

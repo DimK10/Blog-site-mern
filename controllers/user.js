@@ -1,8 +1,9 @@
 const User = require('../models/user');
+const { createBucket } = require('mongoose-gridfs');
 
 const userById = async (req, res, next, id) => {
     try {
-        let user = await User.findById(id);
+        let user = await User.findById(id).select('+salt +hashed_password');
 
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
@@ -36,9 +37,82 @@ const getAllUsers = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        let user = req.user;
+        let user = req.profile;
 
-        await user.update({ $set: req.body }, { new: true });
+        let {
+            name,
+            email,
+            password,
+            newPassword,
+            about = '',
+            interests,
+        } = req.body;
+
+        //TODO - Postman test - delete
+        interests = JSON.parse(interests);
+
+        let avatar = req.file;
+
+        if (!user.authenticate(password.toString())) {
+            return res.status(400).json({ msg: 'Invalid credentials' });
+        }
+
+        // Check if there is a photo
+        if (avatar) {
+            const Attachment = req.Attachment;
+
+            // Write image to gridFS
+            // for photo i need path
+            // const readStream = createReadStream(photo.orinalname);
+            const readStream = new stream.PassThrough();
+            readStream.end(avatar.buffer);
+
+            const options = {
+                filename: user.name,
+                contentType: avatar.type,
+            };
+
+            await Attachment.write(options, readStream, async (err, file) => {
+                // Either Attacchment.write is buggy, or im cant code
+                // Cant get any value using await like
+                // const result = await Attachment.write(...)
+                // so i ll stick with this code block, so that i can save avatarId
+                if (err) {
+                    console.error(err.message);
+                    res.status(500).json({
+                        msg: "Can't upload profile image",
+                    });
+                    return;
+                }
+
+                // Save photo id to user
+                avatarId = file._id.toString();
+                // TODO - Add promote user to admin
+                user.avatarId = avatarId;
+                user.name = name;
+                user.email = email;
+                user.password = newPassword;
+                user.about = about;
+                user.interests = interests;
+
+                await user.save();
+
+                user.salt = undefined;
+                user.hashed_password = undefined;
+
+                return res.send(user);
+            });
+            return;
+        }
+
+        user.avatarId = null;
+        user.name = name;
+        user.email = email;
+        user.password = newPassword;
+        user.about = about;
+        user.interests = interests;
+
+        await user.save();
 
         user.salt = undefined;
         user.hashed_password = undefined;
@@ -164,8 +238,7 @@ const deleteActionFromUserHistory = async (req, res, action, next) => {
 
 const resetUserPassword = async (req, res, next) => {
     try {
-        const { _id } = req.body;
-        let user = await User.findById(_id);
+        let user = req.profile;
 
         user.password = '123456';
         await user.save();
