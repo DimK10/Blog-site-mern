@@ -8,6 +8,10 @@ const Reply = require('../models/reply');
 const replyById = async (req, res, next, id) => {
     try {
         const reply = await Reply.findById(id);
+        if (!reply) {
+            return res.status(404).json({ msg: 'Reply not found' });
+        }
+
         req.reply = reply;
         next();
     } catch (err) {

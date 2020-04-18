@@ -20,7 +20,8 @@ router.put(
     '/reply/update/:replyId',
     requireSignin,
     isAuth,
-    isAllowed({ type: 'reply' })
+    isAllowed({ type: 'reply' }),
+    update
 );
 
 router.delete(

@@ -1,11 +1,11 @@
 const User = require('../models/user');
 
-exports.userById = async (req, res, next, id) => {
+const userById = async (req, res, next, id) => {
     try {
         let user = await User.findById(id);
 
         if (!user) {
-            return res.status(400).json({ msg: 'User not found' });
+            return res.status(404).json({ msg: 'User not found' });
         }
         // TODO - Maybe repname to user?
         req.profile = user;
@@ -16,13 +16,13 @@ exports.userById = async (req, res, next, id) => {
     }
 };
 
-exports.read = (req, res) => {
+const read = (req, res) => {
     req.profile.hashed_password = undefined;
     req.profile.salt = undefined;
     return res.json(req.profile);
 };
 
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
         const users = await User.find()
             .populate('interests')
@@ -34,7 +34,7 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-exports.update = async (req, res) => {
+const update = async (req, res) => {
     try {
         let user = req.user;
 
@@ -67,7 +67,7 @@ exports.update = async (req, res) => {
 };
 
 // In frontend, user history will show every action of the user: new post, comment, and reply
-exports.addPostToUserHistory = async (req, res, next) => {
+const addPostToUserHistory = async (req, res, next) => {
     try {
         let user = req.user;
 
@@ -87,7 +87,7 @@ exports.addPostToUserHistory = async (req, res, next) => {
     }
 };
 
-exports.addCommentToUserHistory = async (req, res, next) => {
+const addCommentToUserHistory = async (req, res, next) => {
     try {
         let user = req.user;
 
@@ -107,7 +107,7 @@ exports.addCommentToUserHistory = async (req, res, next) => {
     }
 };
 
-exports.addReplyToUserHistory = async (req, res, next) => {
+const addReplyToUserHistory = async (req, res, next) => {
     try {
         let user = req.user;
 
@@ -127,7 +127,7 @@ exports.addReplyToUserHistory = async (req, res, next) => {
     }
 };
 
-exports.deleteActionFromUserHistory = async (req, res, action, next) => {
+const deleteActionFromUserHistory = async (req, res, action, next) => {
     try {
         let user = req.profile;
         let removeIndex;
@@ -162,7 +162,7 @@ exports.deleteActionFromUserHistory = async (req, res, action, next) => {
     }
 };
 
-exports.resetUserPassword = async (req, res, next) => {
+const resetUserPassword = async (req, res, next) => {
     try {
         const { _id } = req.body;
         let user = await User.findById(_id);
@@ -174,4 +174,16 @@ exports.resetUserPassword = async (req, res, next) => {
         console.error(err.message);
         return res.status(500).send('Server error');
     }
+};
+
+module.exports = {
+    userById,
+    read,
+    getAllUsers,
+    update,
+    addPostToUserHistory,
+    addCommentToUserHistory,
+    addReplyToUserHistory,
+    deleteActionFromUserHistory,
+    resetUserPassword,
 };

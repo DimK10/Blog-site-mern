@@ -1,45 +1,39 @@
-const express = require ('express');
-const router = express.Router ();
+const express = require('express');
+const router = express.Router();
 
-const {postById} = require ('../controllers/post');
-
-const {
-  commentById,
-  create,
-  update,
-  remove,
-} = require ('../controllers/comment');
+const { postById } = require('../controllers/post');
 
 const {
-  requireSignin,
-  isAllowedToDeleteComment,
-  isAuth,
-  isAllowed,
-} = require ('../controllers/auth');
+    commentById,
+    create,
+    update,
+    remove,
+} = require('../controllers/comment');
 
-const {userById} = require ('../controllers/user');
+const { requireSignin, isAuth, isAllowed } = require('../controllers/auth');
 
-router.post ('/comment/create/:postId/:userId', requireSignin, isAuth, create);
+const { userById } = require('../controllers/user');
 
-router.put (
-  '/comment/update/:commentId',
-  requireSignin,
-  isAuth,
-  isAllowed ({type: 'comment', action: 'update'}),
-  update
+router.post('/comment/create/:postId/:userId', requireSignin, isAuth, create);
+
+router.put(
+    '/comment/update/:commentId',
+    requireSignin,
+    isAuth,
+    isAllowed({ type: 'comment', action: 'update' }),
+    update
 );
 
-router.delete (
-  '/comment/delete/:commentId/:userId',
-  requireSignin,
-  isAuth,
-  // isAllowedToDeleteComment,
-  isAllowed ({type: 'comment'}),
-  remove
+router.delete(
+    '/comment/delete/:commentId/:userId',
+    requireSignin,
+    isAuth,
+    isAllowed({ type: 'comment' }),
+    remove
 );
 
-router.param ('postId', postById);
-router.param ('userId', userById);
-router.param ('commentId', commentById);
+router.param('postId', postById);
+router.param('userId', userById);
+router.param('commentId', commentById);
 
 module.exports = router;

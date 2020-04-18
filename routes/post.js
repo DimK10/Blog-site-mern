@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+let storage = multer.memoryStorage();
+let upload = multer({ storage: storage });
 
 const {
     create,
@@ -10,24 +13,29 @@ const {
     update,
     listByInterests,
     listAll,
-    listExploreNew,
+    listByCategory,
 } = require('../controllers/post');
+
+const { postValidator } = require('../validator/postValidator');
 
 const { createAttachment } = require('../middlewares');
 
-const {
-    requireSignin,
-    isAuth,
-    isAdmin,
-    isAllowed,
-} = require('../controllers/auth');
+const { requireSignin, isAuth, isAllowed } = require('../controllers/auth');
 const { userById } = require('../controllers/user');
+const { categoryById } = require('../controllers/category');
 
 router.get('/post/:postId', read);
 
 router.get('/post/image/:postId', createAttachment, readImg);
 
-router.post('/post/create/:userId', requireSignin, createAttachment, create);
+router.post(
+    '/post/create/:userId',
+    requireSignin,
+    upload.single('image'),
+    postValidator,
+    createAttachment,
+    create
+);
 
 router.delete(
     '/delete-post/:postId/:userId',
@@ -43,15 +51,17 @@ router.put(
     requireSignin,
     isAuth,
     isAllowed({ type: 'post', action: 'delete' }),
+    postValidator,
     createAttachment,
     update
 );
 
 router.get('/posts/by-interest', listByInterests);
 router.get('/posts/all', listAll);
-router.get('/posts/explore-new', listExploreNew);
+router.get('/posts/by-category/:categoryId', listByCategory);
 
 router.param('userId', userById);
 router.param('postId', postById);
+router.param('categoryId', categoryById);
 
 module.exports = router;

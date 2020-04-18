@@ -1,10 +1,6 @@
-const formidable = require('formidable');
 const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt');
 const config = require('config');
-const { errorHandler } = require('../helpers/dbErrorHandler');
-const { validationResult } = require('express-validator');
-const { createReadStream } = require('fs');
 
 const stream = require('stream');
 
@@ -35,7 +31,7 @@ const findUser = (req, res, next) => {
 async function signup(req, res) {
     try {
         // See if user exists
-        user = await User.findOne({ email: req.body.email });
+        let user = await User.findOne({ email: req.body.email });
 
         if (user) {
             return res
@@ -141,7 +137,7 @@ async function signup(req, res) {
         user.salt = undefined;
         user.hashed_password = undefined;
 
-        return res.json({ token, user: user.id });
+        res.json({ token, user: user.id });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
@@ -197,48 +193,6 @@ async function signin(req, res) {
         res.status(500).send('Server error');
     }
 }
-// exports.signin = (req, res) => {
-//     // Find user based on email
-//     const { email, password } = req.body;
-//     User.findOne({ email })
-//         .select('+salt +hashed_password')
-//         .exec((err, user) => {
-//             if (err || !user) {
-//                 return res.status(400).json({
-//                     err: 'User with that email does not exist. Please signup',
-//                 });
-//             }
-
-//             // If user is found make sure the email and password match
-//             // create authenticate method in user model
-//             if (!user.authenticate(password)) {
-//                 return res.status(401).json({
-//                     err: 'Email and password dont match',
-//                 });
-//             }
-
-//             //Check if cookie session exists
-//             if (req.cookies.t) {
-//                 // Cookie with t exists -- user is already signed in
-//                 // Ths same user is trying to sign in again
-//                 if (req.cookies.t.username === user.name) {
-//                     return res.status(409).json({
-//                         err: 'You are already signed in',
-//                     });
-//                 }
-//             }
-//             // console.log('user.id in signin ', user.id);
-//             // Generate a signed token with user id and secret
-//             const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-
-//             // Persist the token as 't' in cookie with expiry date
-//             res.cookie('t', { username: user.name, expire: new Date() + 9999 });
-
-//             // Return response with user and token to frontend client
-//             const { _id, name, email, role } = user;
-//             return res.json({ token, user: { _id, name, email, role } });
-//         });
-// };
 
 const signout = (req, res) => {
     res.clearCookie('t');
@@ -311,6 +265,8 @@ const isAllowedToDeleteCategory = (req, res, next) => {
 };
 
 const isAllowed = ({ type }) => (req, res, next) => {
+    // Default isAllowed to false
+    req.isAllowed = false;
     const profile = req.profile;
 
     switch (type) {

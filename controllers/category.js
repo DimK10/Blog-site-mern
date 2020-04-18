@@ -1,109 +1,108 @@
 const Category = require('../models/category');
 const Post = require('../models/post');
 const User = require('../models/user');
-const { errorHandler } = require('../helpers/dbErrorHandler');
 
-exports.categoryById = (req, res, next, id) => {
-    Category.findById(id)
-    .populate('_createdFrom')
-    .exec((err, category) => {
-        if(err || !category) {
-            return res.status(400).json({
-                err: 'Category does not exist'
-            });
-        };
+const categoryById = async (req, res, next, id) => {
+    try {
+        let category = await Category.findById(id).populate('createdFrom');
 
+        if (!category) {
+            return res.status(404).json({ msg: 'Category not found' });
+        }
 
         req.category = category;
+
         next();
-    });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
-exports.create = (req, res) => {
-    // console.log('req.body', req.body);
-    // console.log('req.profile ', req.profile);
-    // console.log('spread ', {...req.body, _createdFrom: req.profile._id});
+const create = async (req, res) => {
+    try {
+        let { title, about } = req.body;
 
-    //TODO -Add check for category name and send proper error
+        let category = new Category({
+            title,
+            about,
+        });
 
-    const category = new Category({...req.body, _createdFrom: req.profile._id});
-    category.save((err, data) => {
-        if(err) {
-            return res.status(400).json({
-                err
-            });
-        };
-        res.json(data);
-    })
-}
+        await category.save();
 
-exports.read = (req, res) => {
+        res.json(category);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
+const read = (req, res) => {
     return res.json(req.category);
-}
-
-exports.update = (req, res) => {
-    const category = req.category;
-    const { title, about } = req.body;
-
-    category.title = title;
-    category.about = about;
-
-    category.save((err, result) => {
-        if(err) {
-            return res.status(400).json({
-                err: errorHandler(err)
-            });
-        };
-
-        res.json(result);
-    });
 };
 
-exports.remove = (req, res) => {
-    const category = req.category;
-    const isAllowed = req.isAllowed;
-    console.log('isAllowed ', isAllowed);
-    if(isAllowed) {
+const update = async (req, res) => {
+    try {
+        const category = req.category;
+        const { title, about } = req.body;
 
-        // Remove the category id from all the categories array in Post
-        console.log('category id', category._id);
-        console.log('typeof categoryId ', typeof category._id);
-        Post.updateMany({ }, { $pull: { categories: String(category._id) }}, { multi: true }, (err, data) => {
-            if(err) {
-                return res.status(500).json({
-                    err
-                });
-            };
+        category.title = title;
+        category.about = about;
 
-            console.log(data);
-        });
-
-        // Remove category
-        category.remove((err, result) => {
-            if(err) {
-                return res.status(400).json({
-                    err
-                });
-            };
-
-            // make isAllowed default to false
-            req.isAllowed = false;
-    
-            res.json({
-                message: 'Category deleted successfully'
-            });
-        });
-    };
+        await category.save();
+        res.json(category);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
-exports.list = (req, res) => {
-    Category.find().populate('_createdFrom', 'name email', User).exec((err, categories) => {
-        if(err) {
-            return res.status(400).json({
-                err: errorHandler(err)
-            });
-        };
+const remove = async (req, res) => {
+    try {
+        let category = req.category;
+
+        const allowed = req.isAllowed;
+
+        if (!allowed) {
+            return res
+                .status(403)
+                .json({ msg: 'You are not allowed to perform this action' });
+        }
+
+        category.posts.foreach(async (postId) => {
+            let post = await Post.findById(postId);
+            let removeIndex = post.categories.indexOf(category._id);
+            post.categories.splice(removeIndex, 1);
+
+            await post.save();
+        });
+        res.json({ msg: 'Category was removed successfully' });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
+const list = async (req, res) => {
+    try {
+        let categories = await Category.find().populate(
+            'createdFrom',
+            'name email',
+            User
+        );
+
         res.json(categories);
-    });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
+module.exports = {
+    categoryById,
+    create,
+    read,
+    update,
+    remove,
+    list,
+};

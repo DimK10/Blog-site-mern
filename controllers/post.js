@@ -1,178 +1,96 @@
-const formidable = require('formidable');
-const _ = require('lodash');
-const fs = require('fs');
-const { createReadStream } = require('fs');
-const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Category = require('../models/category');
 const Comment = require('../models/comment');
 const Reply = require('../models/reply');
-// const Photo = require('../models/photo');
-const { createModel, createBucket } = require('mongoose-gridfs');
-const { errorHandler } = require('../helpers/dbErrorHandler');
+const { createBucket } = require('mongoose-gridfs');
 
-const postById = (req, res, next, id) => {
-    Post.findById(id)
-        .populate('author')
-        .populate('comments')
-        .populate('categories')
-        .exec((err, post) => {
-            if (err || !post) {
-                return res.status(400).json({
-                    err: 'Post not found. Error ' + err,
-                });
-            }
-            // Comment.populate(post.comments, { path: '_userId' }, (err, doc) => {
-            //     if(err) {
-            //         return res.status(500).json({
-            //             err
-            //         });
-            //     };
+const postById = async (req, res, next, id) => {
+    try {
+        let post = await Post.findById(id)
+            .populate('author')
+            .populate('comments')
+            .populate('categories');
 
-            //     Reply.populate(comment.replies, { path:'_userId' }, (err, doc) => {
-            //         return res.status(500).json({
-            //             err
-            //         });
-            //     });
-            // })
-            req.post = post;
-            next();
-        });
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+
+        req.post = post;
+        next();
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
-
-// TODO - Delete - moved to Middlewares folder
-// const createAttachment = (req, res, next) => {
-//     const Attachment = createModel({
-//         modelName: 'Photo',
-//         connection: mongoose.connection,
-//     });
-//     req.Attachment = Attachment;
-//     next();
-// };
 
 const read = (req, res) => {
     return res.json(req.post);
 };
 
-const create = (req, res) => {
-    let form = new formidable.IncomingForm();
-    form.keepExtensions = true;
-    form.hash = 'md5';
+const create = async (req, res) => {
+    try {
+        let { title, description, categories } = req.body;
+        let imageId = null;
+        let image = req.file;
 
-    form.parse(req, (err, fields, files) => {
-        if (err) {
-            return res.status(400).json({
-                err: 'Image could not be uploaded. Err: ' + err,
-            });
-        }
-
-        // Check for all fields
-        let { title, description, categories } = fields;
-
-        //
-
-        // console.log('form fields: ', fields);
-        // TODO - add !categories
-        if (!title || !description) {
-            return res.status(400).json({
-                err: 'All fields are required',
-            });
-        }
-
-        // Change description to json data cause it will be rich text with/or videos and/or images
-        fields.description = JSON.stringify(description);
-
-        // Modify categories, because it will be sent as an array
-        fields.categories = JSON.parse(fields.categories);
-
-        let post = new Post(fields);
-        // console.log('post ', post);
-        post.author = req.params.userId;
-
-        // Photo
-        if (files.photo) {
-            // console.log('files photo: ', files.photo);
-            // console.log('mongoose connection: ', mongoose.connection);
-
+        if (image) {
             const Attachment = req.Attachment;
 
-            // console.log('Attachment: ', Attachment);
+            const readStream = new readStream.PassThrough();
+            readStream.end(image.buffer);
 
-            // Write file to gridfs
-            const readStream = createReadStream(files.photo.path);
+            console.log(image);
+
             const options = {
-                filename: files.photo.name,
-                contentType: files.photo.type,
+                filename: image.name,
+                contentType: image.type,
             };
-            Attachment.write(options, readStream, (err, file) => {
+
+            await Attachment.write(options, readStream, async (err, file) => {
                 if (err) {
-                    return res.status(500).json({
-                        err: 'Could not write to gridfs model. Reason: ' + err,
+                    console.error(err.message);
+                    res.status(500).json({
+                        msg: "Can't upload post image",
                     });
+                    return;
                 }
 
-                console.log('file._id ', file._id);
+                // Save
+                imageId = file._id.toString();
 
-                // Save id to post document
-                post.photoId = file._id;
-
-                post.save((err, result) => {
-                    if (err) {
-                        return res.status(400).json({
-                            err: err,
-                        });
-                    }
-
-                    // Populate necessary data
-                    Post.findById(result._id)
-                        .populate('comments')
-                        .populate('categories')
-                        .populate('author')
-                        .populate('photoId')
-                        .exec((err, newResult) => {
-                            if (err) {
-                                return res.status(400).json({
-                                    err: err,
-                                });
-                            }
-
-                            console.log(newResult);
-
-                            res.json(newResult);
-                        });
+                let post = new Post({
+                    imageId,
+                    title,
+                    description,
+                    categories,
                 });
+
+                // add post._id to each category, so that when category is deleted, it wont show to post
+                categories.foreach(async (categoryId) => {
+                    let category = await Category.findById(categoryId);
+                    category.posts.push(post._id);
+                    await category.save();
+                });
+
+                await post.save();
+                return res.json(post);
             });
-        } else {
-            post.save((err, result) => {
-                if (err) {
-                    return res.status(400).json({
-                        err: err,
-                    });
-                }
-
-                // console.log(result);
-
-                // Populate necessary data
-                Post.findById(result._id)
-                    .populate('comments')
-                    .populate('categories')
-                    .populate('author')
-                    .exec((err, newResult) => {
-                        if (err) {
-                            return res.status(400).json({
-                                err: err,
-                            });
-                        }
-
-                        // console.log(newResult)
-
-                        res.json(newResult);
-                    });
-
-                // res.json(result);
-            });
+            return;
         }
-    });
+
+        let post = new Post({
+            imageId,
+            title,
+            description,
+            categories,
+        });
+
+        await post.save();
+        res.json(post);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
 const remove = (req, res) => {
@@ -243,197 +161,128 @@ const remove = (req, res) => {
     }
 };
 
-const update = (req, res) => {
-    if (req.isAllowed) {
-        let form = formidable.IncomingForm({ multiples: true });
-        form.keepExtensions = true;
-        form.hash = 'md5';
+const update = async (req, res) => {
+    try {
+        const allowed = req.isAllowed;
+        if (!allowed) {
+            return res
+                .status(403)
+                .json({ msg: 'You are not allowed to perform this action' });
+        }
 
-        // console.log('form before parse ', ...form);
+        let { title, description, categories } = req.body;
+        let imageId = null;
+        let image = req.file;
 
-        form.parse(req, (err, fields, files) => {
-            if (err) {
-                return res.status(400).json({
-                    error: 'Image could not be uploaded',
-                });
-            }
+        let post = Post.findById(req.post._id);
 
-            console.log('form fields ', fields);
+        // There are 3 cases
+        // user adds image on a post that didn't have an image
+        // user does not add an image to update the post
+        // user updates image
 
-            const { title, description, categories } = fields;
+        // 1st case
+        if (image && !post.imageId) {
+            const Attachment = req.Attachment;
 
-            if (!title || !description || !categories) {
-                return res.status(400).json({
-                    err: 'All fileds are required',
-                });
-            }
+            const readStream = new readStream.PassThrough();
+            readStream.end(image.buffer);
 
-            // Change description to json data cause it will be rich text with/or videos and/or images
-            fields.description = JSON.stringify(description);
+            console.log('image obj on 1st case', image);
 
-            // Modify categories, because it will be sent as an array
-            fields.categories = JSON.parse(fields.categories);
+            const options = {
+                filename: image.name,
+                contentType: image.type,
+            };
 
-            // let post = req.post;
-            // post = _.extend(post, fields);
-
-            let post = new Post(fields);
-            console.log('post ', post);
-            post.author = req.params.userId;
-
-            // Photo
-            if (files.photo) {
-                console.log('inside photo checking');
-                // Check if files.photo.hash (md5) is the same as the md5 hash of new photo submitted
-                // Read file from gridfs
-                const Attachment = req.Attachment;
-                const { photoId } = post;
-                // console.log('photoId of post: ', photoId);
-                const fileFromDb = Attachment.read({ _id: photoId });
-                // console.log('filefromDb: ', fileFromDb);
-
-                if (files.photo.hash !== fileFromDb.md5) {
-                    console.log('Photo is not the same -- save new photo');
-
-                    // New photo is different that the one stored, delete old and add new
-                    // Remove file and its content
-                    Attachment.unlink(photoId, (err) => {
-                        if (err) {
-                            return res.status(500).json({
-                                err:
-                                    'File could not be deleted. Reason: ' + err,
-                            });
-                        }
+            await Attachment.write(options, readStream, async (err, file) => {
+                if (err) {
+                    console.error(err.message);
+                    res.status(500).json({
+                        msg: "Can't upload post image",
                     });
-
-                    // Save new photo to gridfs
-                    const readStream = createReadStream(files.photo.path);
-                    const options = {
-                        filename: files.photo.name,
-                        contentType: files.photo.type,
-                    };
-                    Attachment.write(options, readStream, (err, file) => {
-                        if (err) {
-                            return res.status(500).json({
-                                err:
-                                    'Could not write to gridfs model. Reason: ' +
-                                    err,
-                            });
-                        }
-
-                        // console.log('file._id ', file._id);
-
-                        // Save id to post document
-                        post.photoId = file._id;
-
-                        // Populate necessary data
-                        Post.findOneAndUpdate(
-                            { _id: post._id },
-                            post,
-                            (err, doc) => {
-                                if (err) {
-                                    return res.status(400).json({
-                                        err: err,
-                                    });
-                                }
-
-                                Post.findById(doc._id)
-                                    .populate('comments')
-                                    .populate('categories')
-                                    .populate('author')
-                                    .exec((err, newResult) => {
-                                        if (err) {
-                                            return res.status(400).json({
-                                                err: err,
-                                            });
-                                        }
-
-                                        // console.log(newResult)
-                                        newResult.save();
-
-                                        res.json(newResult);
-                                    });
-                            }
-                        );
-                    });
-                } else {
-                    console.log('Photo was the same -- not saved');
-
-                    Post.findOneAndUpdate(
-                        { _id: post._id },
-                        post,
-                        (err, doc) => {
-                            if (err) {
-                                return res.status(400).json({
-                                    err: err,
-                                });
-                            }
-
-                            Post.findById(doc._id)
-                                .populate('comments')
-                                .populate('categories')
-                                .populate('author')
-                                .exec((err, newResult) => {
-                                    if (err) {
-                                        return res.status(400).json({
-                                            err: err,
-                                        });
-                                    }
-
-                                    // console.log(newResult)
-                                    newResult.save();
-
-                                    res.json(newResult);
-                                });
-                        }
-                    );
+                    return;
                 }
-            } else {
-                console.log('req.post ', req.post);
 
-                // const newPost = Post.findById(req.post._id);
+                // Save
+                imageId = file._id.toString();
 
-                Post.findOneAndUpdate(
-                    { _id: req.post._id },
-                    {
-                        $set: {
-                            title: post.title,
-                            description: post.description,
-                            categories: post.categories,
-                        },
-                    },
-                    (err, doc) => {
-                        if (err) {
-                            return res.status(400).json({
-                                err: err,
-                            });
-                        }
+                post.imageId = imageId;
+                post.title = title;
+                post.description = description;
+                post.categories = categories;
 
-                        console.log('doc ', doc);
+                await post.save();
 
-                        Post.findById(doc._id)
-                            .populate('comments')
-                            .populate('categories')
-                            .populate('author')
-                            .exec((err, newResult) => {
-                                if (err) {
-                                    return res.status(400).json({
-                                        err: err,
-                                    });
-                                }
+                return res.json(post);
+            });
+        }
 
-                                // console.log(newResult)
-                                newResult.save();
+        // 2nd case
+        if (!image) {
+            post.title = title;
+            post.description = description;
+            post.categories = categories;
 
-                                res.json(newResult);
-                            });
-                    }
-                );
+            await post.save();
+
+            return res.json(post);
+        }
+
+        // 3rd case
+        // TODO - Maybe check user image with post image, if they are the same
+        // if it is sub-optimal
+        // Delete previous image
+        Attachment.unlink(post.imageId, (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    msg: 'Image could not be deleted ',
+                });
             }
         });
+
+        // Add new image to post
+        const Attachment = req.Attachment;
+
+        const readStream = new readStream.PassThrough();
+        readStream.end(image.buffer);
+
+        console.log('image in 3rd case ', image);
+
+        const options = {
+            filename: image.name,
+            contentType: image.type,
+        };
+
+        await Attachment.write(options, readStream, async (err, file) => {
+            if (err) {
+                console.error(err.message);
+                res.status(500).json({
+                    msg: "Can't upload post image",
+                });
+                return;
+            }
+
+            // Save
+            imageId = file._id.toString();
+
+            post.imageId = imageId;
+            post.title = title;
+            post.description = description;
+            post.categories = categories;
+
+            await post.save();
+            return res.json(post);
+        });
+        return;
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
     }
 };
 
+// TODO- Is this needed? DELETE probably
 const photo = (req, res, next) => {
     if (req.product.photo.data) {
         res.set('Content-Type', req.product.photo.contentType);
@@ -443,62 +292,16 @@ const photo = (req, res, next) => {
     next();
 };
 
-const listByInterests = (req, res) => {
-    let order = req.body.order ? req.body.order : 'asc';
-    // let sortBy = req.body.sortBy ? req.body.sortBy : 'createdAt'
-    let limit = req.body.limit ? req.body.limit : 6;
-
-    let interests = req.profile.interests;
-
-    Post.find({ categories: { $in: interests } })
-        .populate('author')
-        .populate({
-            path: 'comments',
-            populate: {
-                path: '_userId',
-                select: '_id name',
-                model: 'User',
-            },
-        })
-        .populate({
-            path: 'categories',
-            populate: {
-                path: '_createdFrom',
-                select: '_id name',
-                model: 'User',
-            },
-        })
-        .exec((err, posts) => {
-            if (err) {
-                return res.status(400).json({
-                    err: errorHandler(err),
-                });
-            }
-
-            res.json(posts);
-        });
-};
-
-const listAll = async (req, res, next) => {
-    let order = req.body.order ? req.body.order : 'asc';
-    let limit = req.body.limit ? req.body.limit : 6;
-
+// TODO - THIS NEEDS TESTING
+const listByInterests = async (req, res) => {
     try {
-        let posts = await Post.find()
+        let interests = req.profile.interests;
+        let posts = await Post.find({ categories: { $in: interests } })
+            .sort({ updatedAt: 'desc' })
             .populate('author')
             .populate({
                 path: 'comments',
                 model: 'Comment',
-                /* populate: [
-            {
-                path: '_userId',
-                select: '_id name',
-                model: 'User'
-            },
-            {
-                path: 'replies',
-                select: 'text',
-                model: 'Reply',
                 populate: [
                     {
                         path: '_userId',
@@ -506,15 +309,18 @@ const listAll = async (req, res, next) => {
                         model: 'User',
                     },
                     {
-                        
                         path: 'replies',
                         select: 'text',
                         model: 'Reply',
-                    
-                    }
-                ]
-            }
-        ] */
+                        populate: [
+                            {
+                                path: '_userId',
+                                select: '_id name',
+                                model: 'User',
+                            },
+                        ],
+                    },
+                ],
             })
             .populate({
                 path: 'categories',
@@ -525,6 +331,94 @@ const listAll = async (req, res, next) => {
                 },
             });
 
+        if (!posts) {
+            return res.status(400).json({ msg: 'No posts found' });
+        }
+
+        res.json(posts);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+    // let order = req.body.order ? req.body.order : 'asc';
+    // // let sortBy = req.body.sortBy ? req.body.sortBy : 'createdAt'
+    // let limit = req.body.limit ? req.body.limit : 6;
+
+    // let interests = req.profile.interests;
+
+    // Post.find({ categories: { $in: interests } })
+    //     .populate('author')
+    //     .populate({
+    //         path: 'comments',
+    //         populate: {
+    //             path: '_userId',
+    //             select: '_id name',
+    //             model: 'User',
+    //         },
+    //     })
+    //     .populate({
+    //         path: 'categories',
+    //         populate: {
+    //             path: '_createdFrom',
+    //             select: '_id name',
+    //             model: 'User',
+    //         },
+    //     })
+    //     .exec((err, posts) => {
+    //         if (err) {
+    //             return res.status(400).json({
+    //                 err: errorHandler(err),
+    //             });
+    //         }
+
+    //         res.json(posts);
+    //     });
+};
+
+const listAll = async (req, res, next) => {
+    let order = req.body.order ? req.body.order : 'asc';
+    let limit = req.body.limit ? req.body.limit : 6;
+
+    try {
+        let posts = await Post.find()
+            .sort({ updatedAt: 'desc' })
+            .populate('author')
+            .populate({
+                path: 'comments',
+                model: 'Comment',
+                populate: [
+                    {
+                        path: '_userId',
+                        select: '_id name',
+                        model: 'User',
+                    },
+                    {
+                        path: 'replies',
+                        select: 'text',
+                        model: 'Reply',
+                        populate: [
+                            {
+                                path: '_userId',
+                                select: '_id name',
+                                model: 'User',
+                            },
+                        ],
+                    },
+                ],
+            })
+            .populate({
+                path: 'categories',
+                populate: {
+                    path: '_createdFrom',
+                    select: '_id name',
+                    model: 'User',
+                },
+            });
+
+        if (!posts) {
+            return res.status(400).json({ msg: 'No posts found' });
+        }
+
         res.send(posts);
     } catch (err) {
         console.error(err);
@@ -532,41 +426,54 @@ const listAll = async (req, res, next) => {
     }
 };
 
-const listExploreNew = (req, res) => {
-    let order = req.body.order ? req.body.order : 'asc';
-    let limit = req.body.limit ? req.body.limit : 6;
+const listByCategory = async (req, res) => {
+    let category = req.category;
 
-    if (!req.sortBy || typeof sortBy !== string) {
-        // User haven't clicked a category to show(?) send err
-        return res.status(400).json({
-            err: "You haven't specified a category to show posts from!",
+    let posts = await Post.find({ categories: { $in: category } })
+        .sort({ updatedAt: 'desc' })
+        .populate('author')
+        .populate({
+            path: 'comments',
+            model: 'Comment',
+            populate: [
+                {
+                    path: '_userId',
+                    select: '_id name',
+                    model: 'User',
+                },
+                {
+                    path: 'replies',
+                    select: 'text',
+                    model: 'Reply',
+                    populate: [
+                        {
+                            path: '_userId',
+                            select: '_id name',
+                            model: 'User',
+                        },
+                    ],
+                },
+            ],
+        })
+        .populate({
+            path: 'categories',
+            populate: {
+                path: '_createdFrom',
+                select: '_id name',
+                model: 'User',
+            },
         });
+
+    if (!posts) {
+        return res.status(400).json({ msg: 'No posts found' });
     }
 
-    let sortBy = req.sortBy; // This is a category
-
-    Category.find({ title: sortBy }).exec((err, category) => {
-        if (err) {
-            return res.status(400).json({
-                err: errorHandler(err),
-            });
-        }
-
-        const { _id } = category;
-        // console.log('category _id: ', _id);
-
-        // Show posts based on category chosen to explore
-        // Find post or posts that have a category that is the same with the chosen one
-        Post.find({ categories: { $in: [_id] } }).exec((err, posts) => {
-            if (err) {
-                return res.status(400).json({
-                    err: 'No posts found for the category chosen',
-                });
-            }
-
-            res.json(posts);
-        });
-    });
+    res.json(post);
+    try {
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
 };
 
 const readImg = (req, res) => {
@@ -593,6 +500,6 @@ module.exports = {
     photo,
     listByInterests,
     listAll,
-    listExploreNew,
+    listByCategory,
     readImg,
 };

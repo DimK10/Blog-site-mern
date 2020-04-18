@@ -27,8 +27,10 @@ mongoose.connect(process.env.DATABASE, {
 
 // Middlewares
 app.use(morgan('dev'));
+// TODO - is bodyparser needed?
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// TODO - Is it needed?
 app.use(cookieParser());
 app.use(expressValidator());
 app.use(cors());
