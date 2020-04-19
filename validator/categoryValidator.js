@@ -20,9 +20,6 @@ exports.categoryValidator = async (req, res, next) => {
             .withMessage(
                 'Category description (about) cannot be lees than 6 characters and more that 32'
             );
-        req.check('createFrom', 'Category creator should be defined')
-            .not()
-            .isEmpty();
 
         const errors = req.validationErrors();
 

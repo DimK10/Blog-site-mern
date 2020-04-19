@@ -308,7 +308,7 @@ const isAllowed = ({ type }) => (req, res, next) => {
                 if (profile.role !== 1) {
                     // User is not allowed to delete this category and also not admin user
                     return res.status(400).json({
-                        err:
+                        msg:
                             "You haven't created this comment, therefore you can't update or delete it",
                     });
                 }
@@ -325,12 +325,27 @@ const isAllowed = ({ type }) => (req, res, next) => {
                 if (profile.role !== 1) {
                     // User is not allowed to delete this category and also not admin user
                     return res.status(400).json({
-                        err:
+                        msg:
                             "You haven't created this reply, therefore you can't update or delete it",
                     });
                 }
             }
 
+            req.isAllowed = true;
+            next();
+            break;
+        case 'category':
+            const category = req.category;
+
+            if (String(profile._id) !== String(category.createdFrom._id)) {
+                if (profile.role !== 1) {
+                    // User is not allowed to delete this category and also not admin user
+                    return res.status(400).json({
+                        msg:
+                            "You haven't created this category, therefore you can't update or delete it",
+                    });
+                }
+            }
             req.isAllowed = true;
             next();
             break;

@@ -21,7 +21,9 @@ const categoryById = async (req, res, next, id) => {
 
 const create = async (req, res) => {
     try {
-        let { title, about, createdFrom } = req.body;
+        let { title, about } = req.body;
+
+        let createdFrom = req.profile._id;
 
         let category = new Category({
             title,
@@ -70,13 +72,18 @@ const remove = async (req, res) => {
                 .json({ msg: 'You are not allowed to perform this action' });
         }
 
-        category.posts.foreach(async (postId) => {
-            let post = await Post.findById(postId);
-            let removeIndex = post.categories.indexOf(category._id);
-            post.categories.splice(removeIndex, 1);
+        if (category.posts.length > 0) {
+            category.posts.foreach(async (postId) => {
+                let post = await Post.findById(postId);
+                let removeIndex = post.categories.indexOf(category._id);
+                post.categories.splice(removeIndex, 1);
 
-            await post.save();
-        });
+                await post.save();
+            });
+        }
+
+        await category.delete();
+
         res.json({ msg: 'Category was removed successfully' });
     } catch (err) {
         console.error(err.message);

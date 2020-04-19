@@ -40,7 +40,7 @@ router.delete(
     '/category/:categoryId/:userId',
     requireSignin,
     isAuth,
-    isAllowed({ type: 'category', action: 'delete' }),
+    isAllowed({ type: 'category' }),
     remove
 );
 
