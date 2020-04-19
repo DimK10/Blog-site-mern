@@ -15,10 +15,10 @@ exports.categoryValidator = async (req, res, next) => {
             .isEmpty()
             .isLength({
                 min: 6,
-                max: 32,
+                max: 48,
             })
             .withMessage(
-                'Category description (about) cannot be lees than 6 characters and more that 32'
+                'Category description (about) cannot be lees than 6 characters and more that 48'
             );
 
         const errors = req.validationErrors();
