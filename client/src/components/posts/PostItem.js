@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 import noImg from '../../images/no-thumbnail-medium.png';
 import { Link } from 'react-router-dom';
 
-import axios from 'axios';
-
-import Image from './Image';
+import Image from '../layout/Image';
 
 const PostItem = ({
     post: {
@@ -27,31 +25,13 @@ const PostItem = ({
         return shortDesc;
     };
 
-    const [img, setImg] = useState([]);
-
-    //TODO - Test purpose
-    const readImg = async (_id) => {
-        try {
-            let res = await axios.get(`/api/post/image/${_id}`);
-
-            console.log(res);
-
-            // let blob = await new Blob([res.data.data]);
-            // console.log(blob);
-
-            setImg(res.data.data);
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
     return (
         <Fragment>
             {/* <!-- Blog Post --> */}
             <div className='card mb-4'>
                 {/* TODO - Add loading for image */}
                 {imageId ? (
-                    <Image postId={_id} />
+                    <Image url={`/api/post/image/${_id}`} />
                 ) : (
                     <img className='card-img-top' alt='' src={noImg} />
                 )}

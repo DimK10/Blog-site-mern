@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { getPost } from '../../actions/post';
 import ReactHtmlParser from 'react-html-parser';
 import Moment from 'react-moment';
+import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
 import noImg from '../../images/no-thumbnail-medium.png';
-import { GET_CATEGORIES } from '../../actions/types';
 
 const Post = ({
     getPost,
@@ -32,12 +32,8 @@ const Post = ({
                     {/* <!-- Post Content Column --> */}
                     <div className='col-lg-8 mt-5'>
                         {/* <!-- Preview Image --> */}
-                        {post.photoId ? (
-                            <img
-                                className='img-fluid rounded'
-                                src={`/api/post/image/${match.params.id}`}
-                                alt=''
-                            ></img>
+                        {post.imageId ? (
+                            <Image url={`/api/post/image/${match.params.id}`} />
                         ) : (
                             <img
                                 className='img-fluid rounded'
@@ -55,7 +51,10 @@ const Post = ({
                         </p>
                         <hr></hr>
                         {/* <!-- Post Content --> */}
-                        <p>{ReactHtmlParser(JSON.parse(post.description))}</p>
+                        {<p className='lead'>{post.title}</p>}
+                        {/* TODO - Remove after */}
+                        {<p>{post.description}</p>}
+                        {/* <p>{ReactHtmlParser(JSON.parse(post.description))}</p> */}
 
                         <hr></hr>
 

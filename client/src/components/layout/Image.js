@@ -1,23 +1,34 @@
 import React, { useEffect, Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
-import { getPostImage } from '../../actions/image';
-import pulseLoading from '../../images/loading/Pulse-1s-200px.gif';
-import { connect } from 'react-redux';
+import axios from 'axios';
 
-const Image = ({ getPostImage, image: { image, loading }, postId }) => {
+import pulseLoading from '../../images/loading/Pulse-1s-200px.gif';
+
+const Image = ({ url }) => {
     const [img, setImg] = useState('');
-    // const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getPostImage(postId);
-    }, [getPostImage]);
+        let fetchImg = async () => {
+            let res = await axios.get(url, {
+                responseType: 'arraybuffer',
+            });
+
+            let base64Url = new Buffer(res.data, 'binary').toString('base64');
+
+            setImg(base64Url);
+            setLoading(false);
+        };
+
+        fetchImg();
+    }, []);
 
     return (
         <Fragment>
             {!loading ? (
                 <img
                     className='card-img-top'
-                    src={`data:image/jpeg;base64,${image}`}
+                    src={`data:image/jpeg;base64,${img}`}
                     alt=''
                 />
             ) : (
@@ -34,13 +45,7 @@ const Image = ({ getPostImage, image: { image, loading }, postId }) => {
 };
 
 Image.propTypes = {
-    getPostImage: PropTypes.func.isRequired,
-    image: PropTypes.object.isRequired,
-    postId: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-    image: state.image,
-});
-
-export default connect(mapStateToProps, { getPostImage })(Image);
+export default Image;
