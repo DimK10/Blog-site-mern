@@ -1,26 +1,26 @@
-const Post = require("../models/post");
-const Category = require("../models/category");
-const Comment = require("../models/comment");
-const Reply = require("../models/reply");
-const stream = require("stream");
-const { createBucket } = require("mongoose-gridfs");
+const Post = require('../models/post');
+const Category = require('../models/category');
+const Comment = require('../models/comment');
+const Reply = require('../models/reply');
+const stream = require('stream');
+const { createBucket } = require('mongoose-gridfs');
 
 const postById = async (req, res, next, id) => {
     try {
         let post = await Post.findById(id)
-            .populate("author")
-            .populate("comments")
-            .populate("categories");
+            .populate('author')
+            .populate('comments')
+            .populate('categories');
 
         if (!post) {
-            return res.status(404).json({ msg: "Post not found" });
+            return res.status(404).json({ msg: 'Post not found' });
         }
 
         req.post = post;
         next();
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send("Server error");
+        return res.status(500).send('Server error');
     }
 };
 
@@ -64,7 +64,7 @@ const create = async (req, res) => {
 
                 // Save
                 imageId = file._id.toString();
-                console.log("imageId ", imageId);
+                console.log('imageId ', imageId);
 
                 let post = new Post({
                     imageId,
@@ -82,7 +82,7 @@ const create = async (req, res) => {
                     await category.save();
                 });
 
-                console.log("post before save ", post);
+                console.log('post before save ', post);
 
                 await post.save();
                 return res.json(post);
@@ -102,7 +102,7 @@ const create = async (req, res) => {
         res.json(post);
     } catch (err) {
         console.error(err);
-        return res.status(500).send("Server error");
+        return res.status(500).send('Server error');
     }
 };
 
@@ -114,7 +114,7 @@ const remove = (req, res) => {
         Post.findById(post._id, (err, doc) => {
             if (err) {
                 return res.status(500).json({
-                    err: "Post not found. This shouldnt happen. Error " + err,
+                    err: 'Post not found. This shouldnt happen. Error ' + err,
                 });
             }
 
@@ -126,7 +126,7 @@ const remove = (req, res) => {
                 bucket.deleteFile(doc.imageId, (err, results) => {
                     if (err) {
                         return res.status(500).json({
-                            err: "Photo could not be deleted. Reason: " + err,
+                            err: 'Photo could not be deleted. Reason: ' + err,
                         });
                     }
 
@@ -137,7 +137,7 @@ const remove = (req, res) => {
                 Attachment.unlink(doc.imageId, (err) => {
                     if (err) {
                         return res.status(500).json({
-                            err: "Photo could not be deleted. Reason: " + err,
+                            err: 'Photo could not be deleted. Reason: ' + err,
                         });
                     }
                 });
@@ -148,7 +148,7 @@ const remove = (req, res) => {
                 if (err) {
                     return res.status(500).json({
                         err:
-                            "Comment could not be found. This shouldnt happen. Reason: " +
+                            'Comment could not be found. This shouldnt happen. Reason: ' +
                             err,
                     });
                 }
@@ -168,7 +168,7 @@ const remove = (req, res) => {
             // Default isAllowed to false
             req.listAllowed = false;
             res.json({
-                message: "Post deleted successfully",
+                message: 'Post deleted successfully',
             });
         });
     }
@@ -180,32 +180,32 @@ const update = async (req, res) => {
         if (!allowed) {
             return res
                 .status(403)
-                .json({ msg: "You are not allowed to perform this action" });
+                .json({ msg: 'You are not allowed to perform this action' });
         }
 
-        let { title, description, categories } = req.body;
+        let { title, description } = req.body;
         let imageId = null;
         let image = req.file;
 
-        let post = Post.findById(req.post._id);
+        // TODO - might need to change the way I handle arrays
+        let categories = JSON.parse(req.body.categories).map((catId) => catId);
 
+        let post = req.post;
         // There are 3 cases
         // user adds image on a post that didn't have an image
         // user does not add an image to update the post
         // user updates image
 
+        const Attachment = req.Attachment;
+
         // 1st case
         if (image && !post.imageId) {
-            const Attachment = req.Attachment;
-
-            const readStream = new readStream.PassThrough();
+            const readStream = new stream.PassThrough();
             readStream.end(image.buffer);
 
-            console.log("image obj on 1st case", image);
-
             const options = {
-                filename: image.name,
-                contentType: image.type,
+                filename: image.originalname,
+                contentType: image.mimetype,
             };
 
             await Attachment.write(options, readStream, async (err, file) => {
@@ -229,6 +229,7 @@ const update = async (req, res) => {
 
                 return res.json(post);
             });
+            return;
         }
 
         // 2nd case
@@ -250,22 +251,19 @@ const update = async (req, res) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({
-                    msg: "Image could not be deleted ",
+                    msg: 'Image could not be deleted ',
                 });
             }
         });
 
         // Add new image to post
-        const Attachment = req.Attachment;
 
         const readStream = new stream.PassThrough();
         readStream.end(image.buffer);
 
-        console.log("image in 3rd case ", image);
-
         const options = {
-            filename: image.name,
-            contentType: image.type,
+            filename: image.originalname,
+            contentType: image.mimetype,
         };
 
         await Attachment.write(options, readStream, async (err, file) => {
@@ -290,15 +288,15 @@ const update = async (req, res) => {
         });
         return;
     } catch (err) {
-        console.error(err.message);
-        return res.status(500).send("Server error");
+        console.error(err);
+        return res.status(500).send('Server error');
     }
 };
 
 // TODO- Is this needed? DELETE probably
 const photo = (req, res, next) => {
     if (req.product.photo.data) {
-        res.set("Content-Type", req.product.photo.contentType);
+        res.set('Content-Type', req.product.photo.contentType);
         return res.send(req.product.photo.data);
     }
 
@@ -310,48 +308,48 @@ const listByInterests = async (req, res) => {
     try {
         let interests = req.profile.interests;
         let posts = await Post.find({ categories: { $in: interests } })
-            .sort({ updatedAt: "desc" })
-            .populate("author")
+            .sort({ updatedAt: 'desc' })
+            .populate('author')
             .populate({
-                path: "comments",
-                model: "Comment",
+                path: 'comments',
+                model: 'Comment',
                 populate: [
                     {
-                        path: "_userId",
-                        select: "_id name",
-                        model: "User",
+                        path: '_userId',
+                        select: '_id name',
+                        model: 'User',
                     },
                     {
-                        path: "replies",
-                        select: "text",
-                        model: "Reply",
+                        path: 'replies',
+                        select: 'text',
+                        model: 'Reply',
                         populate: [
                             {
-                                path: "_userId",
-                                select: "_id name",
-                                model: "User",
+                                path: '_userId',
+                                select: '_id name',
+                                model: 'User',
                             },
                         ],
                     },
                 ],
             })
             .populate({
-                path: "categories",
+                path: 'categories',
                 populate: {
-                    path: "_createdFrom",
-                    select: "_id name",
-                    model: "User",
+                    path: '_createdFrom',
+                    select: '_id name',
+                    model: 'User',
                 },
             });
 
         if (!posts) {
-            return res.status(400).json({ msg: "No posts found" });
+            return res.status(400).json({ msg: 'No posts found' });
         }
 
         res.json(posts);
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send("Server error");
+        return res.status(500).send('Server error');
     }
     // let order = req.body.order ? req.body.order : 'asc';
     // // let sortBy = req.body.sortBy ? req.body.sortBy : 'createdAt'
@@ -389,53 +387,53 @@ const listByInterests = async (req, res) => {
 };
 
 const listAll = async (req, res, next) => {
-    let order = req.body.order ? req.body.order : "asc";
+    let order = req.body.order ? req.body.order : 'asc';
     let limit = req.body.limit ? req.body.limit : 6;
 
     try {
         let posts = await Post.find()
-            .sort({ updatedAt: "desc" })
-            .populate("author")
+            .sort({ updatedAt: 'desc' })
+            .populate('author')
             .populate({
-                path: "comments",
-                model: "Comment",
+                path: 'comments',
+                model: 'Comment',
                 populate: [
                     {
-                        path: "_userId",
-                        select: "_id name",
-                        model: "User",
+                        path: '_userId',
+                        select: '_id name',
+                        model: 'User',
                     },
                     {
-                        path: "replies",
-                        select: "text",
-                        model: "Reply",
+                        path: 'replies',
+                        select: 'text',
+                        model: 'Reply',
                         populate: [
                             {
-                                path: "_userId",
-                                select: "_id name",
-                                model: "User",
+                                path: '_userId',
+                                select: '_id name',
+                                model: 'User',
                             },
                         ],
                     },
                 ],
             })
             .populate({
-                path: "categories",
+                path: 'categories',
                 populate: {
-                    path: "_createdFrom",
-                    select: "_id name",
-                    model: "User",
+                    path: '_createdFrom',
+                    select: '_id name',
+                    model: 'User',
                 },
             });
 
         if (!posts) {
-            return res.status(400).json({ msg: "No posts found" });
+            return res.status(400).json({ msg: 'No posts found' });
         }
 
         res.send(posts);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Server error");
+        res.status(500).send('Server error');
     }
 };
 
@@ -443,49 +441,49 @@ const listByCategory = async (req, res) => {
     let category = req.category;
 
     let posts = await Post.find({ categories: { $in: category } })
-        .sort({ updatedAt: "desc" })
-        .populate("author")
+        .sort({ updatedAt: 'desc' })
+        .populate('author')
         .populate({
-            path: "comments",
-            model: "Comment",
+            path: 'comments',
+            model: 'Comment',
             populate: [
                 {
-                    path: "_userId",
-                    select: "_id name",
-                    model: "User",
+                    path: '_userId',
+                    select: '_id name',
+                    model: 'User',
                 },
                 {
-                    path: "replies",
-                    select: "text",
-                    model: "Reply",
+                    path: 'replies',
+                    select: 'text',
+                    model: 'Reply',
                     populate: [
                         {
-                            path: "_userId",
-                            select: "_id name",
-                            model: "User",
+                            path: '_userId',
+                            select: '_id name',
+                            model: 'User',
                         },
                     ],
                 },
             ],
         })
         .populate({
-            path: "categories",
+            path: 'categories',
             populate: {
-                path: "_createdFrom",
-                select: "_id name",
-                model: "User",
+                path: '_createdFrom',
+                select: '_id name',
+                model: 'User',
             },
         });
 
     if (!posts) {
-        return res.status(400).json({ msg: "No posts found" });
+        return res.status(400).json({ msg: 'No posts found' });
     }
 
     res.json(post);
     try {
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send("Server error");
+        return res.status(500).send('Server error');
     }
 };
 
@@ -499,7 +497,7 @@ const readImg = async (req, res) => {
         readStream.pipe(res);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Server error");
+        res.status(500).send('Server error');
     }
 };
 
