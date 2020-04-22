@@ -1,6 +1,6 @@
 exports.postValidator = (req, res, next) => {
     try {
-        req.check('title', 'A post must have a title')
+        req.check("title", "A post must have a title")
             .not()
             .isEmpty()
             .isLength({
@@ -10,7 +10,7 @@ exports.postValidator = (req, res, next) => {
             .withMessage(
                 "Post title can't be less than 6 characters and more than 70"
             );
-        req.check('description', 'A blog must have a body, a description')
+        req.check("description", "A blog must have a body, a description")
             .not()
             .isEmpty()
             .isLength({
@@ -18,11 +18,11 @@ exports.postValidator = (req, res, next) => {
                 max: 2000,
             })
             .withMessage(
-                'For performance reasons, a blog post cannot be more than 2000 characters long and less than 6 characters'
+                "For performance reasons, a blog post cannot be more than 2000 characters long and less than 6 characters"
             );
-        req.check('categories', 'A post must have at least one tag/category')
+        req.check("categories", "A post must have at least one tag/category")
             .not()
-            .isEMpty();
+            .isEmpty();
 
         const errors = req.validationErrors();
 
@@ -39,6 +39,6 @@ exports.postValidator = (req, res, next) => {
         next();
     } catch (err) {
         console.error(err.message);
-        return res.status(500).send('Server error');
+        return res.status(500).send("Server error");
     }
 };
