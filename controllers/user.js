@@ -149,6 +149,7 @@ const addPostToUserHistory = async (req, res, next) => {
             id: req.post._id,
             parentId: null,
             type: 'post',
+            action: 'create',
             parent: null,
         });
 
@@ -169,6 +170,7 @@ const addCommentToUserHistory = async (req, res, next) => {
             id: req.comment._id,
             parentId: req.post._id,
             type: 'comment',
+            action: 'create',
             parent: 'post',
         });
 
@@ -189,6 +191,7 @@ const addReplyToUserHistory = async (req, res, next) => {
             id: req.reply._id,
             parentId: req.comment._id,
             type: 'reply',
+            action: 'create',
             parent: 'comment',
         });
 
@@ -201,6 +204,32 @@ const addReplyToUserHistory = async (req, res, next) => {
     }
 };
 
+const addActionToUserHistory = async (
+    req,
+    res,
+    id,
+    parentId,
+    type,
+    action,
+    parent,
+    data
+) => {
+    try {
+        let user = req.user;
+
+        user.history.unshift({
+            id,
+            parentId,
+            type,
+            action,
+            parent,
+        });
+
+        await user.save();
+    } catch (err) {}
+};
+
+// TODO - I should remove
 const deleteActionFromUserHistory = async (req, res, action, next) => {
     try {
         let user = req.profile;
@@ -259,4 +288,5 @@ module.exports = {
     addReplyToUserHistory,
     deleteActionFromUserHistory,
     resetUserPassword,
+    addActionToUserHistory,
 };

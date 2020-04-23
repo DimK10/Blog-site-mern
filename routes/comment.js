@@ -17,10 +17,10 @@ const { userById } = require('../controllers/user');
 router.post('/comment/create/:postId/:userId', requireSignin, isAuth, create);
 
 router.put(
-    '/comment/update/:commentId',
+    '/comment/update/:commentId/:userId',
     requireSignin,
     isAuth,
-    isAllowed({ type: 'comment', action: 'update' }),
+    isAllowed({ type: 'comment' }),
     update
 );
 

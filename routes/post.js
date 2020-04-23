@@ -41,7 +41,7 @@ router.delete(
     '/delete-post/:postId/:userId',
     requireSignin,
     isAuth,
-    isAllowed({ type: 'post', action: 'delete' }),
+    isAllowed({ type: 'post' }),
     createAttachment,
     remove
 );

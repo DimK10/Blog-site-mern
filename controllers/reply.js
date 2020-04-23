@@ -24,11 +24,17 @@ const createReply = async (req, res) => {
     try {
         const { text } = req.body;
 
+        const commentId = req.comment._id;
+
         if (!text || !text.trim() || text.length === 0) {
             return res.status(400).json({ msg: 'A reply cannot be empty' });
         }
 
-        let reply = await new Reply({ text, userId: req.profile._id });
+        let reply = await new Reply({
+            text,
+            userId: req.profile._id,
+            commentId,
+        });
 
         await reply.save();
 
@@ -78,7 +84,7 @@ const remove = async (req, res) => {
         let reply = await Reply.findById(req.reply._id);
 
         // Remove from comment's replies array
-        let comment = req.comment;
+        let comment = await Comment.findById(reply.commentId);
         comment.replies.splice(comment.replies.indexOf(reply.id), 1);
         comment.save();
 
@@ -86,8 +92,6 @@ const remove = async (req, res) => {
         reply.remove();
 
         res.json(comment);
-
-        req.isAllowed = false;
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');

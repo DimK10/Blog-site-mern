@@ -17,7 +17,7 @@ const { userById } = require('../controllers/user');
 router.post('/reply/:commentId/:userId', requireSignin, isAuth, createReply);
 
 router.put(
-    '/reply/update/:replyId',
+    '/reply/update/:replyId/:userId',
     requireSignin,
     isAuth,
     isAllowed({ type: 'reply' }),
@@ -25,7 +25,7 @@ router.put(
 );
 
 router.delete(
-    '/reply/delete/:commentId/:replyId/:userId',
+    '/reply/delete/:replyId/:userId',
     requireSignin,
     isAuth,
     isAllowed({ type: 'reply' }),

@@ -18,6 +18,11 @@ const replySchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        commentId: {
+            type: ObjectId,
+            ref: 'Comment',
+            required: true,
+        },
         // TODO - Make a like unlike system
         upvotes: { type: Number },
         downvotes: { type: Number },

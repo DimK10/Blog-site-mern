@@ -78,7 +78,7 @@ const remove = async (req, res) => {
         // Remove comment
         await comment.remove();
 
-        res.json(post);
+        res.send('Comment deleted successfully');
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');

@@ -300,11 +300,11 @@ const isAllowed = ({ type }) => (req, res, next) => {
 
         case 'comment':
             const comment = req.comment;
-            console.log('comment ', comment);
-            console.log('profile', profile);
+            // console.log('comment ', comment);
+            // console.log('profile', profile);
             // console.log('profile._id !== post.author) || profile.role != 1 ', (profile._id !== post.author) || profile.role != 1);
 
-            if (String(profile._id) !== String(comment._userId._id)) {
+            if (String(profile._id) !== String(comment.userId._id)) {
                 if (profile.role !== 1) {
                     // User is not allowed to delete this category and also not admin user
                     return res.status(400).json({
@@ -321,7 +321,7 @@ const isAllowed = ({ type }) => (req, res, next) => {
         case 'reply':
             const reply = req.reply;
 
-            if (String(profile._id) !== String(reply._userId._id)) {
+            if (String(profile._id) !== String(reply.userId._id)) {
                 if (profile.role !== 1) {
                     // User is not allowed to delete this category and also not admin user
                     return res.status(400).json({

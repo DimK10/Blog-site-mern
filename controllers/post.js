@@ -5,6 +5,8 @@ const Reply = require('../models/reply');
 const stream = require('stream');
 const { createBucket } = require('mongoose-gridfs');
 
+const { addActionToUserHistory } = require('./user');
+
 const postById = async (req, res, next, id) => {
     try {
         let post = await Post.findById(id)
@@ -82,10 +84,19 @@ const create = async (req, res) => {
                     await category.save();
                 });
 
-                console.log('post before save ', post);
-
                 await post.save();
-                return res.json(post);
+
+                // Add to user history
+                addActionToUserHistory(
+                    req,
+                    res,
+                    post._id,
+                    null,
+                    'post',
+                    'create',
+                    null,
+                    post
+                );
             });
             return;
         }
@@ -99,6 +110,7 @@ const create = async (req, res) => {
         });
 
         await post.save();
+
         res.json(post);
     } catch (err) {
         console.error(err);
@@ -106,71 +118,47 @@ const create = async (req, res) => {
     }
 };
 
-const remove = (req, res) => {
-    const isAllowed = req.isAllowed;
+const remove = async (req, res) => {
+    try {
+        const allowed = req.isAllowed;
 
-    if (isAllowed) {
-        const post = req.post;
-        Post.findById(post._id, (err, doc) => {
-            if (err) {
-                return res.status(500).json({
-                    err: 'Post not found. This shouldnt happen. Error ' + err,
-                });
-            }
+        if (!allowed) {
+            return res
+                .status(403)
+                .json({ msg: 'You are not allowed to perform this action' });
+        }
 
-            // Remove photo linked to post in gridfs
-            // Check if thre is a photo linked with this post
-            if (post.imageId) {
-                // Remove chunks of photo
-                const bucket = createBucket();
-                bucket.deleteFile(doc.imageId, (err, results) => {
-                    if (err) {
-                        return res.status(500).json({
-                            err: 'Photo could not be deleted. Reason: ' + err,
-                        });
-                    }
+        let post = req.post;
 
-                    // console.log('Chunks of photo should now be successfully deleted');
-                });
+        // Delete image if there is an image linked to the post
+        if (post.imageId) {
+            // Remove chunks of photo
+            const bucket = createBucket();
+            await bucket.deleteFile(post.imageId);
 
-                const Attachment = req.Attachment;
-                Attachment.unlink(doc.imageId, (err) => {
-                    if (err) {
-                        return res.status(500).json({
-                            err: 'Photo could not be deleted. Reason: ' + err,
-                        });
-                    }
-                });
-            }
+            const Attachment = req.Attachment;
 
-            // Remove all associated comments and replies with this post
-            Comment.find({ _id: { $in: doc.comments } }, (err, doc) => {
-                if (err) {
-                    return res.status(500).json({
-                        err:
-                            'Comment could not be found. This shouldnt happen. Reason: ' +
-                            err,
-                    });
+            await Attachment.unlink(post.imageId);
+        }
+
+        // Delete comments and replies
+        if (post.comments.length > 0) {
+            post.comments.forEach(async (comment) => {
+                if (comment.replies.length > 0) {
+                    // Delete the replies
+                    comment.replies.forEach(
+                        async (reply) => await reply.delete()
+                    );
+                    await comment.delete();
                 }
-                Reply.remove({ _id: { $in: doc.replies } });
             });
+        }
 
-            Comment.remove({ _id: { $in: doc.comments } });
-        });
-
-        post.remove((err, removedPost) => {
-            if (err) {
-                return res.status(400).json({
-                    err,
-                });
-            }
-
-            // Default isAllowed to false
-            req.listAllowed = false;
-            res.json({
-                message: 'Post deleted successfully',
-            });
-        });
+        await Post.findByIdAndDelete(post.id);
+        res.status(200).send('Post deleted successfully');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
 };
 
