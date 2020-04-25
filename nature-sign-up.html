@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Sign Up</title>
+		<!-- Bootstrap core CSS -->
+		<link
+		href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<!-- Fontawesome CSS -->
+		<link
+		href="css/all.css" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link href="css/style.css" rel="stylesheet">
+		<script src="vendor/jquery/jquery.min.js"></script>
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+		<script>
+			$(document).ready(function () {
+$('.js-example-basic-multiple').select2({hidden: false});
+});
+		</script>
+	</head>
+	<body>
+		<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-light top-nav fixed-top">
+			<div class="row ml-2">Logo created by
+				<a href="https://www.designevo.com/logo-maker/" title="Free Online Logo Maker">DesignEvo logo maker</a>
+			</div>
+			<div class="container">
+				<a class="navbar-brand" href="index.html">
+					<img src="images/logo-made/logo.png" alt="logo" style="width: 120px; height: 70px;"/>
+				</a>
+				<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="fas fa-bars"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarResponsive">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-blog-home.html">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-blog-view-profiles.html">Community</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-blog-about.html">About</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-blog-create-post.html">Create a Post</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-blog-create-category.html">Create a Category</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-sign-in.html">Sign In</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./nature-sign-up.html">Sign Up</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div class="container">
+			<div class="jumbotron mt-3 mb-3">
+				<h1 class="large-text primary">Sign Up</h1>
+				<p class="lead">
+					<i class="fas fa-user"></i>
+					Create A New Account
+				</p>
+			</div>
+			<form class="form">
+				<div class="form-group">
+					<label>Profile Picture (optional)</label>
+					<div class="custom-file">
+						<input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+						<label class="custom-file-label" for="inputGroupFile01">Choose a profile image (max 2mb)</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="nameInput">* Name</label>
+					<input type="email" id="nameInput" class="form-control" placeholder="Email Address" name="email" required="" value="">
+				</div>
+				<div class="form-group">
+					<label for="emailInput">* Email</label>
+					<input type="email" id="emailInput" class="form-control" placeholder="Email Address" name="email" required="" value="">
+				</div>
+				<div class="form-group">
+					<label for="passwordInput">* Password</label>
+					<input type="password" id="passwordInput" class="form-control" placeholder="Password" name="password" minlength="6" value="">
+				</div>
+				<div class="form-group">
+					<label for="passwordInput2">* Re-Type Password</label>
+					<input type="password" id="passwordInput2" class="form-control" placeholder="Confirm Password" name="password2" minlength="6" value="">
+				</div>
+				<div class="form-group">
+					<label for="aboutTextarea">Tells Us More About Yourself</label>
+					<textarea class="form-control" id="aboutTextarea" rows="3"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="interests">interests (Choose one or more - optional)</label>
+					<select id="interests" class="js-example-basic-multiple" name="categories[]" multiple="multiple" style="width: 100%">
+						<option value="general">General</option>
+						...
+						<option value="animals">Animals</option>
+						<option value="nature">Nature</option>
+
+					</select>
+				</div>
+				<div class="row mb-4">
+					<div class="col">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
