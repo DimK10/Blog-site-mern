@@ -11,6 +11,7 @@ const {
     getAllUsers,
     update,
     resetUserPassword,
+    readUserImg,
 } = require('../controllers/user');
 
 const { userSignupValidator } = require('../validator/userValidator');
@@ -32,6 +33,7 @@ router.put(
 
 router.get('/user/:userId', requireSignin, read);
 router.get('/users', requireSignin, getAllUsers);
+router.get('/user/image/:userId', createAttachment, readUserImg);
 router.put(
     '/user/:userId',
     requireSignin,

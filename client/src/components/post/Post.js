@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getPost } from '../../actions/post';
 import ReactHtmlParser from 'react-html-parser';
+import { v4 as uuidv4 } from 'uuid';
+import { Link, NavLink } from 'react-router-dom';
 import Moment from 'react-moment';
+import Comment from './Comment';
 import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
 import noImg from '../../images/no-thumbnail-medium.png';
@@ -61,97 +64,58 @@ const Post = ({
                         <div className='blog-right-side'>
                             {/* <!-- Comments Form --> */}
                             {/* TODO - Mae comments functional */}
-                            <div className='card my-4'>
-                                <h5 className='card-header'>
-                                    Leave a Comment:
-                                </h5>
-                                <div className='card-body'>
-                                    <form>
-                                        <div className='form-group'>
-                                            <textarea
-                                                className='form-control'
-                                                rows='3'
-                                            ></textarea>
-                                        </div>
-                                        <button
-                                            type='submit'
-                                            className='btn btn-primary'
-                                        >
-                                            Submit
-                                        </button>
-                                    </form>
+                            {isAuthenticated ? (
+                                <div className='card my-4'>
+                                    <h5 className='card-header'>
+                                        Leave a Comment:
+                                    </h5>
+                                    <div className='card-body'>
+                                        <form>
+                                            <div className='form-group'>
+                                                <textarea
+                                                    className='form-control'
+                                                    rows='3'
+                                                ></textarea>
+                                            </div>
+                                            <button
+                                                type='submit'
+                                                className='btn btn-primary'
+                                            >
+                                                Submit
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className='card my-4'>
+                                    <h4>
+                                        <NavLink exact to='/signin'>
+                                            Sign In
+                                        </NavLink>{' '}
+                                        <span>to comment!</span>
+                                    </h4>
+                                    <br />
+                                    <h5>
+                                        <span>
+                                            Not a User?{' '}
+                                            <NavLink exact to='/signup'>
+                                                Join Us!
+                                            </NavLink>
+                                        </span>
+                                    </h5>
+                                </div>
+                            )}
                         </div>
-
-                        {/* <!-- Single Comment --> */}
-                        <div className='media mb-4'>
-                            <img
-                                className='d-flex mr-3 rounded-circle'
-                                src='images/testi_01.png'
-                                alt=''
-                            ></img>
-                            <div className='media-body'>
-                                <h5 className='mt-0'>Commenter Name</h5>
-                                Cras sit amet nibh libero, in gravida nulla.
-                                Nulla vel metus scelerisque ante sollicitudin.
-                                Cras purus odio, vestibulum in vulputate at,
-                                tempus viverra turpis. Fusce condimentum nunc ac
-                                nisi vulputate fringilla. Donec lacinia congue
-                                felis in faucibus.
-                            </div>
-                        </div>
-
                         {/* <!-- Comment with nested comments --> */}
-                        <div className='media mb-4'>
-                            <img
-                                className='d-flex mr-3 rounded-circle'
-                                src='images/testi_02.png'
-                                alt=''
-                            ></img>
-                            <div className='media-body'>
-                                <h5 className='mt-0'>Commenter Name</h5>
-                                Cras sit amet nibh libero, in gravida nulla.
-                                Nulla vel metus scelerisque ante sollicitudin.
-                                Cras purus odio, vestibulum in vulputate at,
-                                tempus viverra turpis. Fusce condimentum nunc ac
-                                nisi vulputate fringilla. Donec lacinia congue
-                                felis in faucibus.
-                                <div className='media mt-4'>
-                                    <img
-                                        className='d-flex mr-3 rounded-circle'
-                                        src='images/testi_01.png'
-                                        alt=''
-                                    ></img>
-                                    <div className='media-body'>
-                                        <h5 className='mt-0'>Commenter Name</h5>
-                                        Cras sit amet nibh libero, in gravida
-                                        nulla. Nulla vel metus scelerisque ante
-                                        sollicitudin. Cras purus odio,
-                                        vestibulum in vulputate at, tempus
-                                        viverra turpis. Fusce condimentum nunc
-                                        ac nisi vulputate fringilla. Donec
-                                        lacinia congue felis in faucibus.
-                                    </div>
-                                </div>
-                                <div className='media mt-4'>
-                                    <img
-                                        className='d-flex mr-3 rounded-circle'
-                                        src='images/testi_03.png'
-                                        alt=''
-                                    ></img>
-                                    <div className='media-body'>
-                                        <h5 className='mt-0'>Commenter Name</h5>
-                                        Cras sit amet nibh libero, in gravida
-                                        nulla. Nulla vel metus scelerisque ante
-                                        sollicitudin. Cras purus odio,
-                                        vestibulum in vulputate at, tempus
-                                        viverra turpis. Fusce condimentum nunc
-                                        ac nisi vulputate fringilla. Donec
-                                        lacinia congue felis in faucibus.
-                                    </div>
-                                </div>
-                            </div>
+                        <div class='media mb-4'>
+                            {post.comments &&
+                                post.comments.map((comment) => (
+                                    <Comment
+                                        comment={comment}
+                                        key={uuidv4()}
+                                        type='child'
+                                    />
+                                ))}
                         </div>
                     </div>
 

@@ -226,7 +226,11 @@ const addActionToUserHistory = async (
         });
 
         await user.save();
-    } catch (err) {}
+        return res.json(data);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
 };
 
 // TODO - I should remove
@@ -278,6 +282,25 @@ const resetUserPassword = async (req, res, next) => {
     }
 };
 
+const readUserImg = async (req, res) => {
+    try {
+        const user = req.user;
+        const Attacchment = req.Attacchment;
+
+        if (!user.avatarId) {
+            return res
+                .status(404)
+                .json({ msg: 'User does not have an image ' });
+        }
+        const readStream = Attacchment.read({ _id: user.avatarId });
+
+        readStream.pipe(res);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
 module.exports = {
     userById,
     read,
@@ -289,4 +312,5 @@ module.exports = {
     deleteActionFromUserHistory,
     resetUserPassword,
     addActionToUserHistory,
+    readUserImg,
 };
