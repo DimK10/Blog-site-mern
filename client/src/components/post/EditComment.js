@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { updateComment } from '../../actions/comment';
 
+//TODO - Move to comments folder
 const EditComment = ({ updateComment, commentId, postId, userId, text }) => {
     const [commentText, setCommentText] = useState(text);
 

@@ -21,6 +21,7 @@ const Post = ({
     postObj: { post, loading },
     comment: { comments },
     match,
+    location,
 }) => {
     useEffect(() => {
         getPost(match.params.id);
@@ -78,7 +79,15 @@ const Post = ({
                             ) : (
                                 <div className='card my-4'>
                                     <h4>
-                                        <NavLink exact to='/signin'>
+                                        <NavLink
+                                            exact
+                                            to={{
+                                                pathname: '/signin',
+                                                state: {
+                                                    prevPath: location.pathname,
+                                                },
+                                            }}
+                                        >
                                             Sign In
                                         </NavLink>{' '}
                                         <span>to comment!</span>
@@ -87,7 +96,16 @@ const Post = ({
                                     <h5>
                                         <span>
                                             Not a User?{' '}
-                                            <NavLink exact to='/signup'>
+                                            <NavLink
+                                                exact
+                                                to={{
+                                                    pathname: '/signup',
+                                                    state: {
+                                                        prevPath:
+                                                            location.pathname,
+                                                    },
+                                                }}
+                                            >
                                                 Join Us!
                                             </NavLink>
                                         </span>

@@ -50,6 +50,7 @@ export default function (state = initialState, action) {
                 token: null,
                 user: null,
                 isAuthenticated: false,
+                // comment: {},
                 loading: false,
             };
         default:

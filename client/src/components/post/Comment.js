@@ -6,6 +6,7 @@ import Avatar from '../layout/Avatar';
 import EditComment from './EditComment';
 import { deleteComment } from '../../actions/comment';
 
+//TODO - Move to comments folder
 const Comment = ({
     deleteComment,
     comment: {
