@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getPost } from '../../actions/post';
+import { getPost, getComments } from '../../actions/post';
 import ReactHtmlParser from 'react-html-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { Link, NavLink } from 'react-router-dom';
@@ -13,13 +13,15 @@ import noImg from '../../images/no-thumbnail-medium.png';
 
 const Post = ({
     getPost,
+    getComments,
     auth: { isAuthenticated },
-    postObj: { post, loading },
+    postObj: { post, comments, loading },
     match,
 }) => {
     useEffect(() => {
         getPost(match.params.id);
-    }, [getPost]);
+        getComments(match.params.id);
+    }, [getPost, getComments]);
 
     return loading || post === null ? (
         <div className='mt-5'>
@@ -108,8 +110,9 @@ const Post = ({
                         </div>
                         {/* <!-- Comment with nested comments --> */}
                         <div class='media mb-4'>
-                            {post.comments &&
-                                post.comments.map((comment) => (
+                            {/* TODO - Remove comments from post object returned from api */}
+                            {comments &&
+                                comments.map((comment) => (
                                     <Comment
                                         comment={comment}
                                         key={uuidv4()}
@@ -188,4 +191,4 @@ const mapStateToProps = (state) => ({
     postObj: state.post,
 });
 
-export default connect(mapStateToProps, { getPost })(Post);
+export default connect(mapStateToProps, { getPost, getComments })(Post);

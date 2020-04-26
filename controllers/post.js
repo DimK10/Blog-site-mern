@@ -30,6 +30,17 @@ const read = (req, res) => {
     return res.json(req.post);
 };
 
+const readPostComments = async (req, res) => {
+    try {
+        let post = req.post;
+
+        res.send(post.comments);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
 const create = async (req, res) => {
     try {
         let { title, description, author } = req.body;
@@ -492,6 +503,7 @@ const readImg = async (req, res) => {
 module.exports = {
     postById,
     read,
+    readPostComments,
     create,
     update,
     remove,

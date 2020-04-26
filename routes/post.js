@@ -8,6 +8,7 @@ const {
     create,
     postById,
     read,
+    readPostComments,
     readImg,
     remove,
     update,
@@ -25,6 +26,8 @@ const { userById } = require('../controllers/user');
 const { categoryById } = require('../controllers/category');
 
 router.get('/post/:postId', read);
+
+router.get('/post/comments/:postId', readPostComments);
 
 router.get('/post/image/:postId', createAttachment, readImg);
 
