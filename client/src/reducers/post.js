@@ -4,6 +4,8 @@ import {
     POST_ERROR,
     GET_COMMENTS,
     COMMENTS_ERROR,
+    ADD_COMMENT,
+    COMMENT_ERROR,
 } from '../actions/types';
 const initialState = {
     posts: [],
@@ -34,6 +36,7 @@ export default function (state = initialState, action) {
                 comments: payload,
                 loading: false,
             };
+        case COMMENT_ERROR:
         case POST_ERROR:
             return {
                 ...state,
@@ -45,6 +48,7 @@ export default function (state = initialState, action) {
                 ...state,
                 loading: false,
             };
+        case ADD_COMMENT:
         default:
             return state;
     }

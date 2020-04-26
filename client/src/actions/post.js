@@ -5,6 +5,8 @@ import {
     GET_POST,
     GET_COMMENTS,
     COMMENTS_ERROR,
+    ADD_COMMENT,
+    COMMENT_ERROR,
 } from './types';
 
 // Get posts
@@ -59,6 +61,28 @@ export const getComments = (postId) => async (dispatch) => {
     } catch (err) {
         dispatch({
             type: COMMENTS_ERROR,
+        });
+    }
+};
+
+// Add comment to post
+export const addComment = (postId, userId, text) => async (dispatch) => {
+    try {
+        const body = { text };
+        await axios.post(`/api/comment/create/${postId}/${userId}`, body);
+
+        dispatch({
+            type: ADD_COMMENT,
+        });
+
+        dispatch(getComments(postId));
+    } catch (err) {
+        dispatch({
+            type: COMMENT_ERROR,
+            payload: {
+                msg: err.response.statusText,
+                status: err.response.status,
+            },
         });
     }
 };

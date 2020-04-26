@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import { getPost, getComments } from '../../actions/post';
 import ReactHtmlParser from 'react-html-parser';
 import { v4 as uuidv4 } from 'uuid';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Moment from 'react-moment';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Comment from './Comment';
 import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
 import noImg from '../../images/no-thumbnail-medium.png';
+import SubmitComment from './SubmitComment';
 
 const Post = ({
     getPost,
@@ -67,27 +69,10 @@ const Post = ({
                             {/* <!-- Comments Form --> */}
                             {/* TODO - Mae comments functional */}
                             {isAuthenticated ? (
-                                <div className='card my-4'>
-                                    <h5 className='card-header'>
-                                        Leave a Comment:
-                                    </h5>
-                                    <div className='card-body'>
-                                        <form>
-                                            <div className='form-group'>
-                                                <textarea
-                                                    className='form-control'
-                                                    rows='3'
-                                                ></textarea>
-                                            </div>
-                                            <button
-                                                type='submit'
-                                                className='btn btn-primary'
-                                            >
-                                                Submit
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+                                <SubmitComment
+                                    postId={post._id}
+                                    userId={post.author._id}
+                                />
                             ) : (
                                 <div className='card my-4'>
                                     <h4>
@@ -109,7 +94,17 @@ const Post = ({
                             )}
                         </div>
                         {/* <!-- Comment with nested comments --> */}
-                        <div class='media mb-4'>
+                        <ReactCSSTransitionGroup
+                            transitionName={{
+                                enter: 'enter',
+                                leave: 'leave',
+                                appear: 'appear',
+                            }}
+                            transitionAppear={true}
+                            transitionAppearTimeout={1500}
+                            transitionEnterTimeout={1500}
+                            transitionLeaveTimeout={1300}
+                        >
                             {/* TODO - Remove comments from post object returned from api */}
                             {comments &&
                                 comments.map((comment) => (
@@ -119,7 +114,7 @@ const Post = ({
                                         type='child'
                                     />
                                 ))}
-                        </div>
+                        </ReactCSSTransitionGroup>
                     </div>
 
                     {/* <!-- Sidebar Widgets Column --> */}
@@ -136,7 +131,10 @@ const Post = ({
                                                 {post.categories.map(
                                                     (category, index) =>
                                                         index % 2 === 0 ? (
-                                                            <ul className='list-unstyled mb-0'>
+                                                            <ul
+                                                                className='list-unstyled mb-0'
+                                                                key={uuidv4()}
+                                                            >
                                                                 <li>
                                                                     <a href='#/'>
                                                                         {
@@ -152,7 +150,10 @@ const Post = ({
                                                 {post.categories.map(
                                                     (category, index) =>
                                                         index % 2 === 1 ? (
-                                                            <ul className='list-unstyled mb-0'>
+                                                            <ul
+                                                                className='list-unstyled mb-0'
+                                                                key={uuidv4()}
+                                                            >
                                                                 <li>
                                                                     <a href='#/'>
                                                                         {
