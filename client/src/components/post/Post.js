@@ -11,7 +11,7 @@ import Comment from './Comment';
 import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
 import noImg from '../../images/no-thumbnail-medium.png';
-import SubmitComment from './SubmitComment';
+import SubmitComment from './AddComment';
 
 const Post = ({
     getPost,

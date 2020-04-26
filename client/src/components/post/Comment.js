@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import Avatar from '../layout/Avatar';
+import EditComment from './EditComment';
 import { deleteComment } from '../../actions/post';
 
 const Comment = ({
@@ -16,8 +17,14 @@ const Comment = ({
     },
     auth: { isAuthenticated, loading, user },
 }) => {
+    const [isOnEdit, setIsOnEdit] = useState(false);
+
     const onClick = () => {
         deleteComment(commentId, postId, _id);
+    };
+
+    const onEditClick = () => {
+        setIsOnEdit(!isOnEdit);
     };
 
     return (
@@ -38,7 +45,7 @@ const Comment = ({
                                 <Fragment>
                                     <span
                                         id='operations'
-                                        onClick={(e) => console.log(e)}
+                                        onClick={(e) => onEditClick()}
                                     >
                                         <i
                                             className='fas fa-edit pr-1'
@@ -58,7 +65,7 @@ const Comment = ({
                             )}
                         </div>
                     </h5>
-                    {text}
+                    {!isOnEdit ? text : <EditComment text={text} />}
                     {replies &&
                         replies.map((reply) => (
                             <div key={uuidv4()}>
