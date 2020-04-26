@@ -194,7 +194,7 @@ async function signin(req, res) {
             expiresIn: 360000,
         });
 
-        return res.json({ token, user: user.id });
+        return res.json({ token, user });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
