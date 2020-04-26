@@ -3,15 +3,23 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import Avatar from '../layout/Avatar';
+import { deleteComment } from '../../actions/post';
 
 const Comment = ({
+    deleteComment,
     comment: {
+        _id: commentId,
         text,
+        postId,
         userId: { _id, avatarId, name },
         replies = [],
     },
     auth: { isAuthenticated, loading, user },
 }) => {
+    const onClick = () => {
+        deleteComment(commentId, postId, _id);
+    };
+
     return (
         <Fragment>
             <div className='media mb-4'>
@@ -28,13 +36,19 @@ const Comment = ({
                         <div className='d-flex justify-content-end'>
                             {!loading && isAuthenticated && user._id === _id && (
                                 <Fragment>
-                                    <span onClick={(e) => console.log(e)}>
+                                    <span
+                                        id='operations'
+                                        onClick={(e) => console.log(e)}
+                                    >
                                         <i
                                             className='fas fa-edit pr-1'
                                             title='edit'
                                         ></i>
                                     </span>{' '}
-                                    <span>
+                                    <span
+                                        id='operations'
+                                        onClick={(e) => onClick()}
+                                    >
                                         <i
                                             className='far fa-trash-alt'
                                             title='delete'
@@ -76,10 +90,11 @@ const Comment = ({
 Comment.propTypes = {
     comment: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
+    deleteComment: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
 });
 
-export default connect(mapStateToProps)(Comment);
+export default connect(mapStateToProps, { deleteComment })(Comment);

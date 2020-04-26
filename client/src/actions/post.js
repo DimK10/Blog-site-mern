@@ -7,7 +7,9 @@ import {
     COMMENTS_ERROR,
     ADD_COMMENT,
     COMMENT_ERROR,
+    DELETE_COMMENT,
 } from './types';
+import { setAlert } from './alert';
 
 // Get posts
 export const getPosts = () => async (dispatch) => {
@@ -83,6 +85,29 @@ export const addComment = (postId, userId, text) => async (dispatch) => {
                 msg: err.response.statusText,
                 status: err.response.status,
             },
+        });
+    }
+};
+
+// Delete comment from post
+export const deleteComment = (commentId, postId, userId) => async (
+    dispatch
+) => {
+    try {
+        await axios.delete(`/api/comment/delete/${commentId}/${userId}`);
+
+        dispatch({
+            type: DELETE_COMMENT,
+            payload: { id: commentId },
+        });
+
+        dispatch(setAlert('comment deleted successfully!', 'success'));
+
+        dispatch(getComments(postId));
+    } catch (err) {
+        console.error(err.message);
+        dispatch({
+            type: COMMENT_ERROR,
         });
     }
 };

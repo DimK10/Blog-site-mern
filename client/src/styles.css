@@ -782,3 +782,9 @@ a:hover {
     opacity: 0.01;
     transition: opacity 300ms ease-in;
 }
+
+/* for fontawesome icons as buttons */
+
+#operations {
+    cursor: pointer;
+}
