@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import logo from '../../images/logo-made/logo.jpg';
@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
 
 const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
+    const [showCollapse, setShowCollapse] = useState('');
+
     const guestLinks = (
         <ul className='navbar-nav ml-auto'>
             <li className='nav-item'>
@@ -89,7 +91,7 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                     <img
                         src={logo}
                         alt='logo'
-                        style={{ width: '120px', height: '70px' }}
+                        style={{ width: '90px', height: '50px' }}
                     />
                 </a>
                 <button
@@ -100,10 +102,20 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                     aria-controls='navbarResponsive'
                     aria-expanded='false'
                     aria-label='Toggle navigation'
+                    onClick={() => {
+                        if (showCollapse === '') {
+                            setShowCollapse('show');
+                        } else {
+                            setShowCollapse('');
+                        }
+                    }}
                 >
                     <span className='fas fa-bars'></span>
                 </button>
-                <div className='collapse navbar-collapse' id='navbarResponsive'>
+                <div
+                    className={`collapse navbar-collapse ${showCollapse}`}
+                    id='navbarResponsive'
+                >
                     {/* //TODO - Add the links for user and admin */}
                     {/* {<Fragment>{guestLinks}</Fragment>} */}
                     {!loading && (
