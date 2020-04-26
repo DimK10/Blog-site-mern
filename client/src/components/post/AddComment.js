@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { addComment } from '../../actions/post';
+import { addComment } from '../../actions/comment';
 import { connect } from 'react-redux';
 
 const SubmitComment = ({ postId, userId, addComment }) => {

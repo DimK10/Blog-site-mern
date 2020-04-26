@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getPost, getComments } from '../../actions/post';
+import { getPost } from '../../actions/post';
+import { getComments } from '../../actions/comment';
 import ReactHtmlParser from 'react-html-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { NavLink } from 'react-router-dom';
@@ -17,7 +18,8 @@ const Post = ({
     getPost,
     getComments,
     auth: { isAuthenticated },
-    postObj: { post, comments, loading },
+    postObj: { post, loading },
+    comment: { comments },
     match,
 }) => {
     useEffect(() => {
@@ -185,11 +187,13 @@ Post.propTypes = {
     getPost: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
     postObj: PropTypes.object.isRequired,
+    comment: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
     postObj: state.post,
+    comment: state.comment,
 });
 
 export default connect(mapStateToProps, { getPost, getComments })(Post);

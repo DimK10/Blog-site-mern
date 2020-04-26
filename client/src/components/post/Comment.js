@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import Avatar from '../layout/Avatar';
 import EditComment from './EditComment';
-import { deleteComment } from '../../actions/post';
+import { deleteComment } from '../../actions/comment';
 
 const Comment = ({
     deleteComment,
