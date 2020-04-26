@@ -1,7 +1,9 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { updateComment } from '../../actions/comment';
 
-const EditComment = ({ text }) => {
+const EditComment = ({ updateComment, commentId, postId, userId, text }) => {
     const [commentText, setCommentText] = useState(text);
 
     const onChange = (e) => {
@@ -10,7 +12,7 @@ const EditComment = ({ text }) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        // TODO - Update comment here
+        updateComment(commentId, postId, userId, commentText);
     };
 
     return (
@@ -40,7 +42,11 @@ const EditComment = ({ text }) => {
 };
 
 EditComment.propTypes = {
+    updateComment: PropTypes.func.isRequired,
+    commentId: PropTypes.string.isRequired,
+    postId: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
 };
 
-export default EditComment;
+export default connect(null, { updateComment })(EditComment);

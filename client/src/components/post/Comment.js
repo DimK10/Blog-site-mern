@@ -65,7 +65,16 @@ const Comment = ({
                             )}
                         </div>
                     </h5>
-                    {!isOnEdit ? text : <EditComment text={text} />}
+                    {!isOnEdit ? (
+                        text
+                    ) : (
+                        <EditComment
+                            commentId={commentId}
+                            postId={postId}
+                            userId={_id}
+                            text={text}
+                        />
+                    )}
                     {replies &&
                         replies.map((reply) => (
                             <div key={uuidv4()}>

@@ -5,6 +5,7 @@ import {
     ADD_COMMENT,
     COMMENT_ERROR,
     DELETE_COMMENT,
+    UPDATE_COMMENT,
 } from './types';
 
 import { setAlert } from './alert';
@@ -47,6 +48,28 @@ export const addComment = (postId, userId, text) => async (dispatch) => {
     }
 };
 
+// Update post comment
+export const updateComment = (commentId, postId, userId, text) => async (
+    dispatch
+) => {
+    try {
+        const body = { text };
+        await axios.put(`/api/comment/update/${commentId}/${userId}`, body);
+
+        dispatch({
+            type: UPDATE_COMMENT,
+        });
+
+        dispatch(setAlert('Your comment was updated successfully!', 'success'));
+
+        dispatch(getComments(postId));
+    } catch (err) {
+        console.error(err.message);
+        dispatch({
+            type: COMMENT_ERROR,
+        });
+    }
+};
 // Delete comment from post
 export const deleteComment = (commentId, postId, userId) => async (
     dispatch
