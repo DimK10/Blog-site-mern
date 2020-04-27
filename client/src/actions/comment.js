@@ -4,10 +4,11 @@ import {
     START_LOADING_COMMENTS,
     COMMENTS_ERROR,
     ADD_COMMENT,
+    UPDATE_COMMENT,
+    START_UPDATING_COMMENT,
     COMMENT_ERROR,
     DELETE_COMMENT,
     START_DELETING_COMMENT,
-    UPDATE_COMMENT,
 } from './types';
 
 import { setAlert } from './alert';
@@ -60,7 +61,7 @@ export const updateComment = (commentId, postId, userId, text) => async (
 ) => {
     try {
         dispatch({
-            type: START_LOADING_COMMENTS,
+            type: START_UPDATING_COMMENT,
         });
 
         const body = { text };

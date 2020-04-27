@@ -2,9 +2,17 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { updateComment } from '../../actions/comment';
+import SecondaryLoading from '../layout/SecondaryLoading';
 
 //TODO - Move to comments folder
-const EditComment = ({ updateComment, commentId, postId, userId, text }) => {
+const EditComment = ({
+    updateComment,
+    commentId,
+    postId,
+    userId,
+    text,
+    comment: { loadingOnUpdate },
+}) => {
     const [commentText, setCommentText] = useState(text);
 
     const onChange = (e) => {
@@ -48,6 +56,11 @@ EditComment.propTypes = {
     postId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
+    comment: PropTypes.object.isRequired,
 };
 
-export default connect(null, { updateComment })(EditComment);
+const mapStateToProps = (state) => ({
+    comment: state.comment,
+});
+
+export default connect(mapStateToProps, { updateComment })(EditComment);

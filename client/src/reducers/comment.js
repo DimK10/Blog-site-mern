@@ -6,12 +6,15 @@ import {
     DELETE_COMMENT,
     START_DELETING_COMMENT,
     START_LOADING_COMMENTS,
+    UPDATE_COMMENT,
+    START_UPDATING_COMMENT,
 } from '../actions/types';
 
 const initialState = {
     comments: [],
     comment: {},
     loading: true,
+    loadingOnUpdate: false,
     loadingOnDelete: false,
     error: {},
 };
@@ -36,6 +39,11 @@ export default function (state = initialState, action) {
                 ...state,
                 loadingOnDelete: true,
             };
+        case START_UPDATING_COMMENT:
+            return {
+                ...state,
+                loadingOnUpdate: true,
+            };
         case DELETE_COMMENT:
             return {
                 ...state,
@@ -57,6 +65,7 @@ export default function (state = initialState, action) {
                 loading: false,
             };
         case ADD_COMMENT:
+        case UPDATE_COMMENT:
         default:
             return state;
     }
