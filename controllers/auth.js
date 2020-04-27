@@ -161,7 +161,7 @@ async function signin(req, res) {
                 '-salt -hashed_password'
             );
             // User is already authenticated
-            return res.json(user);
+            return res.json({ id: user._id });
         }
 
         let user = await User.findOne({ email }).select(
@@ -194,7 +194,7 @@ async function signin(req, res) {
             expiresIn: 360000,
         });
 
-        return res.json({ token, user });
+        return res.json({ token, user: { id: user._id } });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');

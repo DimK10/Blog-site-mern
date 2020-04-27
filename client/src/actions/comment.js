@@ -1,10 +1,12 @@
 import axios from 'axios';
 import {
     GET_COMMENTS,
+    START_LOADING_COMMENTS,
     COMMENTS_ERROR,
     ADD_COMMENT,
     COMMENT_ERROR,
     DELETE_COMMENT,
+    START_DELETING_COMMENT,
     UPDATE_COMMENT,
 } from './types';
 
@@ -29,6 +31,10 @@ export const getComments = (postId) => async (dispatch) => {
 // Add comment to post
 export const addComment = (postId, userId, text) => async (dispatch) => {
     try {
+        dispatch({
+            type: START_LOADING_COMMENTS,
+        });
+
         const body = { text };
         await axios.post(`/api/comment/create/${postId}/${userId}`, body);
 
@@ -53,6 +59,10 @@ export const updateComment = (commentId, postId, userId, text) => async (
     dispatch
 ) => {
     try {
+        dispatch({
+            type: START_LOADING_COMMENTS,
+        });
+
         const body = { text };
         await axios.put(`/api/comment/update/${commentId}/${userId}`, body);
 
@@ -75,6 +85,10 @@ export const deleteComment = (commentId, postId, userId) => async (
     dispatch
 ) => {
     try {
+        dispatch({
+            type: START_DELETING_COMMENT,
+        });
+
         await axios.delete(`/api/comment/delete/${commentId}/${userId}`);
 
         dispatch({

@@ -22,10 +22,10 @@ const Signin = ({ login, isAuthenticated, location }) => {
 
     // Redirect if logged in
     if (isAuthenticated) {
-        if (location.pathname) {
-            // User was sent from a page, so redirect to that page
-            return <Redirect to={location.state.prevPath} />;
-        }
+        // if (location.pathname) {
+        //     // User was sent from a page, so redirect to that page
+        //     return <Redirect to={location.state.prevPath} />;
+        // }
         return <Redirect to='/' />;
     }
 

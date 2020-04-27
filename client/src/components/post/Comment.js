@@ -6,6 +6,7 @@ import Avatar from '../layout/Avatar';
 import EditComment from './EditComment';
 import { deleteComment } from '../../actions/comment';
 import AddReply from '../reply/AddReply';
+import SecondaryLoading from '../layout/SecondaryLoading';
 
 //TODO - Move to comments folder
 const Comment = ({
@@ -17,6 +18,7 @@ const Comment = ({
         userId: { _id, avatarId, name },
         replies = [],
     },
+    commentState: { loadingOnDelete },
     auth: { isAuthenticated, loading, user },
 }) => {
     const [isOnEdit, setIsOnEdit] = useState(false);
@@ -49,8 +51,11 @@ const Comment = ({
                     <h5 className='mt-0'>
                         {name}{' '}
                         <div className='d-flex justify-content-end'>
-                            {!loading && isAuthenticated && user._id === _id && (
+                            {!loading && isAuthenticated && user.id === _id && (
                                 <Fragment>
+                                    {loadingOnDelete && (
+                                        <SecondaryLoading width={'30px'} />
+                                    )}
                                     <span
                                         id='operations'
                                         onClick={(e) => onEditClick()}
@@ -79,7 +84,7 @@ const Comment = ({
                                 <Fragment>
                                     {!loading &&
                                     isAuthenticated &&
-                                    user._id === _id ? (
+                                    user.id === _id ? (
                                         <Fragment>
                                             {text}
                                             {'   '}
@@ -92,7 +97,7 @@ const Comment = ({
                                             </button>
                                         </Fragment>
                                     ) : (
-                                        { text }
+                                        <Fragment>{text}</Fragment>
                                     )}
                                 </Fragment>
                             ) : (
@@ -137,12 +142,14 @@ const Comment = ({
 
 Comment.propTypes = {
     comment: PropTypes.object.isRequired,
+    commentState: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
     deleteComment: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
+    commentState: state.comment,
 });
 
 export default connect(mapStateToProps, { deleteComment })(Comment);

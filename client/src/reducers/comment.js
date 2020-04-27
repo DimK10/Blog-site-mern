@@ -4,12 +4,15 @@ import {
     ADD_COMMENT,
     COMMENT_ERROR,
     DELETE_COMMENT,
+    START_DELETING_COMMENT,
+    START_LOADING_COMMENTS,
 } from '../actions/types';
 
 const initialState = {
     comments: [],
     comment: {},
     loading: true,
+    loadingOnDelete: false,
     error: {},
 };
 
@@ -23,6 +26,16 @@ export default function (state = initialState, action) {
                 comments: payload,
                 loading: false,
             };
+        case START_LOADING_COMMENTS:
+            return {
+                ...state,
+                loading: true,
+            };
+        case START_DELETING_COMMENT:
+            return {
+                ...state,
+                loadingOnDelete: true,
+            };
         case DELETE_COMMENT:
             return {
                 ...state,
@@ -30,6 +43,7 @@ export default function (state = initialState, action) {
                     (comment) => comment._id !== payload.id
                 ),
                 loading: false,
+                loadingOnDelete: false,
             };
         case COMMENT_ERROR:
             return {

@@ -12,21 +12,21 @@ import Comment from './Comment';
 import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
 import noImg from '../../images/no-thumbnail-medium.png';
-import SubmitComment from './AddComment';
+import AddComment from './AddComment';
 
 const Post = ({
     getPost,
     getComments,
     auth: { isAuthenticated },
     postObj: { post, loading },
-    comment: { comments },
+    comment: { comments, commentsLoading },
     match,
     location,
 }) => {
     useEffect(() => {
         getPost(match.params.id);
         getComments(match.params.id);
-    }, [getPost, getComments]);
+    }, [getPost]);
 
     return loading || post === null ? (
         <div className='mt-5'>
@@ -72,7 +72,7 @@ const Post = ({
                             {/* <!-- Comments Form --> */}
                             {/* TODO - Mae comments functional */}
                             {isAuthenticated ? (
-                                <SubmitComment
+                                <AddComment
                                     postId={post._id}
                                     userId={post.author._id}
                                 />
@@ -114,27 +114,21 @@ const Post = ({
                             )}
                         </div>
                         {/* <!-- Comment with nested comments --> */}
-                        <ReactCSSTransitionGroup
-                            transitionName={{
-                                enter: 'enter',
-                                leave: 'leave',
-                                appear: 'appear',
-                            }}
-                            transitionAppear={true}
-                            transitionAppearTimeout={1500}
-                            transitionEnterTimeout={1500}
-                            transitionLeaveTimeout={1300}
-                        >
-                            {/* TODO - Remove comments from post object returned from api */}
-                            {comments &&
-                                comments.map((comment) => (
-                                    <Comment
-                                        comment={comment}
-                                        key={uuidv4()}
-                                        type='child'
-                                    />
-                                ))}
-                        </ReactCSSTransitionGroup>
+                        {!commentsLoading ? (
+                            <Fragment>
+                                {/* TODO - Remove comments from post object returned from api */}
+                                {comments &&
+                                    comments.map((comment) => (
+                                        <Comment
+                                            comment={comment}
+                                            key={uuidv4()}
+                                            type='child'
+                                        />
+                                    ))}
+                            </Fragment>
+                        ) : (
+                            <TreeLoading />
+                        )}
                     </div>
 
                     {/* <!-- Sidebar Widgets Column --> */}

@@ -2,10 +2,13 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { addComment } from '../../actions/comment';
 import { connect } from 'react-redux';
+import SecondaryLoading from '../layout/SecondaryLoading';
 
 //TODO - Move to comments folder
-const AddComment = ({ postId, userId, addComment }) => {
+const AddComment = ({ postId, userId, addComment, comment }) => {
     const [commentText, setCommentText] = useState('');
+
+    //TODO - Change to a loading animation
 
     const onChange = (e) => {
         setCommentText(e.target.value);
@@ -29,9 +32,12 @@ const AddComment = ({ postId, userId, addComment }) => {
                                 onChange={(e) => onChange(e)}
                             ></textarea>
                         </div>
-                        <button type='submit' className='btn btn-primary'>
-                            Submit
-                        </button>
+                        <div className='d-flex justify-content-start'>
+                            <button type='submit' className='btn btn-primary'>
+                                Submit
+                            </button>
+                            {comment.loading && <SecondaryLoading />}
+                        </div>
                     </form>
                 </div>
             </div>
@@ -43,6 +49,11 @@ AddComment.propTypes = {
     postId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
     addComment: PropTypes.func.isRequired,
+    comment: PropTypes.object.isRequired,
 };
 
-export default connect(null, { addComment })(AddComment);
+const mapStateToProps = (state) => ({
+    comment: state.comment,
+});
+
+export default connect(mapStateToProps, { addComment })(AddComment);
