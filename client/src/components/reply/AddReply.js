@@ -1,25 +1,21 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
-import { addComment } from '../../actions/comment';
-import { connect } from 'react-redux';
 
-//TODO - Move to comments folder
-const AddComment = ({ postId, userId, addComment }) => {
-    const [commentText, setCommentText] = useState('');
+const AddReply = ({ text }) => {
+    const [replyText, setReplyText] = useState('');
 
     const onChange = (e) => {
-        setCommentText(e.target.value);
+        setReplyText(e.target.value);
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-        addComment(postId, userId, commentText);
+        // addComment(postId, userId, commentText);
     };
-
     return (
         <Fragment>
             <div className='card my-4'>
-                <h5 className='card-header'>Leave a Comment:</h5>
+                <h5 className='card-header'>Leave a Reply:</h5>
                 <div className='card-body'>
                     <form className='form' onSubmit={(e) => onSubmit(e)}>
                         <div className='form-group'>
@@ -39,10 +35,6 @@ const AddComment = ({ postId, userId, addComment }) => {
     );
 };
 
-AddComment.propTypes = {
-    postId: PropTypes.string.isRequired,
-    userId: PropTypes.string.isRequired,
-    addComment: PropTypes.func.isRequired,
-};
+AddReply.propTypes = {};
 
-export default connect(null, { addComment })(AddComment);
+export default AddReply;

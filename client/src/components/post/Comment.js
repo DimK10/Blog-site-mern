@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Avatar from '../layout/Avatar';
 import EditComment from './EditComment';
 import { deleteComment } from '../../actions/comment';
+import AddReply from '../reply/AddReply';
 
 //TODO - Move to comments folder
 const Comment = ({
@@ -20,12 +21,18 @@ const Comment = ({
 }) => {
     const [isOnEdit, setIsOnEdit] = useState(false);
 
+    const [onReply, setOnReply] = useState(false);
+
     const onClick = () => {
         deleteComment(commentId, postId, _id);
     };
 
     const onEditClick = () => {
         setIsOnEdit(!isOnEdit);
+    };
+
+    const onReplyClick = () => {
+        setOnReply(!onReply);
     };
 
     return (
@@ -67,7 +74,31 @@ const Comment = ({
                         </div>
                     </h5>
                     {!isOnEdit ? (
-                        text
+                        <Fragment>
+                            {!onReply ? (
+                                <Fragment>
+                                    {!loading &&
+                                    isAuthenticated &&
+                                    user._id === _id ? (
+                                        <Fragment>
+                                            {text}
+                                            {'   '}
+                                            <button
+                                                className='btn btn-primary d-flex justify-content-end'
+                                                onClick={() => onReplyClick()}
+                                            >
+                                                {' '}
+                                                reply
+                                            </button>
+                                        </Fragment>
+                                    ) : (
+                                        { text }
+                                    )}
+                                </Fragment>
+                            ) : (
+                                <AddReply />
+                            )}
+                        </Fragment>
                     ) : (
                         <EditComment
                             commentId={commentId}
