@@ -37,6 +37,10 @@ const Comment = ({
         setOnReply(!onReply);
     };
 
+    const cancelReply = () => {
+        setOnReply(false);
+    };
+
     return (
         <Fragment>
             <div className='media mb-4'>
@@ -101,7 +105,15 @@ const Comment = ({
                                     )}
                                 </Fragment>
                             ) : (
-                                <AddReply />
+                                <Fragment>
+                                    {text}
+                                    <AddReply
+                                        commentId={commentId}
+                                        postId={postId}
+                                        userId={user.id}
+                                        cancelReply={cancelReply}
+                                    />
+                                </Fragment>
                             )}
                         </Fragment>
                     ) : (

@@ -12,7 +12,6 @@ import {
 
 const initialState = {
     comments: [],
-    comment: {},
     loading: true,
     loadingOnUpdate: false,
     loadingOnDelete: false,
