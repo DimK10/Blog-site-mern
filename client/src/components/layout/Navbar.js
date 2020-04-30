@@ -51,9 +51,9 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                 </a>
             </li>
             <li className='nav-item'>
-                <a className='nav-link' href='./nature-blog-create-post.html'>
+                <Link className='nav-link' to='/post/create'>
                     Create a Post
-                </a>
+                </Link>
             </li>
             <li className='nav-item'>
                 <a

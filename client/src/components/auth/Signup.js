@@ -81,7 +81,8 @@ const Signup = ({
             formData.append('about', about);
             formData.append('interests', JSON.stringify(interests));
 
-            registerUser(formData);
+            console.log(...formData);
+            // registerUser(formData);
         }
     };
 
@@ -110,39 +111,38 @@ const Signup = ({
                                 <label htmlFor='img-preview'>
                                     Image to upload
                                 </label>
-                                <div className=''>
-                                    <div className='text-center col-xxs-12 col-xs-10'>
-                                        <img
-                                            src={imagePreview}
-                                            id='img-preview'
-                                            className='rounded '
-                                            style={{
-                                                width: '200px',
-                                                height: '200px',
-                                            }}
-                                            alt='img_preview'
-                                        ></img>
 
-                                        <i
-                                            className='fas fa-times-circle fa-2x'
-                                            style={{
-                                                position: 'absolute',
-                                                color: 'Tomato',
-                                            }}
-                                            onClick={() => {
-                                                setImagePreview('');
-                                                setFormValues({
-                                                    ...formValues,
-                                                    avatar: null,
-                                                });
-                                            }}
-                                        ></i>
+                                <div className='text-center col-xxs-12 col-xs-10'>
+                                    <img
+                                        src={imagePreview}
+                                        id='img-preview'
+                                        className='rounded '
+                                        style={{
+                                            width: '200px',
+                                            height: '200px',
+                                        }}
+                                        alt='img_preview'
+                                    ></img>
 
-                                        {/* <div className='col-auto pl-0'>
+                                    <i
+                                        className='fas fa-times-circle fa-2x'
+                                        style={{
+                                            position: 'absolute',
+                                            color: 'Tomato',
+                                        }}
+                                        onClick={() => {
+                                            setImagePreview('');
+                                            setFormValues({
+                                                ...formValues,
+                                                avatar: null,
+                                            });
+                                        }}
+                                    ></i>
+
+                                    {/* <div className='col-auto pl-0'>
                                             {' '}
                                             <i className='fas fa-times-circle'></i>
                                         </div> */}
-                                    </div>
                                 </div>
                             </Fragment>
                         )}
@@ -277,6 +277,7 @@ Signup.propTypes = {
     registerUser: PropTypes.func.isRequired,
     setAlert: PropTypes.func.isRequired,
     category: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
