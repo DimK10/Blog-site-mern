@@ -7,6 +7,7 @@ import EditComment from './EditComment';
 import { deleteComment } from '../../actions/comment';
 import AddReply from '../reply/AddReply';
 import SecondaryLoading from '../layout/SecondaryLoading';
+import Reply from '../reply/Reply';
 
 //TODO - Move to comments folder
 const Comment = ({
@@ -18,9 +19,16 @@ const Comment = ({
         userId: { _id, avatarId, name },
         replies = [],
     },
-    commentState: { loadingOnDelete },
-    auth: { isAuthenticated, loading, user },
+    commentState: {
+        loadingReply,
+        loadingOnUpdateReply,
+        loadingOnDeleteReply,
+        loadingOnDelete,
+    },
+    auth,
 }) => {
+    const { isAuthenticated, loading, user } = auth;
+
     const [isOnEdit, setIsOnEdit] = useState(false);
 
     const [onReply, setOnReply] = useState(false);
@@ -126,25 +134,15 @@ const Comment = ({
                     )}
                     {replies &&
                         replies.map((reply) => (
-                            <div key={uuidv4()}>
-                                <div className='media mt-4'>
-                                    {reply.userId.avatarId ? (
-                                        <Avatar
-                                            url={`/api/user/image${reply.userId.avatarId}`}
-                                        />
-                                    ) : (
-                                        <div className='d-flex mr-3 rounded-circle'>
-                                            <i className='fas fa-user fa-2x'></i>
-                                        </div>
-                                    )}
-                                    <div className='media-body'>
-                                        <h5 className='mt-0'>
-                                            {reply.userId.name}
-                                        </h5>
-                                        {reply.text}
-                                    </div>
-                                </div>
-                            </div>
+                            <Reply
+                                key={uuidv4()}
+                                reply={reply}
+                                postId={postId}
+                                loadindReply={loadingReply}
+                                loadingOnUpdateReply={loadingOnUpdateReply}
+                                loadingOnDeleteReply={loadingOnDeleteReply}
+                                auth={auth}
+                            />
                         ))}
                 </div>
             </div>

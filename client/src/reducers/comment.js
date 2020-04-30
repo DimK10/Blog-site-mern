@@ -8,13 +8,22 @@ import {
     START_LOADING_COMMENTS,
     UPDATE_COMMENT,
     START_UPDATING_COMMENT,
+    ADD_REPLY,
+    UPDATE_REPLY,
+    START_UPDATING_REPLY,
+    DELETE_REPLY,
+    START_DELETING_REPLY,
+    REPLY_ERROR,
 } from '../actions/types';
 
 const initialState = {
     comments: [],
     loading: true,
+    loadingReply: true,
     loadingOnUpdate: false,
     loadingOnDelete: false,
+    loadingOnUpdateReply: false,
+    loadingOnDeleteReply: false,
     error: {},
 };
 
@@ -27,6 +36,8 @@ export default function (state = initialState, action) {
                 ...state,
                 comments: payload,
                 loading: false,
+                loadingOnUpdateReply: false,
+                loadingOnDeleteReply: false,
             };
         case START_LOADING_COMMENTS:
             return {
@@ -63,8 +74,27 @@ export default function (state = initialState, action) {
                 ...state,
                 loading: false,
             };
+        case START_DELETING_REPLY:
+            return {
+                ...state,
+                loadingOnDeleteReply: true,
+            };
+        case START_UPDATING_REPLY:
+            return {
+                ...state,
+                loadingOnUpdateReply: true,
+            };
+        case REPLY_ERROR:
+            return {
+                ...state,
+                error: payload,
+                loadingReply: false,
+            };
+        case ADD_REPLY:
+        case UPDATE_REPLY:
         case ADD_COMMENT:
         case UPDATE_COMMENT:
+        case DELETE_REPLY:
         default:
             return state;
     }

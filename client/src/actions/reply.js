@@ -3,7 +3,8 @@ import {
     ADD_REPLY,
     UPDATE_REPLY,
     START_UPDATING_REPLY,
-    // DELETE_REPLY,
+    START_DELETING_REPLY,
+    DELETE_REPLY,
     REPLY_ERROR,
 } from './types.js';
 import { setAlert } from './alert.js';
@@ -44,7 +45,7 @@ export const updateReply = (replyId, postId, userId, text) => async (
         });
 
         const body = { text };
-        await axios.put(`/api/reply/update/${replyId}/${userId}`);
+        await axios.put(`/api/reply/update/${replyId}/${userId}`, body);
 
         dispatch({
             type: UPDATE_REPLY,
@@ -65,19 +66,18 @@ export const updateReply = (replyId, postId, userId, text) => async (
 export const deleteReply = (replyId, postId, userId) => async (dispatch) => {
     try {
         dispatch({
-            type: START_UPDATING_REPLY,
+            type: START_DELETING_REPLY,
         });
 
         await axios.delete(`/api/reply/delete/${replyId}/${userId}`);
 
-        // dispatch({
-        //     type: DELETE_REPLY,
-        //     payload: { id: replyId },
-        // });
-
-        dispatch(setAlert('reply deleted successfully!', 'success'));
+        dispatch({
+            type: DELETE_REPLY,
+        });
 
         dispatch(getComments(postId));
+
+        dispatch(setAlert('reply deleted successfully!', 'success'));
     } catch (err) {
         console.error(err.message);
         dispatch({
