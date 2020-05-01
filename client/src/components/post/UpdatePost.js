@@ -6,31 +6,49 @@ import { Redirect } from 'react-router-dom';
 import Select from 'react-select';
 import { createNewPost } from '../../actions/post';
 import { getAllCategories } from '../../actions/category';
+import TreeLoading from '../layout/TreeLoading';
 
 const UpdatePost = ({
     getAllCategories,
-    category: { categories, options, loading: categoriesLoading },
+    category: { options, loading: categoriesLoading },
     auth: { isAuthenticated, user },
     post: { post, loading: postLoading },
 }) => {
-    const [updatedOptions, setUpdatedOptions] = useState(options);
+    useEffect(() => {
+        const getCategoriesAndInitOptions = async () => {
+            await getAllCategories();
+        };
+
+        getCategoriesAndInitOptions();
+    }, []);
 
     useEffect(() => {
-        getAllCategories();
-        if (!categoriesLoading) {
-            const newOptions = options.filter(
+        console.log('options ', options);
+        setUpdatedOptions(
+            options.filter(
                 (option) =>
                     post.categories
                         .map((category) => category._id)
                         .indexOf(option.value) === -1
-            );
-            console.log('new options ', newOptions);
-
-            setUpdatedOptions(newOptions);
-        }
-    }, [getAllCategories]);
+            )
+        );
+    }, [options]);
 
     const [imagePreview, setImagePreview] = useState('');
+
+    const [updatedOptions, setUpdatedOptions] = useState([]);
+
+    // if (!categoriesLoading && !updatedOptions.length > 0) {
+    //     const newOptions = options.filter(
+    //         (option) =>
+    //             post.categories
+    //                 .map((category) => category._id)
+    //                 .indexOf(option.value) === -1
+    //     );
+    //     console.log('new options ', newOptions);
+
+    //     setUpdatedOptions(newOptions);
+    // }
 
     if (post.image && imagePreview === '') {
         setImagePreview(`data:image/jpeg;base64,${post.image}`);
@@ -40,7 +58,7 @@ const UpdatePost = ({
         image: post.image,
         title: post.title,
         description: post.description,
-        postCategories: post.categories,
+        postCategories: post.categories.map((category) => category._id),
     });
 
     const { image, title, description, postCategories } = formValues;
@@ -54,14 +72,15 @@ const UpdatePost = ({
     };
 
     const onSelectChange = (categories) => {
+        console.log('categories in select ', categories);
+
         if (categories && categories.length > 0) {
             setFormValues({
                 ...formValues,
-                ...{
-                    postCategories: [
-                        ...categories.map((category) => category.value),
-                    ],
-                },
+
+                postCategories: [
+                    ...categories.map((category) => category.value),
+                ],
             });
         } else {
             setFormValues({
@@ -100,13 +119,15 @@ const UpdatePost = ({
         }
     };
 
-    return (
+    return !categoriesLoading && updatedOptions.length > 0 ? (
         <Fragment>
             <div className='container'>
                 {/* <!-- jumbotron --> */}
                 <div className='jumbotron mt-3 mb-3'>
-                    <h1 className='large-text primary'>Create a new Post!</h1>
-                    <p className='lead'>Feel free to share your thoughts!</p>
+                    <h1 className='large-text primary'>Update Your Post!</h1>
+                    <p className='lead'>
+                        Fix that small mistake and make your post THE BEST!
+                    </p>
                     <p>* required field</p>
                 </div>
                 {/* <!-- image upload --> */}
@@ -182,7 +203,7 @@ const UpdatePost = ({
                             placeholder="Post's Title"
                             name='title'
                             onChange={(e) => onChange(e)}
-                            value={post.title}
+                            defaultValue={post.title}
                         />
                     </div>
                     <div className='form-group'>
@@ -202,8 +223,8 @@ const UpdatePost = ({
                                 ],
                                 toolbar:
                                     'undo redo | formatselect | bold italic | \
-            alignleft aligncenter alignright | \
-            bullist numlist outdent indent | link image media | help',
+                                    alignleft aligncenter alignright | \
+                                    bullist numlist outdent indent | link image media | help',
                             }}
                             onChange={handleEditorChange}
                         />{' '}
@@ -213,14 +234,14 @@ const UpdatePost = ({
                             * Categories - Tags (Choose one or more)
                         </label>
                         <Select
-                            value={post.categories}
+                            defaultValue={updatedOptions}
                             isMulti={true}
                             isSearchable={true}
                             name='categories'
                             onChange={(categories) => {
                                 onSelectChange(categories);
                             }}
-                            options={updatedOptions}
+                            options={options}
                         />
                     </div>
                     <div className='row mb-4'>
@@ -236,6 +257,8 @@ const UpdatePost = ({
                 </form>
             </div>
         </Fragment>
+    ) : (
+        <TreeLoading />
     );
 };
 
