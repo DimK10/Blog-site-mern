@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { GET_POSTS, POST_ERROR, GET_POST } from './types';
+import { GET_POSTS, POST_ERROR, GET_POST, CREATE_POST } from './types';
 import { setAlert } from './alert';
+import { body } from 'express-validator/check';
 
 // Get posts
 export const getPosts = () => async (dispatch) => {
@@ -38,6 +39,37 @@ export const getPost = (postId) => async (dispatch) => {
                 msg: err.response.statusText,
                 status: err.response.status,
             },
+        });
+    }
+};
+
+// Create a new post
+export const createNewPost = (userId, formData) => async (dispatch) => {
+    try {
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
+
+        let res = await axios.post(
+            `/api/post/create/${userId}`,
+            formData,
+            config
+        );
+
+        dispatch({
+            type: CREATE_POST,
+            payload: res.data,
+        });
+
+        dispatch(setAlert('Your post was created successfully!', 'success'));
+    } catch (err) {
+        console.error(err);
+        dispatch({
+            type: POST_ERROR,
+            msg: err.response.statusText,
+            status: err.response.status,
         });
     }
 };

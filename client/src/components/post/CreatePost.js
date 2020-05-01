@@ -2,13 +2,17 @@ import React, { Fragment, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from '@tinymce/tinymce-react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import Select from 'react-select';
+import { createNewPost } from '../../actions/post';
 import { getAllCategories } from '../../actions/category';
 
 const CreatePost = ({
     getAllCategories,
+    createNewPost,
     category: { categories, options, loading },
-    auth: { isAuthenticated },
+    auth: { isAuthenticated, user },
+    post: { post, loading: postLoading },
 }) => {
     useEffect(() => {
         getAllCategories();
@@ -17,13 +21,13 @@ const CreatePost = ({
     const [imagePreview, setImagePreview] = useState('');
 
     const [formValues, setFormValues] = useState({
-        avatar: {},
+        image: {},
         title: '',
         description: '',
         postCategories: [],
     });
 
-    const { avatar, title, description, postCategories } = formValues;
+    const { avatar: image, title, description, postCategories } = formValues;
 
     const handleEditorChange = (e) => {
         // console.log('Content was updated:', e.target.getContent());
@@ -52,7 +56,7 @@ const CreatePost = ({
     };
 
     const onAvatarChange = (e) => {
-        setFormValues({ ...formValues, avatar: e.target.files[0] });
+        setFormValues({ ...formValues, image: e.target.files[0] });
     };
 
     const onChange = (e) =>
@@ -64,14 +68,20 @@ const CreatePost = ({
         // TODO - regiterUser
         // Creat formData object and add values
         let formData = new FormData();
-        formData.append('avatar', avatar);
+        formData.append('image', image);
         formData.append('title', title);
         formData.append('description', description);
         formData.append('categories', JSON.stringify(postCategories));
 
-        console.log(...formData);
+        // console.log(...formData);
 
-        // registerUser(formData);
+        createNewPost(user.id, formData);
+
+        if (!postLoading) {
+            if (post) {
+                return <Redirect to={`/post/${post._id}`} />;
+            }
+        }
     };
 
     return (
@@ -160,7 +170,7 @@ const CreatePost = ({
                     </div>
                     <div className='form-group'>
                         {/* <!-- There is a tinyMCE fore react  link: https://www.tiny.cloud/docs/integrations/react/ --> */}
-                        <label for='editor'>* Description</label>
+                        <label htmlFor='editor'>* Description</label>
                         <Editor
                             apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
                             init={{
@@ -181,7 +191,7 @@ const CreatePost = ({
                         />{' '}
                     </div>
                     <div className='form-group'>
-                        <label for='categories'>
+                        <label htmlFor='categories'>
                             * Categories - Tags (Choose one or more)
                         </label>
                         <Select
@@ -199,9 +209,9 @@ const CreatePost = ({
                             <button type='submit' className='btn btn-primary'>
                                 Submit
                             </button>
-                            <button className='btn btn-alert'>
+                            {/* <button className='btn btn-alert'>
                                 Preview Post
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </form>
@@ -212,6 +222,7 @@ const CreatePost = ({
 
 CreatePost.propTypes = {
     getAllCategories: PropTypes.func.isRequired,
+    createNewPost: PropTypes.func.isRequired,
     category: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
 };
@@ -219,6 +230,10 @@ CreatePost.propTypes = {
 const mapStateToProps = (state) => ({
     category: state.category,
     auth: state.auth,
+    post: state.post,
 });
 
-export default connect(mapStateToProps, { getAllCategories })(CreatePost);
+export default connect(mapStateToProps, {
+    getAllCategories,
+    createNewPost,
+})(CreatePost);

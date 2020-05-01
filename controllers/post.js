@@ -43,12 +43,15 @@ const readPostComments = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        let { title, description, author } = req.body;
+        let { title, description } = req.body;
         let imageId = null;
         let image = req.file;
+        let author = req.profile._id;
 
         //TODO - Only for testing in postman - delete
         // console.log("categories ", typeof categories);
+
+        console.log('image ', image);
 
         // TODO - might need to change the way I handle arrays
         let categories = JSON.parse(req.body.categories).map((catId) => catId);

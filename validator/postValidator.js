@@ -15,10 +15,9 @@ exports.postValidator = (req, res, next) => {
             .isEmpty()
             .isLength({
                 min: 6,
-                max: 2000,
             })
             .withMessage(
-                'For performance reasons, a blog post cannot be more than 2000 characters long and less than 6 characters'
+                'For performance reasons, a blog post cannot be more than 20000 characters long and less than 6 characters'
             );
         req.check('categories', 'A post must have at least one tag/category')
             .not()
