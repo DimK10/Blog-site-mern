@@ -1,4 +1,10 @@
-import { GET_POSTS, GET_POST, POST_ERROR, CREATE_POST } from '../actions/types';
+import {
+    GET_POSTS,
+    GET_POST,
+    POST_ERROR,
+    CREATE_POST,
+    GET_POST_IMAGE,
+} from '../actions/types';
 const initialState = {
     posts: [],
     post: null,
@@ -20,6 +26,12 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 post: payload,
+                loading: false,
+            };
+        case GET_POST_IMAGE:
+            return {
+                ...state,
+                post: { ...state.post, image: payload },
                 loading: false,
             };
         case CREATE_POST:

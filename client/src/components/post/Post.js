@@ -1,23 +1,24 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getPost } from '../../actions/post';
+import { getPost, getPostImage } from '../../actions/post';
 import { getComments } from '../../actions/comment';
 import ReactHtmlParser from 'react-html-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { NavLink } from 'react-router-dom';
 import Moment from 'react-moment';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import Comment from './Comment';
+import Comment from '../comment/Comment';
 import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
 import noImg from '../../images/no-thumbnail-medium.png';
-import AddComment from './AddComment';
+import AddComment from '../comment/AddComment';
 
 const Post = ({
     getPost,
+    getPostImage,
     getComments,
-    auth: { isAuthenticated },
+    auth: { isAuthenticated, loading: authLoading, user },
     postObj: { post, loading },
     comment: { comments, commentsLoading },
     match,
@@ -25,8 +26,13 @@ const Post = ({
 }) => {
     useEffect(() => {
         getPost(match.params.id);
+        getPostImage(match.params.id);
         getComments(match.params.id);
     }, [getPost]);
+
+    const onDeletePostBtnClick = () => {
+        // Delete post here and redirect to /
+    };
 
     return loading || post === null ? (
         <div className='mt-5'>
@@ -43,6 +49,7 @@ const Post = ({
                     <div className='col-lg-8 mt-5'>
                         {/* <!-- Preview Image --> */}
                         {post.imageId ? (
+                            //TODO - Use Redux here - Remake the component below
                             <Image url={`/api/post/image/${match.params.id}`} />
                         ) : (
                             <img
@@ -53,18 +60,41 @@ const Post = ({
                         )}
                         <hr></hr>
                         {/* <!-- Date/Time --> */}
-                        <p>
-                            Posted on{' '}
-                            <Moment format='MMMM Do YYYY'>
-                                {post.createdAt}
-                            </Moment>
-                        </p>
+                        <Fragment>
+                            <p>
+                                Posted on{' '}
+                                <Moment format='MMMM Do YYYY'>
+                                    {post.createdAt}
+                                </Moment>
+                            </p>
+                            {!authLoading &&
+                                isAuthenticated &&
+                                user.id === post.author._id && (
+                                    <Fragment>
+                                        <NavLink
+                                            className='btn btn-primary mr-3'
+                                            to={'/post/update'}
+                                        >
+                                            Update Post
+                                        </NavLink>
+
+                                        <button
+                                            className='btn btn-alert'
+                                            onClick={() =>
+                                                onDeletePostBtnClick()
+                                            }
+                                        >
+                                            Delete Post
+                                        </button>
+                                    </Fragment>
+                                )}
+                        </Fragment>
                         <hr></hr>
                         {/* <!-- Post Content --> */}
                         {<p className='lead'>{post.title}</p>}
                         {/* TODO - Remove after */}
                         {/* {<p>{post.description}</p>} */}
-                        <p>{ReactHtmlParser(post.description)}</p>
+                        {ReactHtmlParser(post.description)}
 
                         <hr></hr>
 
@@ -197,6 +227,7 @@ const Post = ({
 
 Post.propTypes = {
     getPost: PropTypes.func.isRequired,
+    getPostImage: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
     postObj: PropTypes.object.isRequired,
     comment: PropTypes.object.isRequired,
@@ -208,4 +239,6 @@ const mapStateToProps = (state) => ({
     comment: state.comment,
 });
 
-export default connect(mapStateToProps, { getPost, getComments })(Post);
+export default connect(mapStateToProps, { getPost, getPostImage, getComments })(
+    Post
+);

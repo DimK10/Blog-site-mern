@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { GET_POSTS, POST_ERROR, GET_POST, CREATE_POST } from './types';
+import {
+    GET_POSTS,
+    POST_ERROR,
+    GET_POST,
+    GET_POST_IMAGE,
+    CREATE_POST,
+} from './types';
 import { setAlert } from './alert';
 import { body } from 'express-validator/check';
 
@@ -33,6 +39,32 @@ export const getPost = (postId) => async (dispatch) => {
             payload: res.data,
         });
     } catch (err) {
+        dispatch({
+            type: POST_ERROR,
+            payload: {
+                msg: err.response.statusText,
+                status: err.response.status,
+            },
+        });
+    }
+};
+
+// Get post's image
+export const getPostImage = (postId) => async (dispatch) => {
+    try {
+        const config = {
+            responseType: 'arraybuffer',
+        };
+        let res = await axios.get(`/api/post/image/${postId}`, config);
+
+        let base64Url = new Buffer(res.data, 'binary').toString('base64');
+
+        dispatch({
+            type: GET_POST_IMAGE,
+            payload: base64Url,
+        });
+    } catch (err) {
+        console.error(err);
         dispatch({
             type: POST_ERROR,
             payload: {

@@ -38,7 +38,7 @@ const PostItem = ({
                 <div className='card-body'>
                     <h2 className='card-title'>{title}</h2>
                     {/* TODO - Remove this line - all descriptions will be formatted as html */}
-                    <p className='card-text'>{description}</p>
+                    {/* <p className='card-text'>{description}</p> */}
                     {/* <p className='card-text'>{showShortDesc(description)}</p> */}
                     <p>
                         Tags:{' '}
