@@ -215,7 +215,7 @@ const addActionToUserHistory = async (
     data
 ) => {
     try {
-        let user = req.user;
+        let user = req.profile;
 
         user.history.unshift({
             id,

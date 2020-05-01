@@ -27,7 +27,7 @@ const CreatePost = ({
         postCategories: [],
     });
 
-    const { avatar: image, title, description, postCategories } = formValues;
+    const { image, title, description, postCategories } = formValues;
 
     const handleEditorChange = (e) => {
         // console.log('Content was updated:', e.target.getContent());
@@ -55,7 +55,9 @@ const CreatePost = ({
         }
     };
 
-    const onAvatarChange = (e) => {
+    const onImageChange = (e) => {
+        console.log('image e.target.files ', e.target.files);
+
         setFormValues({ ...formValues, image: e.target.files[0] });
     };
 
@@ -73,7 +75,7 @@ const CreatePost = ({
         formData.append('description', description);
         formData.append('categories', JSON.stringify(postCategories));
 
-        // console.log(...formData);
+        console.log(...formData);
 
         createNewPost(user.id, formData);
 
@@ -122,7 +124,7 @@ const CreatePost = ({
                                             setImagePreview('');
                                             setFormValues({
                                                 ...formValues,
-                                                avatar: null,
+                                                image: null,
                                             });
                                         }}
                                     ></i>
@@ -144,7 +146,7 @@ const CreatePost = ({
                                                 e.target.files[0]
                                             )
                                         );
-                                        onAvatarChange(e);
+                                        onImageChange(e);
                                     }
                                 }}
                             />

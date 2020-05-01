@@ -63,8 +63,8 @@ const Post = ({
                         {/* <!-- Post Content --> */}
                         {<p className='lead'>{post.title}</p>}
                         {/* TODO - Remove after */}
-                        {<p>{post.description}</p>}
-                        {/* <p>{ReactHtmlParser(JSON.parse(post.description))}</p> */}
+                        {/* {<p>{post.description}</p>} */}
+                        <p>{ReactHtmlParser(post.description)}</p>
 
                         <hr></hr>
 
