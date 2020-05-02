@@ -5,6 +5,7 @@ import {
     CREATE_POST,
     GET_POST_IMAGE,
     UPDATE_POST,
+    START_GETTING_POST,
 } from '../actions/types';
 const initialState = {
     posts: [],
@@ -19,6 +20,7 @@ const initialState = {
         created_at: '',
         updatedAt: '',
         image: null,
+        loading: true,
     },
     loading: true,
     error: {},
@@ -34,17 +36,20 @@ export default function (state = initialState, action) {
                 posts: payload,
                 loading: false,
             };
+        case START_GETTING_POST:
+            return {
+                ...state,
+                post: { ...state.post, loading: true },
+            };
         case GET_POST:
             return {
                 ...state,
-                post: payload,
-                loading: false,
+                post: { ...payload, loading: false },
             };
         case GET_POST_IMAGE:
             return {
                 ...state,
-                post: { ...state.post, image: payload },
-                loading: false,
+                post: { ...state.post, image: payload, loading: false },
             };
         case CREATE_POST:
             return {

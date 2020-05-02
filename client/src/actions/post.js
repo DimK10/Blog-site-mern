@@ -6,6 +6,7 @@ import {
     GET_POST_IMAGE,
     CREATE_POST,
     UPDATE_POST,
+    START_GETTING_POST,
 } from './types';
 import { setAlert } from './alert';
 
@@ -32,6 +33,10 @@ export const getPosts = () => async (dispatch) => {
 // Get post
 export const getPost = (postId) => async (dispatch) => {
     try {
+        dispatch({
+            type: START_GETTING_POST,
+        });
+
         const res = await axios.get(`/api/post/${postId}`);
 
         dispatch({

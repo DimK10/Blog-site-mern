@@ -18,22 +18,37 @@ const Post = ({
     getPostImage,
     getComments,
     auth: { isAuthenticated, loading: authLoading, user },
-    postObj: { post, loading },
+    postObj: {
+        post: {
+            _id: id,
+            imageId,
+            title,
+            description,
+            categories,
+            loading,
+            createdAt,
+            author,
+        },
+    },
     comment: { comments, commentsLoading },
     match,
     location,
 }) => {
     useEffect(() => {
-        getPost(match.params.id);
-        getPostImage(match.params.id);
-        getComments(match.params.id);
+        const fetchData = async () => {
+            await getPost(match.params.id);
+            getPostImage(match.params.id);
+            getComments(match.params.id);
+        };
+
+        fetchData();
     }, [getPost, getPostImage, getComments, match.params.id]);
 
     const onDeletePostBtnClick = () => {
         // Delete post here and redirect to /
     };
 
-    return loading || post === null ? (
+    return loading || id === null ? (
         <div className='mt-5'>
             <TreeLoading />
         </div>
@@ -47,7 +62,7 @@ const Post = ({
                     {/* <!-- Post Content Column --> */}
                     <div className='col-lg-8 mt-5'>
                         {/* <!-- Preview Image --> */}
-                        {post.imageId ? (
+                        {imageId ? (
                             //TODO - Use Redux here - Remake the component below
                             <Image url={`/api/post/image/${match.params.id}`} />
                         ) : (
@@ -63,16 +78,16 @@ const Post = ({
                             <p>
                                 Posted on{' '}
                                 <Moment format='MMMM Do YYYY'>
-                                    {post.createdAt}
+                                    {createdAt}
                                 </Moment>
                             </p>
                             {!authLoading &&
                                 isAuthenticated &&
-                                user.id === post.author._id && (
+                                user.id === author._id && (
                                     <Fragment>
                                         <NavLink
                                             className='btn btn-primary mr-3'
-                                            to={`/post/update/${post._id}`}
+                                            to={`/post/update/${id}`}
                                         >
                                             Update Post
                                         </NavLink>
@@ -90,10 +105,10 @@ const Post = ({
                         </Fragment>
                         <hr></hr>
                         {/* <!-- Post Content --> */}
-                        {<p className='lead'>{post.title}</p>}
+                        {<p className='lead'>{title}</p>}
                         {/* TODO - Remove after */}
                         {/* {<p>{post.description}</p>} */}
-                        {ReactHtmlParser(post.description)}
+                        {ReactHtmlParser(description)}
 
                         <hr></hr>
 
@@ -101,10 +116,7 @@ const Post = ({
                             {/* <!-- Comments Form --> */}
                             {/* TODO - Mae comments functional */}
                             {isAuthenticated ? (
-                                <AddComment
-                                    postId={post._id}
-                                    userId={post.author._id}
-                                />
+                                <AddComment postId={id} userId={author._id} />
                             ) : (
                                 <div className='card my-4'>
                                     <h4>
@@ -168,10 +180,10 @@ const Post = ({
                             <h5 className='card-header'>Categories</h5>
                             <div className='card-body'>
                                 <div className='row'>
-                                    {post.categories.length > 0 ? (
+                                    {categories.length > 0 ? (
                                         <Fragment>
                                             <div className='col-lg-6'>
-                                                {post.categories.map(
+                                                {categories.map(
                                                     (category, index) =>
                                                         index % 2 === 0 ? (
                                                             <ul
@@ -190,7 +202,7 @@ const Post = ({
                                                 )}
                                             </div>
                                             <div className='col-lg-6'>
-                                                {post.categories.map(
+                                                {categories.map(
                                                     (category, index) =>
                                                         index % 2 === 1 ? (
                                                             <ul
