@@ -9,18 +9,37 @@ const Image = ({ url }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+
         let fetchImg = async () => {
-            let res = await axios.get(url, {
-                responseType: 'arraybuffer',
-            });
+            try {
+                const config = {
+                    responseType: 'arraybuffer',
+                    cancelToken: source.token,
+                };
 
-            let base64Url = new Buffer(res.data, 'binary').toString('base64');
+                let res = await axios.get(url, config);
 
-            setImg(base64Url);
-            setLoading(false);
+                let base64Url = new Buffer(res.data, 'binary').toString(
+                    'base64'
+                );
+
+                setImg(base64Url);
+                setLoading(false);
+            } catch (error) {
+                if (!axios.isCancel(error)) {
+                    console.error(error);
+                }
+            }
         };
 
         fetchImg();
+
+        // Clean up function
+        return () => {
+            source.cancel();
+        };
     }, []);
 
     return (
