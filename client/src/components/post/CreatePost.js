@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from '@tinymce/tinymce-react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import { createNewPost } from '../../actions/post';
 import { getAllCategories } from '../../actions/category';
@@ -13,6 +13,7 @@ const CreatePost = ({
     category: { categories, options, loading },
     auth: { isAuthenticated, user },
     post: { post, loading: postLoading },
+    history,
 }) => {
     useEffect(() => {
         getAllCategories();
@@ -21,7 +22,7 @@ const CreatePost = ({
     const [imagePreview, setImagePreview] = useState('');
 
     const [formValues, setFormValues] = useState({
-        image: {},
+        image: null,
         title: '',
         description: '',
         postCategories: [],
@@ -77,13 +78,9 @@ const CreatePost = ({
 
         console.log(...formData);
 
-        createNewPost(user.id, formData);
+        await createNewPost(user.id, formData);
 
-        if (!postLoading) {
-            if (post) {
-                return <Redirect to={`/post/${post._id}`} />;
-            }
-        }
+        history.push(`/`);
     };
 
     return (
@@ -96,7 +93,10 @@ const CreatePost = ({
                     <p>* required field</p>
                 </div>
                 {/* <!-- image upload --> */}
-                <form className='form' onSubmit={(e) => onSubmit(e)}>
+                <form
+                    className='form'
+                    onSubmit={async (e) => await onSubmit(e)}
+                >
                     <div className='form-group'>
                         {imagePreview && (
                             <Fragment>
@@ -228,6 +228,7 @@ CreatePost.propTypes = {
     createNewPost: PropTypes.func.isRequired,
     category: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -236,7 +237,9 @@ const mapStateToProps = (state) => ({
     post: state.post,
 });
 
-export default connect(mapStateToProps, {
-    getAllCategories,
-    createNewPost,
-})(CreatePost);
+export default withRouter(
+    connect(mapStateToProps, {
+        getAllCategories,
+        createNewPost,
+    })(CreatePost)
+);

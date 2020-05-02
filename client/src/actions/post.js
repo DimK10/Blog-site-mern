@@ -7,6 +7,7 @@ import {
     CREATE_POST,
     UPDATE_POST,
     START_GETTING_POST,
+    DELETE_POST,
 } from './types';
 import { setAlert } from './alert';
 
@@ -103,10 +104,19 @@ export const createNewPost = (userId, formData) => async (dispatch) => {
         dispatch(setAlert('Your post was created successfully!', 'success'));
     } catch (err) {
         console.error(err);
+
+        const errors = err.response.data.errors;
+
+        if (errors) {
+            errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+        }
+
         dispatch({
             type: POST_ERROR,
-            msg: err.response.statusText,
-            status: err.response.status,
+            payload: {
+                msg: err.response.statusText,
+                status: err.response.status,
+            },
         });
     }
 };
@@ -130,6 +140,26 @@ export const updatePost = (postId, userId, formData) => async (dispatch) => {
         });
 
         dispatch(setAlert('Your post was updated successfully!', 'success'));
+    } catch (err) {
+        console.error(err);
+        dispatch({
+            type: POST_ERROR,
+            msg: err.response.statusText,
+            status: err.response.status,
+        });
+    }
+};
+
+// Delete a post
+export const deletePost = (postId, userId) => async (dispatch) => {
+    try {
+        await axios.delete(`/api/delete-post/${postId}/${userId}`);
+
+        dispatch({
+            type: DELETE_POST,
+        });
+
+        dispatch(setAlert('Your post was deleted successfully', 'success'));
     } catch (err) {
         console.error(err);
         dispatch({

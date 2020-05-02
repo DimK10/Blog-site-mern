@@ -1,11 +1,11 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getPost, getPostImage } from '../../actions/post';
+import { getPost, getPostImage, deletePost } from '../../actions/post';
 import { getComments } from '../../actions/comment';
 import ReactHtmlParser from 'react-html-parser';
 import { v4 as uuidv4 } from 'uuid';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 import Moment from 'react-moment';
 import Comment from '../comment/Comment';
 import Image from '../layout/Image';
@@ -17,6 +17,7 @@ const Post = ({
     getPost,
     getPostImage,
     getComments,
+    deletePost,
     auth: { isAuthenticated, loading: authLoading, user },
     postObj: {
         post: {
@@ -33,6 +34,7 @@ const Post = ({
     comment: { comments, commentsLoading },
     match,
     location,
+    history,
 }) => {
     useEffect(() => {
         const fetchData = async () => {
@@ -44,8 +46,10 @@ const Post = ({
         fetchData();
     }, [getPost, getPostImage, getComments, match.params.id]);
 
-    const onDeletePostBtnClick = () => {
+    const onDeletePostBtnClick = async () => {
         // Delete post here and redirect to /
+        await deletePost(id, author._id);
+        history.push('/');
     };
 
     return loading || id === null ? (
@@ -94,8 +98,8 @@ const Post = ({
 
                                         <button
                                             className='btn btn-alert'
-                                            onClick={() =>
-                                                onDeletePostBtnClick()
+                                            onClick={async () =>
+                                                await onDeletePostBtnClick()
                                             }
                                         >
                                             Delete Post
@@ -239,9 +243,13 @@ const Post = ({
 Post.propTypes = {
     getPost: PropTypes.func.isRequired,
     getPostImage: PropTypes.func.isRequired,
+    deletePost: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
     postObj: PropTypes.object.isRequired,
     comment: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -250,6 +258,11 @@ const mapStateToProps = (state) => ({
     comment: state.comment,
 });
 
-export default connect(mapStateToProps, { getPost, getPostImage, getComments })(
-    Post
+export default withRouter(
+    connect(mapStateToProps, {
+        getPost,
+        getPostImage,
+        getComments,
+        deletePost,
+    })(Post)
 );

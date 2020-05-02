@@ -20,8 +20,7 @@ const PostItem = ({
 }) => {
     const showShortDesc = (description) => {
         let stripedDesc = stripHtml(description);
-
-        const indexOfDot = stripedDesc.indexOf('.');
+        const indexOfDot = stripedDesc.indexOf('.') + 1;
         let shortDesc = stripedDesc.substring(0, indexOfDot).replace('"', '');
         return shortDesc;
     };

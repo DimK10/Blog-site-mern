@@ -148,7 +148,10 @@ const remove = async (req, res) => {
         if (post.imageId) {
             // Remove chunks of photo
             const bucket = createBucket();
-            await bucket.deleteFile(post.imageId);
+            await bucket.deleteFile(post.imageId, () => {
+                console.log('image removed');
+                return;
+            });
 
             const Attachment = req.Attachment;
 
@@ -171,7 +174,7 @@ const remove = async (req, res) => {
         await Post.findByIdAndDelete(post.id);
         res.status(200).send('Post deleted successfully');
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         res.status(500).send('Server error');
     }
 };

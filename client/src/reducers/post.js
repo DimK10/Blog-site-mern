@@ -6,22 +6,26 @@ import {
     GET_POST_IMAGE,
     UPDATE_POST,
     START_GETTING_POST,
+    DELETE_POST,
 } from '../actions/types';
+
+const initialPostValues = {
+    comments: [],
+    categories: [],
+    _id: null,
+    imageId: '',
+    title: '',
+    description: '',
+    author: null,
+    created_at: '',
+    updatedAt: '',
+    image: null,
+    loading: true,
+};
+
 const initialState = {
     posts: [],
-    post: {
-        comments: [],
-        categories: [],
-        _id: null,
-        imageId: '',
-        title: '',
-        description: '',
-        author: null,
-        created_at: '',
-        updatedAt: '',
-        image: null,
-        loading: true,
-    },
+    post: initialPostValues,
     loading: true,
     error: {},
 };
@@ -53,8 +57,12 @@ export default function (state = initialState, action) {
             };
         case CREATE_POST:
             return {
-                ...state,
+                ...initialState,
                 post: payload,
+            };
+        case DELETE_POST:
+            return {
+                ...initialState,
             };
         case POST_ERROR:
             return {
