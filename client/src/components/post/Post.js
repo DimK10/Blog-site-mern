@@ -73,7 +73,7 @@ const Post = ({
                                     <Fragment>
                                         <NavLink
                                             className='btn btn-primary mr-3'
-                                            to={'/post/update'}
+                                            to={`/post/update/${post._id}`}
                                         >
                                             Update Post
                                         </NavLink>

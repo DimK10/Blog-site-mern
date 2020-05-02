@@ -4,64 +4,52 @@ import { Editor } from '@tinymce/tinymce-react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import Select from 'react-select';
-import { createNewPost } from '../../actions/post';
+import { updatePost } from '../../actions/post';
 import { getAllCategories } from '../../actions/category';
 import TreeLoading from '../layout/TreeLoading';
 
 const UpdatePost = ({
     getAllCategories,
     category: { options, loading: categoriesLoading },
-    auth: { isAuthenticated, user },
-    post: { post, loading: postLoading },
+    post: { post },
+    match,
 }) => {
     useEffect(() => {
-        const getCategoriesAndInitOptions = async () => {
-            await getAllCategories();
-        };
-
-        getCategoriesAndInitOptions();
-    }, []);
+        getAllCategories();
+    }, [getAllCategories]);
 
     useEffect(() => {
-        console.log('options ', options);
         setUpdatedOptions(
             options.filter(
                 (option) =>
                     post.categories
                         .map((category) => category._id)
-                        .indexOf(option.value) === -1
+                        .indexOf(option.value) !== -1
             )
         );
     }, [options]);
 
-    const [imagePreview, setImagePreview] = useState('');
-
     const [updatedOptions, setUpdatedOptions] = useState([]);
 
-    // if (!categoriesLoading && !updatedOptions.length > 0) {
-    //     const newOptions = options.filter(
-    //         (option) =>
-    //             post.categories
-    //                 .map((category) => category._id)
-    //                 .indexOf(option.value) === -1
-    //     );
-    //     console.log('new options ', newOptions);
-
-    //     setUpdatedOptions(newOptions);
-    // }
-
-    if (post.image && imagePreview === '') {
-        setImagePreview(`data:image/jpeg;base64,${post.image}`);
-    }
-
     const [formValues, setFormValues] = useState({
-        image: post.image,
+        image: post.image ? post.image : null,
         title: post.title,
         description: post.description,
-        postCategories: post.categories.map((category) => category._id),
+        postCategories: post.categories
+            ? post.categories.map((category) => category._id)
+            : [],
     });
 
     const { image, title, description, postCategories } = formValues;
+
+    const [imagePreview, setImagePreview] = useState(
+        post.image ? `data:image/jpeg;base64,${image}` : ''
+    );
+
+    if (!post._id) {
+        // Redirect to original post
+        return <Redirect to={`/post/${match.params.id}`} />;
+    }
 
     const handleEditorChange = (e) => {
         // console.log('Content was updated:', e.target.getContent());
@@ -111,12 +99,6 @@ const UpdatePost = ({
         formData.append('categories', JSON.stringify(postCategories));
 
         console.log(...formData);
-
-        if (!postLoading) {
-            if (post) {
-                return <Redirect to={`/post/${post._id}`} />;
-            }
-        }
     };
 
     return !categoriesLoading && updatedOptions.length > 0 ? (
@@ -249,9 +231,6 @@ const UpdatePost = ({
                             <button type='submit' className='btn btn-primary'>
                                 Submit
                             </button>
-                            {/* <button className='btn btn-alert'>
-                                Preview Post
-                            </button> */}
                         </div>
                     </div>
                 </form>
@@ -264,15 +243,17 @@ const UpdatePost = ({
 
 UpdatePost.propTypes = {
     getAllCategories: PropTypes.func.isRequired,
+    updatePost: PropTypes.func.isRequired,
     category: PropTypes.object.isRequired,
-    auth: PropTypes.object.isRequired,
     post: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     category: state.category,
-    auth: state.auth,
     post: state.post,
 });
 
-export default connect(mapStateToProps, { getAllCategories })(UpdatePost);
+export default connect(mapStateToProps, { getAllCategories, updatePost })(
+    UpdatePost
+);

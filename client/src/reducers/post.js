@@ -4,10 +4,22 @@ import {
     POST_ERROR,
     CREATE_POST,
     GET_POST_IMAGE,
+    UPDATE_POST,
 } from '../actions/types';
 const initialState = {
     posts: [],
-    post: null,
+    post: {
+        comments: [],
+        categories: [],
+        _id: null,
+        imageId: '',
+        title: '',
+        description: '',
+        author: null,
+        created_at: '',
+        updatedAt: '',
+        image: null,
+    },
     loading: true,
     error: {},
 };
@@ -45,7 +57,7 @@ export default function (state = initialState, action) {
                 error: payload,
                 loading: false,
             };
-
+        case UPDATE_POST:
         default:
             return state;
     }

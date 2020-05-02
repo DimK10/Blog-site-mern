@@ -5,6 +5,7 @@ import {
     GET_POST,
     GET_POST_IMAGE,
     CREATE_POST,
+    UPDATE_POST,
 } from './types';
 import { setAlert } from './alert';
 import { body } from 'express-validator/check';
@@ -96,6 +97,35 @@ export const createNewPost = (userId, formData) => async (dispatch) => {
         });
 
         dispatch(setAlert('Your post was created successfully!', 'success'));
+    } catch (err) {
+        console.error(err);
+        dispatch({
+            type: POST_ERROR,
+            msg: err.response.statusText,
+            status: err.response.status,
+        });
+    }
+};
+
+export const updatePost = (postId, userId, formData) => async (dispatch) => {
+    try {
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
+
+        await axios.put(
+            `/api/update-post/${postId}/${userId}`,
+            formData,
+            config
+        );
+
+        dispatch({
+            type: UPDATE_POST,
+        });
+
+        dispatch(setAlert('Your post was updated successfully!', 'success'));
     } catch (err) {
         console.error(err);
         dispatch({

@@ -12,7 +12,11 @@ const Routes = () => {
         <section className='container'>
             <Switch>
                 <UserRoute exact path='/post/create' component={CreatePost} />
-                <UserRoute exact path='/post/update' component={UpdatePost} />
+                <UserRoute
+                    exact
+                    path='/post/update/:id'
+                    component={UpdatePost}
+                />
                 <Route exact path='/signin' component={Signin} />
                 <Route exact path='/signup' component={Signup} />
                 <Route path='/post/:id' component={Post} />
