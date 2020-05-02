@@ -7,7 +7,6 @@ import ReactHtmlParser from 'react-html-parser';
 import { v4 as uuidv4 } from 'uuid';
 import { NavLink } from 'react-router-dom';
 import Moment from 'react-moment';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Comment from '../comment/Comment';
 import Image from '../layout/Image';
 import TreeLoading from '../layout/TreeLoading';
@@ -28,7 +27,7 @@ const Post = ({
         getPost(match.params.id);
         getPostImage(match.params.id);
         getComments(match.params.id);
-    }, [getPost]);
+    }, [getPost, getPostImage, getComments, match.params.id]);
 
     const onDeletePostBtnClick = () => {
         // Delete post here and redirect to /

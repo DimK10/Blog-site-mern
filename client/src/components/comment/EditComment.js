@@ -2,7 +2,6 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { updateComment } from '../../actions/comment';
-import SecondaryLoading from '../layout/SecondaryLoading';
 
 //TODO - Move to comments folder
 const EditComment = ({

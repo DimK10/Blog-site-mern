@@ -8,7 +8,6 @@ import {
     UPDATE_POST,
 } from './types';
 import { setAlert } from './alert';
-import { body } from 'express-validator/check';
 
 // Get posts
 export const getPosts = () => async (dispatch) => {

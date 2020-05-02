@@ -2,7 +2,6 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { updateReply } from '../../actions/reply';
 import { connect } from 'react-redux';
-import SecondaryLoading from '../layout/SecondaryLoading';
 
 const EditReply = ({ updateReply, replyId, postId, userId, text }) => {
     const [replyText, setReplyText] = useState(text);

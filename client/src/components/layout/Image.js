@@ -40,7 +40,7 @@ const Image = ({ url }) => {
         return () => {
             source.cancel();
         };
-    }, []);
+    }, [url]);
 
     return (
         <Fragment>

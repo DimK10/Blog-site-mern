@@ -185,9 +185,10 @@ const CreatePost = ({
                                     'insertdatetime media table paste wordcount',
                                 ],
                                 toolbar:
+                                    // eslint-disable-next-line
                                     'undo redo | formatselect | bold italic | \
-            alignleft aligncenter alignright | \
-            bullist numlist outdent indent | link image media | help',
+                                         alignleft aligncenter alignright | \
+                                         bullist numlist outdent indent | link image media | help',
                             }}
                             onChange={handleEditorChange}
                         />{' '}

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import Moment from 'react-moment';
 import stripHtml from 'string-strip-html';
 import PropTypes from 'prop-types';
@@ -19,9 +19,10 @@ const PostItem = ({
     },
 }) => {
     const showShortDesc = (description) => {
-        const indexOfDot = description.indexOf('.');
-        let shortDesc = description.substring(0, indexOfDot);
-        shortDesc = stripHtml(shortDesc).replace('"', '');
+        let stripedDesc = stripHtml(description);
+
+        const indexOfDot = stripedDesc.indexOf('.');
+        let shortDesc = stripedDesc.substring(0, indexOfDot).replace('"', '');
         return shortDesc;
     };
 
@@ -39,7 +40,7 @@ const PostItem = ({
                     <h2 className='card-title'>{title}</h2>
                     {/* TODO - Remove this line - all descriptions will be formatted as html */}
                     {/* <p className='card-text'>{description}</p> */}
-                    {/* <p className='card-text'>{showShortDesc(description)}</p> */}
+                    <p className='card-text'>{showShortDesc(description)}</p>
                     <p>
                         Tags:{' '}
                         {categories.map((category) => (

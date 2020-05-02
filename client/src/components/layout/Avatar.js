@@ -6,19 +6,35 @@ const Avatar = ({ url }) => {
     const [avatar, setAvatar] = useState('');
 
     useEffect(() => {
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+
         let fetchAvatar = async () => {
-            const config = {
-                responseType: 'arrayBuffer',
-            };
-            let res = await axios.get(url, config);
+            try {
+                const config = {
+                    responseType: 'arrayBuffer',
+                };
+                let res = await axios.get(url, config);
 
-            let base64Url = new Buffer(res.data, 'binary').toString('base64');
+                let base64Url = new Buffer(res.data, 'binary').toString(
+                    'base64'
+                );
 
-            setAvatar(base64Url);
+                setAvatar(base64Url);
+            } catch (err) {
+                if (!axios.isCancel(err)) {
+                    console.error(err);
+                }
+            }
         };
 
         fetchAvatar();
-    }, []);
+
+        // Clean up function
+        return () => {
+            source.cancel();
+        };
+    }, [url]);
     return (
         <Fragment>
             <img

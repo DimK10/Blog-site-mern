@@ -27,7 +27,7 @@ const UpdatePost = ({
                         .indexOf(option.value) !== -1
             )
         );
-    }, [options]);
+    }, [options, post.categories]);
 
     const [updatedOptions, setUpdatedOptions] = useState([]);
 
@@ -204,6 +204,7 @@ const UpdatePost = ({
                                     'insertdatetime media table paste wordcount',
                                 ],
                                 toolbar:
+                                    // eslint-disable-next-line
                                     'undo redo | formatselect | bold italic | \
                                     alignleft aligncenter alignright | \
                                     bullist numlist outdent indent | link image media | help',
