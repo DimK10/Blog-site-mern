@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Post = require('../models/post');
 const { createBucket } = require('mongoose-gridfs');
 
 const userById = async (req, res, next, id) => {
@@ -301,6 +302,19 @@ const readUserImg = async (req, res) => {
     }
 };
 
+const getPostsWrittenByUser = async (req, res) => {
+    try {
+        let user = req.profile;
+
+        let posts = await Post.find({ author: user._id });
+
+        res.send(posts);
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
 module.exports = {
     userById,
     read,
@@ -313,4 +327,5 @@ module.exports = {
     resetUserPassword,
     addActionToUserHistory,
     readUserImg,
+    getPostsWrittenByUser,
 };

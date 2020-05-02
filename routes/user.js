@@ -5,6 +5,7 @@ let storage = multer.memoryStorage();
 let upload = multer({ storage: storage });
 
 const { requireSignin, isAuth, isAdmin } = require('../controllers/auth');
+const { postById } = require('../controllers/post');
 const {
     userById,
     read,
@@ -12,6 +13,7 @@ const {
     update,
     resetUserPassword,
     readUserImg,
+    getPostsWrittenByUser,
 } = require('../controllers/user');
 
 const { userSignupValidator } = require('../validator/userValidator');
@@ -34,6 +36,7 @@ router.put(
 router.get('/user/:userId', requireSignin, read);
 router.get('/users', requireSignin, getAllUsers);
 router.get('/user/image/:userId', createAttachment, readUserImg);
+router.get('/user/posts/:userId', requireSignin, isAuth, getPostsWrittenByUser);
 router.put(
     '/user/:userId',
     requireSignin,
@@ -43,6 +46,7 @@ router.put(
     createAttachment,
     update
 );
+
 router.param('userId', userById);
 
 module.exports = router;
