@@ -6,11 +6,13 @@ import Signup from '../auth/Signup';
 import Post from '../post/Post';
 import CreatePost from '../post/CreatePost';
 import UpdatePost from '../post/UpdatePost';
+import Posts from '../posts/Posts';
 
 const Routes = () => {
     return (
         <section className='container'>
             <Switch>
+                <UserRoute exact path='/my-posts' component={Posts} />
                 <UserRoute exact path='/post/create' component={CreatePost} />
                 <UserRoute
                     exact

@@ -37,13 +37,9 @@ const Post = ({
     history,
 }) => {
     useEffect(() => {
-        const fetchData = async () => {
-            await getPost(match.params.id);
-            getPostImage(match.params.id);
-            getComments(match.params.id);
-        };
-
-        fetchData();
+        getPost(match.params.id);
+        getPostImage(match.params.id);
+        getComments(match.params.id);
     }, [getPost, getPostImage, getComments, match.params.id]);
 
     const onDeletePostBtnClick = async () => {

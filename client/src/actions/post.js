@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
     GET_POSTS,
+    GET_USER_POSTS,
     POST_ERROR,
     GET_POST,
     GET_POST_IMAGE,
@@ -18,6 +19,26 @@ export const getPosts = () => async (dispatch) => {
 
         dispatch({
             type: GET_POSTS,
+            payload: res.data,
+        });
+    } catch (err) {
+        dispatch({
+            type: POST_ERROR,
+            payload: {
+                msg: err.response.statusText,
+                status: err.response.status,
+            },
+        });
+    }
+};
+
+// Get posts written by the same user
+export const getUserPosts = (userId) => async (dispatch) => {
+    try {
+        let res = await axios.get(`'/api/user/posts/${userId}`);
+
+        dispatch({
+            type: GET_USER_POSTS,
             payload: res.data,
         });
     } catch (err) {

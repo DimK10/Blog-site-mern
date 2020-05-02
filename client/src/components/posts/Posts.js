@@ -1,12 +1,28 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { getPosts } from '../../actions/post';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { getPosts, getUserPosts } from '../../actions/post';
 import PostItem from './PostItem';
 
-const Posts = ({ getPosts, post: { posts, loading } }) => {
+const Posts = ({
+    getPosts,
+    location,
+    auth: { user },
+    post: { posts, loading },
+}) => {
     useEffect(() => {
-        getPosts();
+        console.log('pathname ', location.pathname);
+        console.log(
+            "location.pathname === '/my-posts' ",
+            location.pathname === '/my-posts'
+        );
+
+        if (location.pathname === '/my-posts') {
+            getUserPosts(user.id);
+        } else {
+            getPosts();
+        }
     }, [getPosts]);
 
     return (
@@ -39,11 +55,17 @@ const Posts = ({ getPosts, post: { posts, loading } }) => {
 
 Posts.propTypes = {
     getPosts: PropTypes.func.isRequired,
+    getUserPosts: PropTypes.func.isRequired,
     post: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
 };
 
-const mpaStateToProps = (state) => ({
+const mapStateToProps = (state) => ({
     post: state.post,
+    auth: state.auth,
 });
 
-export default connect(mpaStateToProps, { getPosts })(Posts);
+export default withRouter(
+    connect(mapStateToProps, { getPosts, getUserPosts })(Posts)
+);

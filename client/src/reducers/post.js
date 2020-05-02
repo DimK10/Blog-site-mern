@@ -7,6 +7,7 @@ import {
     UPDATE_POST,
     START_GETTING_POST,
     DELETE_POST,
+    GET_USER_POSTS,
 } from '../actions/types';
 
 const initialPostValues = {
@@ -35,6 +36,12 @@ export default function (state = initialState, action) {
 
     switch (type) {
         case GET_POSTS:
+            return {
+                ...state,
+                posts: payload,
+                loading: false,
+            };
+        case GET_USER_POSTS:
             return {
                 ...state,
                 posts: payload,

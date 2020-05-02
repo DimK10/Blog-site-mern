@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import logo from '../../images/logo-made/logo.jpg';
 import PropTypes from 'prop-types';
@@ -11,9 +11,14 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
     const guestLinks = (
         <ul className='navbar-nav ml-auto'>
             <li className='nav-item'>
-                <Link className='nav-link' to='/'>
+                <NavLink
+                    className='nav-link'
+                    exact
+                    activeClassName='active'
+                    to='/'
+                >
                     Home
-                </Link>
+                </NavLink>
             </li>
             <li className='nav-item'>
                 <a className='nav-link' href='./nature-blog-about.html'>
@@ -21,14 +26,24 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                 </a>
             </li>
             <li className='nav-item'>
-                <Link className='nav-link' to='/signin'>
+                <NavLink
+                    className='nav-link'
+                    exact
+                    activeClassName='active'
+                    to='/signin'
+                >
                     Sign In
-                </Link>
+                </NavLink>
             </li>
             <li className='nav-item'>
-                <Link className='nav-link' to='/signup'>
+                <NavLink
+                    className='nav-link'
+                    exact
+                    activeClassName='active'
+                    to='/signup'
+                >
                     Sign Up
-                </Link>
+                </NavLink>
             </li>
         </ul>
     );
@@ -36,9 +51,24 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
     const userLinks = (
         <ul className='navbar-nav ml-auto'>
             <li className='nav-item'>
-                <Link className='nav-link' to='/'>
+                <NavLink
+                    className='nav-link'
+                    exact
+                    activeClassName='active'
+                    to='/'
+                >
                     Home
-                </Link>
+                </NavLink>
+            </li>
+            <li className='nav-item'>
+                <NavLink
+                    className='nav-link'
+                    exact
+                    activeClassName='active'
+                    to='/my-posts'
+                >
+                    My Posts
+                </NavLink>
             </li>
             <li className='nav-item'>
                 <a className='nav-link' href='./nature-blog-view-profiles.html'>
@@ -51,9 +81,14 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                 </a>
             </li>
             <li className='nav-item'>
-                <Link className='nav-link' to='/post/create'>
+                <NavLink
+                    className='nav-link'
+                    exact
+                    activeClassName='active'
+                    to='/post/create'
+                >
                     Create a Post
-                </Link>
+                </NavLink>
             </li>
             <li className='nav-item'>
                 <a
