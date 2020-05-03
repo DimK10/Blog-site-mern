@@ -26,7 +26,7 @@ const Posts = ({
         <Fragment>
             {/* TODO - Make this a static component so that alerts are shown under it */}
             {/* <!-- full Title --> */}
-            {!isForOnUser && userId === '' && (
+            {!isForOnUser && userId === '' ? (
                 <div className='full-title'>
                     <div className='container'>
                         {/* <!-- Page Heading/Breadcrumbs --> */}
@@ -36,6 +36,8 @@ const Posts = ({
                         </h3>
                     </div>
                 </div>
+            ) : (
+                <h2>My Posts</h2>
             )}
             {/* <!-- Page Content --> */}
             <div className='container'>
