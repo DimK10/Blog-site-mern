@@ -65,9 +65,9 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                     className='nav-link'
                     exact
                     activeClassName='active'
-                    to='/my-posts'
+                    to='/my-profile'
                 >
-                    My Posts
+                    My Profile
                 </NavLink>
             </li>
             <li className='nav-item'>

@@ -35,7 +35,7 @@ export const getPosts = () => async (dispatch) => {
 // Get posts written by the same user
 export const getUserPosts = (userId) => async (dispatch) => {
     try {
-        let res = await axios.get(`'/api/user/posts/${userId}`);
+        let res = await axios.get(`/api/user/posts/${userId}`);
 
         dispatch({
             type: GET_USER_POSTS,

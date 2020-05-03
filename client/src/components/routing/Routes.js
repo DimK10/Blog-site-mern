@@ -7,12 +7,13 @@ import Post from '../post/Post';
 import CreatePost from '../post/CreatePost';
 import UpdatePost from '../post/UpdatePost';
 import Posts from '../posts/Posts';
+import Profile from '../profile/Profile';
 
 const Routes = () => {
     return (
-        <section className='container'>
-            <Switch>
-                <UserRoute exact path='/my-posts' component={Posts} />
+        <Switch>
+            <UserRoute exact path='/my-profile' component={Profile} />
+            <section className='container'>
                 <UserRoute exact path='/post/create' component={CreatePost} />
                 <UserRoute
                     exact
@@ -22,8 +23,8 @@ const Routes = () => {
                 <Route exact path='/signin' component={Signin} />
                 <Route exact path='/signup' component={Signup} />
                 <Route path='/post/:id' component={Post} />
-            </Switch>
-        </section>
+            </section>
+        </Switch>
     );
 };
 

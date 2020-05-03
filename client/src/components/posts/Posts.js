@@ -7,6 +7,7 @@ import PostItem from './PostItem';
 
 const Posts = ({
     getPosts,
+    getUserPosts,
     location,
     auth: { user },
     post: { posts, loading },
@@ -23,7 +24,7 @@ const Posts = ({
         } else {
             getPosts();
         }
-    }, [getPosts]);
+    }, [getUserPosts, getPosts]);
 
     return (
         <Fragment>
