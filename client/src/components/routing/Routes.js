@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import UserRoute from './UserRoute';
 import Signin from '../auth/Signin';
@@ -10,9 +10,8 @@ import ProfilePage from '../profile/ProfilePage';
 
 const Routes = () => {
     return (
-        <Switch>
-            <UserRoute exact path='/my-profile' component={ProfilePage} />
-            <section className='container'>
+        <div className='container'>
+            <Switch>
                 <UserRoute exact path='/post/create' component={CreatePost} />
                 <UserRoute
                     exact
@@ -22,8 +21,8 @@ const Routes = () => {
                 <Route exact path='/signin' component={Signin} />
                 <Route exact path='/signup' component={Signup} />
                 <Route path='/post/:id' component={Post} />
-            </section>
-        </Switch>
+            </Switch>
+        </div>
     );
 };
 

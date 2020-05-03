@@ -5,6 +5,8 @@ import Navbar from './components/layout/Navbar';
 import Posts from './components/posts/Posts';
 import Alert from './components/layout/Alert';
 import Routes from './components/routing/Routes';
+import UserRoute from './components/routing/UserRoute';
+import ProfilePage from './components/profile/ProfilePage';
 
 // Redux
 import { Provider } from 'react-redux';
@@ -27,9 +29,16 @@ const App = () => {
             <Router>
                 <Fragment>
                     <Navbar />
-                    <Alert />
+                    <div className='container'>
+                        <Alert />
+                    </div>
                     <Switch>
                         <Route exact path='/' component={Posts} />
+                        <UserRoute
+                            exact
+                            path='/my-profile'
+                            component={ProfilePage}
+                        />
                         <Route component={Routes} />
                     </Switch>
                 </Fragment>

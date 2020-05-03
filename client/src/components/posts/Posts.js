@@ -26,15 +26,17 @@ const Posts = ({
         <Fragment>
             {/* TODO - Make this a static component so that alerts are shown under it */}
             {/* <!-- full Title --> */}
-            <div className='full-title'>
-                <div className='container'>
-                    {/* <!-- Page Heading/Breadcrumbs --> */}
-                    <h1 className='mt-4 mb-3'>Welcome To Nature's Blog!</h1>
-                    <h3 className='mt-4 mb-3'>
-                        A blog that is all about nature!
-                    </h3>
+            {!isForOnUser && userId === '' && (
+                <div className='full-title'>
+                    <div className='container'>
+                        {/* <!-- Page Heading/Breadcrumbs --> */}
+                        <h1 className='mt-4 mb-3'>Welcome To Nature's Blog!</h1>
+                        <h3 className='mt-4 mb-3'>
+                            A blog that is all about nature!
+                        </h3>
+                    </div>
                 </div>
-            </div>
+            )}
             {/* <!-- Page Content --> */}
             <div className='container'>
                 <div className='row'>

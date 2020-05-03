@@ -1,9 +1,47 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import ProfileContent from '../profile/ProfileContent';
 
 export const SideBar = () => {
     const [isToggled, setIsToggled] = useState('');
     const [render, setRender] = useState('dashboard');
+
+    const [isMyProfileActive, setIsMyProfileActive] = useState('active');
+    const [isMyPostsActive, setIsMyPostsActive] = useState('');
+    const [isEditProfileActive, setIsEditProfileActive] = useState('');
+    const [isMyCommentsActive, setIsMyCommentsActive] = useState('');
+    const [isMyHistoryActive, setIsMyHistoryActive] = useState('');
+
+    useEffect(() => {
+        if (isMyProfileActive === 'active') {
+        } else if (isMyPostsActive === 'active') {
+            setIsMyProfileActive('');
+            setIsEditProfileActive('');
+            setIsMyCommentsActive('');
+            setIsMyHistoryActive('');
+        } else if (isEditProfileActive === 'active') {
+            setIsMyPostsActive('');
+            setIsMyProfileActive('');
+            setIsMyCommentsActive('');
+            setIsMyHistoryActive('');
+        } else if (isMyCommentsActive === 'active') {
+            setIsMyPostsActive('');
+            setIsMyProfileActive('');
+            setIsEditProfileActive('');
+            setIsMyHistoryActive('');
+        } else {
+            setIsMyPostsActive('');
+            setIsMyProfileActive('');
+            setIsEditProfileActive('');
+            setIsMyCommentsActive('');
+        }
+    }, [
+        render,
+        isMyProfileActive,
+        isMyPostsActive,
+        isEditProfileActive,
+        isMyCommentsActive,
+        isMyHistoryActive,
+    ]);
 
     return (
         <Fragment>
@@ -14,31 +52,73 @@ export const SideBar = () => {
                     <div className='list-group list-group-flush'>
                         <span
                             id='operations'
-                            className='list-group-item list-group-item-action bg-light'
+                            className={`list-group-item list-group-item-action bg-light ${isMyProfileActive}`}
+                            onClick={() => {
+                                setRender('dashboard');
+                                setIsMyProfileActive('active');
+                                setIsMyPostsActive('');
+                                setIsEditProfileActive('');
+                                setIsMyCommentsActive('');
+                                setIsMyHistoryActive('');
+                            }}
+                        >
+                            My Profile
+                        </span>
+                        <span
+                            id='operations'
+                            className={`list-group-item list-group-item-action bg-light ${isMyPostsActive}`}
                             onClick={() => {
                                 setRender('my-posts');
+                                setIsMyProfileActive('');
+                                setIsMyPostsActive('active');
+                                setIsEditProfileActive('');
+                                setIsMyCommentsActive('');
+                                setIsMyHistoryActive('');
                             }}
                         >
                             My Posts
                         </span>
-                        <a
-                            href='#'
-                            className='list-group-item list-group-item-action bg-light'
-                        >
-                            My Comments
-                        </a>
-                        <a
-                            href='#'
-                            className='list-group-item list-group-item-action bg-light'
-                        >
-                            My History
-                        </a>
-                        <a
-                            href='#'
-                            className='list-group-item list-group-item-action bg-light'
+                        <span
+                            id='operations'
+                            className={`list-group-item list-group-item-action bg-light ${isEditProfileActive}`}
+                            onClick={() => {
+                                setRender('edit-profile');
+                                setIsMyProfileActive('');
+                                setIsMyPostsActive('');
+                                setIsEditProfileActive('active');
+                                setIsMyCommentsActive('');
+                                setIsMyHistoryActive('');
+                            }}
                         >
                             Edit Profile
-                        </a>
+                        </span>
+                        <span
+                            id='operations'
+                            className={`list-group-item list-group-item-action bg-light ${isMyCommentsActive}`}
+                            onClick={() => {
+                                setRender('my-comments');
+                                setIsMyProfileActive('');
+                                setIsMyPostsActive('');
+                                setIsEditProfileActive('');
+                                setIsMyCommentsActive('active');
+                                setIsMyHistoryActive('');
+                            }}
+                        >
+                            My Comments
+                        </span>
+                        <span
+                            id='operations'
+                            className={`list-group-item list-group-item-action bg-light ${isMyHistoryActive}`}
+                            onClick={() => {
+                                setIsMyProfileActive('');
+                                setIsMyPostsActive('');
+                                setIsEditProfileActive('');
+                                setIsMyCommentsActive('');
+                                setIsMyHistoryActive('active');
+                            }}
+                        >
+                            My History
+                        </span>
                     </div>
                 </div>
                 {/* <!-- /#sidebar-wrapper --> */}

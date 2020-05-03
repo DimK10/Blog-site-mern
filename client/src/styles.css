@@ -756,6 +756,11 @@ body {
     }
 }
 
+.bg-light.active {
+    background-color: #dae0e5 !important;
+    color: #495057;
+}
+
 /* Custom css */
 /* Fix sticky position of sidebar */
 .sticky-offset-15 {
