@@ -7,11 +7,34 @@ import {
     LOGOUT,
     REGISTER_SUCCESS,
     REGISTER_FAIL,
+    LOAD_USER_AVATAR,
+    AVATAR_ERROR,
 } from './types';
 import { setAlert } from './alert';
 
 // Helper function to set up token in Authorization header once
 import setAuthToken from '../utils/setAuthToken';
+
+export const loadUserAvatar = (userId) => async (dispatch) => {
+    try {
+        const config = {
+            responseType: 'arraybuffer',
+        };
+
+        let res = await axios.get(`/api/user/image/${userId}`, config);
+
+        let base64Url = new Buffer(res.data, 'binary').toString('base64');
+
+        dispatch({
+            type: LOAD_USER_AVATAR,
+            payload: base64Url,
+        });
+    } catch (err) {
+        dispatch({
+            type: AVATAR_ERROR,
+        });
+    }
+};
 
 // Load user
 export const loadUser = () => async (dispatch) => {
@@ -22,12 +45,18 @@ export const loadUser = () => async (dispatch) => {
     }
 
     try {
-        const res = await axios.post('/api/auth');
+        let res = await axios.post('/api/auth');
 
         dispatch({
             type: USER_LOADED,
             payload: res.data,
         });
+
+        // If user has an avatar, load it to redux as base64
+        console.log(res.data);
+        if (res.data.user.avatarId) {
+            dispatch(loadUserAvatar(res.data.user._id));
+        }
     } catch (err) {
         console.error(err.message);
         dispatch({

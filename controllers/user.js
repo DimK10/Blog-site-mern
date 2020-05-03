@@ -285,19 +285,19 @@ const resetUserPassword = async (req, res, next) => {
 
 const readUserImg = async (req, res) => {
     try {
-        const user = req.user;
-        const Attacchment = req.Attacchment;
+        const user = req.profile;
+        const Attachment = req.Attachment;
 
         if (!user.avatarId) {
             return res
                 .status(404)
                 .json({ msg: 'User does not have an image ' });
         }
-        const readStream = Attacchment.read({ _id: user.avatarId });
+        const readStream = await Attachment.read({ _id: user.avatarId });
 
         readStream.pipe(res);
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         return res.status(500).send('Server error');
     }
 };

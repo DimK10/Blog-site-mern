@@ -160,8 +160,9 @@ async function signin(req, res) {
             let user = await User.findById(req.profile.id).select(
                 '-salt -hashed_password'
             );
+
             // User is already authenticated
-            return res.json({ id: user._id });
+            return res.json({ user });
         }
 
         let user = await User.findOne({ email }).select(
@@ -182,6 +183,9 @@ async function signin(req, res) {
                 .json({ errors: [{ msg: 'Invalid credentials' }] });
         }
 
+        user.salt = undefined;
+        user.password = undefined;
+
         // Return jsonwebtoken
         let payload = {
             user: {
@@ -194,7 +198,7 @@ async function signin(req, res) {
             expiresIn: 360000,
         });
 
-        return res.json({ token, user: { id: user._id } });
+        return res.json({ token, user });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');

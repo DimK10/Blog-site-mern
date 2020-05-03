@@ -12,6 +12,8 @@ export const DELETE_POST = 'DELETE_POST';
 export const POST_ERROR = 'POST_ERROR';
 // auth
 export const USER_LOADED = 'USER_LOADED';
+export const LOAD_USER_AVATAR = 'LOAD_USER_AVATAR';
+export const AVATAR_ERROR = 'AVATAR_ERROR';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';

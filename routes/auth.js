@@ -33,7 +33,7 @@ router.post(
 );
 // TODO - maybe remove signin?
 router.post('/auth', findUser, signin);
-router.post('/signin', userSigninValidator, signin);
+router.post('/signin', userSigninValidator, createAttachment, signin);
 router.get('/signout', signout);
 
 module.exports = router;

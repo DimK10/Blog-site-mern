@@ -6,6 +6,8 @@ import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
     LOGOUT,
+    AVATAR_ERROR,
+    LOAD_USER_AVATAR,
 } from '../actions/types';
 
 const token = JSON.parse(localStorage.getItem('jwt'))
@@ -27,9 +29,14 @@ export default function (state = initialState, action) {
         case USER_LOADED:
             return {
                 ...state,
+                ...payload,
                 isAuthenticated: true,
                 loading: false,
-                user: payload,
+            };
+        case LOAD_USER_AVATAR:
+            return {
+                ...state,
+                user: { ...state.user, avatar: payload },
             };
         case REGISTER_SUCCESS:
         case LOGIN_SUCCESS:
@@ -53,6 +60,7 @@ export default function (state = initialState, action) {
                 // comment: {},
                 loading: false,
             };
+        case AVATAR_ERROR:
         default:
             return state;
     }

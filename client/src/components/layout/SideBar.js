@@ -94,22 +94,9 @@ export const SideBar = () => {
                         </span>
                         <span
                             id='operations'
-                            className={`list-group-item list-group-item-action bg-light ${isMyCommentsActive}`}
-                            onClick={() => {
-                                setRender('my-comments');
-                                setIsMyProfileActive('');
-                                setIsMyPostsActive('');
-                                setIsEditProfileActive('');
-                                setIsMyCommentsActive('active');
-                                setIsMyHistoryActive('');
-                            }}
-                        >
-                            My Comments
-                        </span>
-                        <span
-                            id='operations'
                             className={`list-group-item list-group-item-action bg-light ${isMyHistoryActive}`}
                             onClick={() => {
+                                setRender('my-history');
                                 setIsMyProfileActive('');
                                 setIsMyPostsActive('');
                                 setIsEditProfileActive('');

@@ -81,8 +81,8 @@ const Signup = ({
             formData.append('about', about);
             formData.append('interests', JSON.stringify(interests));
 
-            console.log(...formData);
-            // registerUser(formData);
+            // console.log(...formData);
+            registerUser(formData);
         }
     };
 
