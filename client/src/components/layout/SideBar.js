@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import ProfileContent from '../profile/ProfileContent';
 
 export const SideBar = () => {
@@ -10,38 +10,6 @@ export const SideBar = () => {
     const [isEditProfileActive, setIsEditProfileActive] = useState('');
     const [isMyCommentsActive, setIsMyCommentsActive] = useState('');
     const [isMyHistoryActive, setIsMyHistoryActive] = useState('');
-
-    useEffect(() => {
-        if (isMyProfileActive === 'active') {
-        } else if (isMyPostsActive === 'active') {
-            setIsMyProfileActive('');
-            setIsEditProfileActive('');
-            setIsMyCommentsActive('');
-            setIsMyHistoryActive('');
-        } else if (isEditProfileActive === 'active') {
-            setIsMyPostsActive('');
-            setIsMyProfileActive('');
-            setIsMyCommentsActive('');
-            setIsMyHistoryActive('');
-        } else if (isMyCommentsActive === 'active') {
-            setIsMyPostsActive('');
-            setIsMyProfileActive('');
-            setIsEditProfileActive('');
-            setIsMyHistoryActive('');
-        } else {
-            setIsMyPostsActive('');
-            setIsMyProfileActive('');
-            setIsEditProfileActive('');
-            setIsMyCommentsActive('');
-        }
-    }, [
-        render,
-        isMyProfileActive,
-        isMyPostsActive,
-        isEditProfileActive,
-        isMyCommentsActive,
-        isMyHistoryActive,
-    ]);
 
     return (
         <Fragment>

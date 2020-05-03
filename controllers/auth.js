@@ -157,17 +157,17 @@ async function signin(req, res) {
     try {
         if (req.profile) {
             // Check if there is a user found from a provided Token
-            let user = await User.findById(req.profile.id).select(
-                '-salt -hashed_password'
-            );
+            let user = await User.findById(req.profile.id)
+                .select('-salt -hashed_password')
+                .populate('interests');
 
             // User is already authenticated
             return res.json({ user });
         }
 
-        let user = await User.findOne({ email }).select(
-            '+salt +hashed_password'
-        );
+        let user = await User.findOne({ email })
+            .select('+salt +hashed_password')
+            .populate('interests');
 
         // console.log('user object ', user);
 
