@@ -6,7 +6,6 @@ const Profile = (props) => {
     return (
         <Fragment>
             <SideBar />
-            Profile Page
         </Fragment>
     );
 };

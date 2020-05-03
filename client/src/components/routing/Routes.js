@@ -6,13 +6,12 @@ import Signup from '../auth/Signup';
 import Post from '../post/Post';
 import CreatePost from '../post/CreatePost';
 import UpdatePost from '../post/UpdatePost';
-import Posts from '../posts/Posts';
-import Profile from '../profile/Profile';
+import ProfilePage from '../profile/ProfilePage';
 
 const Routes = () => {
     return (
         <Switch>
-            <UserRoute exact path='/my-profile' component={Profile} />
+            <UserRoute exact path='/my-profile' component={ProfilePage} />
             <section className='container'>
                 <UserRoute exact path='/post/create' component={CreatePost} />
                 <UserRoute

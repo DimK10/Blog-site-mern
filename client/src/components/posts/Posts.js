@@ -11,16 +11,12 @@ const Posts = ({
     location,
     auth: { user },
     post: { posts, loading },
+    isForOnUser = false,
+    userId = '',
 }) => {
     useEffect(() => {
-        console.log('pathname ', location.pathname);
-        console.log(
-            "location.pathname === '/my-posts' ",
-            location.pathname === '/my-posts'
-        );
-
-        if (location.pathname === '/my-posts') {
-            getUserPosts(user.id);
+        if (isForOnUser && userId !== '') {
+            getUserPosts(userId);
         } else {
             getPosts();
         }

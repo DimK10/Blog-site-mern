@@ -306,7 +306,9 @@ const getPostsWrittenByUser = async (req, res) => {
     try {
         let user = req.profile;
 
-        let posts = await Post.find({ author: user._id });
+        let posts = await Post.find({ author: user._id }).populate(
+            'categories'
+        );
 
         res.send(posts);
     } catch (err) {
