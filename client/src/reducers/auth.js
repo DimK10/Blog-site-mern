@@ -19,7 +19,7 @@ const initialState = {
     token,
     isAuthenticated: null,
     loading: true,
-    user: null,
+    user: { avatar: null },
 };
 
 export default function (state = initialState, action) {
@@ -55,7 +55,7 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 token: null,
-                user: null,
+                user: { avatar: null },
                 isAuthenticated: false,
                 // comment: {},
                 loading: false,

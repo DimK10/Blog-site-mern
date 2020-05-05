@@ -12,7 +12,7 @@ const ProfileContent = ({ render, auth: { user } }) => {
             case 'dashboard':
                 return <ProfileDashboard />;
             case 'my-posts':
-                return <Posts isForOnUser={true} userId={user.id} />;
+                return <Posts isForOnUser={true} userId={user._id} />;
             case 'edit-profile':
                 return <EditProfile />;
             case 'my-history':

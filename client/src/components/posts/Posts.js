@@ -44,9 +44,13 @@ const Posts = ({
                 <div className='row'>
                     {/* <!-- Blog Entries Column --> */}
                     <div className='col-md-8 mt-5 blog-entries'>
-                        {posts.map((post) => (
-                            <PostItem key={post._id} post={post} />
-                        ))}
+                        {posts.length > 0 ? (
+                            posts.map((post) => (
+                                <PostItem key={post._id} post={post} />
+                            ))
+                        ) : (
+                            <h2>No Posts</h2>
+                        )}
                     </div>
                 </div>
             </div>

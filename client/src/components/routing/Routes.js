@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import UserRoute from './UserRoute';
 import Signin from '../auth/Signin';
@@ -6,7 +6,6 @@ import Signup from '../auth/Signup';
 import Post from '../post/Post';
 import CreatePost from '../post/CreatePost';
 import UpdatePost from '../post/UpdatePost';
-import ProfilePage from '../profile/ProfilePage';
 
 const Routes = () => {
     return (
