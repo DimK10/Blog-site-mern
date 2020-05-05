@@ -36,6 +36,9 @@ export const addComment = (postId, userId, text) => async (dispatch) => {
             type: START_LOADING_COMMENTS,
         });
 
+        console.log('utils ', axios.defaults.headers.common['Authorization']);
+        console.log('userId ', userId);
+
         const body = { text };
         await axios.post(`/api/comment/create/${postId}/${userId}`, body);
 

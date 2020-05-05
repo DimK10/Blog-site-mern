@@ -8,6 +8,7 @@ import { deleteComment } from '../../actions/comment';
 import AddReply from '../reply/AddReply';
 import SecondaryLoading from '../layout/SecondaryLoading';
 import Reply from '../reply/Reply';
+import pulseLoading from '../../images/loading/Pulse-1s-200px.gif';
 
 //TODO - Move to comments folder
 const Comment = ({
@@ -53,7 +54,15 @@ const Comment = ({
         <Fragment>
             <div className='media mb-4'>
                 {avatarId ? (
-                    <Avatar url={`/api/user/image${avatarId}`} />
+                    <Fragment>
+                        {/* FIXME - REMOVE Avatar component - or modify */}
+                        <img
+                            className='d-flex mr-3 rounded-circle'
+                            src={`data:image/jpeg;base64,${user.avatar}`}
+                            style={{ width: '5em', height: '5em' }}
+                            alt=''
+                        />
+                    </Fragment>
                 ) : (
                     <div className='d-flex mr-3 rounded-circle'>
                         <i className='fas fa-user fa-2x'></i>
@@ -63,7 +72,7 @@ const Comment = ({
                     <h5 className='mt-0'>
                         {name}{' '}
                         <div className='d-flex justify-content-end'>
-                            {!loading && isAuthenticated && user.id === _id && (
+                            {!loading && isAuthenticated && user._id === _id && (
                                 <Fragment>
                                     {loadingOnDelete && (
                                         <SecondaryLoading width={'30px'} />
@@ -96,7 +105,7 @@ const Comment = ({
                                 <Fragment>
                                     {!loading &&
                                     isAuthenticated &&
-                                    user.id === _id ? (
+                                    user._id === _id ? (
                                         <Fragment>
                                             {text}
                                             {'   '}
@@ -118,7 +127,7 @@ const Comment = ({
                                     <AddReply
                                         commentId={commentId}
                                         postId={postId}
-                                        userId={user.id}
+                                        userId={user._id}
                                         cancelReply={cancelReply}
                                     />
                                 </Fragment>

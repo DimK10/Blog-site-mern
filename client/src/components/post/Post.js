@@ -116,7 +116,7 @@ const Post = ({
                             {/* <!-- Comments Form --> */}
                             {/* TODO - Mae comments functional */}
                             {isAuthenticated ? (
-                                <AddComment postId={id} userId={author._id} />
+                                <AddComment postId={id} userId={user._id} />
                             ) : (
                                 <div className='card my-4'>
                                     <h4>

@@ -218,10 +218,10 @@ const requireSignin = expressJwt({
 
 const isAuth = (req, res, next) => {
     try {
-        // console.log('req.auth ', req.auth);
-        // console.log('req.profile.id ', req.profile._id);
-        // console.log('req.auth.id ', req.auth.id);
-        // console.log('req.profile ', req.profile);
+        console.log('req.auth ', req.auth);
+        console.log('req.profile.id ', req.profile._id);
+        console.log('req.auth.id ', req.auth.id);
+        console.log('req.profile ', req.profile);
 
         let user =
             req.profile && req.auth && req.profile._id == req.auth.user.id;
