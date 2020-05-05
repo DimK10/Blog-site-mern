@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { login } from '../../actions/auth';
@@ -69,7 +69,7 @@ const Signin = ({ login, isAuthenticated, location }) => {
                 </form>
                 <p className='my-1'>
                     Don't have an account?
-                    <a href='./nature-sign-up.html'>Sign Up</a>
+                    <Link to='/signup'>Sign Up</Link>
                 </p>
             </div>
         </Fragment>
