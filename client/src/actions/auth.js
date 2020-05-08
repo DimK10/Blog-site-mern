@@ -15,13 +15,13 @@ import { setAlert } from './alert';
 // Helper function to set up token in Authorization header once
 import setAuthToken from '../utils/setAuthToken';
 
-export const loadUserAvatar = (userId) => async (dispatch) => {
+export const loadUserAvatar = (avatarId) => async (dispatch) => {
     try {
         const config = {
             responseType: 'arraybuffer',
         };
 
-        let res = await axios.get(`/api/user/image/${userId}`, config);
+        let res = await axios.get(`/api/user/image/${avatarId}`, config);
 
         let base64Url = new Buffer(res.data, 'binary').toString('base64');
 
@@ -55,7 +55,7 @@ export const loadUser = () => async (dispatch) => {
         // If user has an avatar, load it to redux as base64
         console.log(res.data);
         if (res.data.user.avatarId) {
-            dispatch(loadUserAvatar(res.data.user._id));
+            dispatch(loadUserAvatar(res.data.user.avatarId));
         }
     } catch (err) {
         console.error(err.message);

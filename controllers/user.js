@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const ObjectId = require('mongodb').ObjectID;
 const { createBucket } = require('mongoose-gridfs');
 
 const userById = async (req, res, next, id) => {
@@ -11,6 +12,16 @@ const userById = async (req, res, next, id) => {
         }
         // TODO - Maybe repname to user?
         req.profile = user;
+        next();
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).send('Server error');
+    }
+};
+
+const addAvatarIdToRequestObj = async (req, res, next, avatarId) => {
+    try {
+        req.avatarId = ObjectId(avatarId);
         next();
     } catch (err) {
         console.error(err.message);
@@ -285,19 +296,19 @@ const resetUserPassword = async (req, res, next) => {
 
 const readUserImg = async (req, res) => {
     try {
-        const user = req.profile;
         const Attachment = req.Attachment;
+        const avatarId = req.avatarId;
 
-        if (!user.avatarId) {
+        if (!avatarId) {
             return res
                 .status(404)
-                .json({ msg: 'User does not have an image ' });
+                .json({ errors: [{ msg: 'User does not have an image ' }] });
         }
-        const readStream = await Attachment.read({ _id: user.avatarId });
+        const readStream = await Attachment.read({ _id: avatarId });
 
         readStream.pipe(res);
     } catch (err) {
-        console.error(err);
+        console.error(err.message);
         return res.status(500).send('Server error');
     }
 };
@@ -319,6 +330,7 @@ const getPostsWrittenByUser = async (req, res) => {
 
 module.exports = {
     userById,
+    addAvatarIdToRequestObj,
     read,
     getAllUsers,
     update,

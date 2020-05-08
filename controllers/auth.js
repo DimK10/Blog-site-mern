@@ -46,6 +46,19 @@ async function signup(req, res) {
                 .json({ errors: [{ msg: 'User already exists' }] });
         }
 
+        // Check for unique name
+        user = await User.findOne({ name: req.body.name });
+
+        if (user) {
+            return res.status(400).json({
+                errors: [
+                    {
+                        msg: 'This username is taken, use another one instead',
+                    },
+                ],
+            });
+        }
+
         // Check for all fields
 
         let { name, email, password, about = '' } = req.body;

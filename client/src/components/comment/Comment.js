@@ -54,18 +54,7 @@ const Comment = ({
         <Fragment>
             <div className='media mb-4'>
                 {avatarId ? (
-                    <Fragment>
-                        {/* FIXME - REMOVE Avatar component - or modify */}
-                        {/* FIXME - Avatar cant be retrieved for public display - Maybe create PublicAvatar component? An remove avatar from redux? */}
-                        {user.avatar && (
-                            <img
-                                className='d-flex mr-3 rounded-circle'
-                                src={`data:image/jpeg;base64,${user.avatar}`}
-                                style={{ width: '5em', height: '5em' }}
-                                alt=''
-                            />
-                        )}
-                    </Fragment>
+                    <Avatar url={`/api/user/image/${avatarId}`} />
                 ) : (
                     <div className='d-flex mr-3 rounded-circle'>
                         <i className='fas fa-user fa-2x'></i>

@@ -8,6 +8,7 @@ const { requireSignin, isAuth, isAdmin } = require('../controllers/auth');
 const { postById } = require('../controllers/post');
 const {
     userById,
+    addAvatarIdToRequestObj,
     read,
     getAllUsers,
     update,
@@ -35,7 +36,7 @@ router.put(
 
 router.get('/user/:userId', requireSignin, read);
 router.get('/users', requireSignin, getAllUsers);
-router.get('/user/image/:userId', createAttachment, readUserImg);
+router.get('/user/image/:userAvatarId', createAttachment, readUserImg);
 router.get('/user/posts/:userId', requireSignin, isAuth, getPostsWrittenByUser);
 router.put(
     '/user/:userId',
@@ -48,5 +49,6 @@ router.put(
 );
 
 router.param('userId', userById);
+router.param('userAvatarId', addAvatarIdToRequestObj);
 
 module.exports = router;

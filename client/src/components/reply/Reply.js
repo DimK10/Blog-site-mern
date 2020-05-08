@@ -30,12 +30,7 @@ const Reply = ({
         <Fragment>
             <div className='media mt-4'>
                 {userId.avatarId ? (
-                    <img
-                        className='d-flex mr-3 rounded-circle'
-                        src={`data:image/jpeg;base64,${user.avatar}`}
-                        style={{ width: '5em', height: '5em' }}
-                        alt=''
-                    />
+                    <Avatar url={`/api/user/image/${userId.avatarId}`} />
                 ) : (
                     <div className='d-flex mr-3 rounded-circle'>
                         <i className='fas fa-user fa-2x'></i>
