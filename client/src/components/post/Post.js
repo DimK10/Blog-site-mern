@@ -83,7 +83,7 @@ const Post = ({
                             </p>
                             {!authLoading &&
                                 isAuthenticated &&
-                                user.id === author._id && (
+                                user._id === author._id && (
                                     <Fragment>
                                         <NavLink
                                             className='btn btn-primary mr-3'

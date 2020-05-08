@@ -60,8 +60,6 @@ const UpdatePost = ({
     };
 
     const onSelectChange = (categories) => {
-        console.log('categories in select ', categories);
-
         if (categories && categories.length > 0) {
             setFormValues({
                 ...formValues,
@@ -79,8 +77,6 @@ const UpdatePost = ({
     };
 
     const onImageChange = (e) => {
-        console.log('image e.target.files ', e.target.files);
-
         setFormValues({ ...formValues, image: e.target.files[0] });
     };
 
