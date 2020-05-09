@@ -112,7 +112,7 @@ async function signup(req, res) {
                 // Return jsonwebtoken
                 let payload = {
                     user: {
-                        id: user.id,
+                        id: user._id,
                     },
                 };
 
@@ -124,7 +124,7 @@ async function signup(req, res) {
                 user.salt = undefined;
                 user.hashed_password = undefined;
 
-                return res.json({ token, user: user.id });
+                return res.json({ token, user: user._id });
             });
             return;
         }
@@ -145,7 +145,7 @@ async function signup(req, res) {
         // Return jsonwebtoken
         let payload = {
             user: {
-                id: user.id,
+                id: user._id,
             },
         };
 
@@ -157,7 +157,7 @@ async function signup(req, res) {
         user.salt = undefined;
         user.hashed_password = undefined;
 
-        res.json({ token, user: user.id });
+        res.json({ token, user: user._id });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
@@ -202,7 +202,7 @@ async function signin(req, res) {
         // Return jsonwebtoken
         let payload = {
             user: {
-                id: user.id,
+                id: user._id,
             },
         };
 
@@ -237,7 +237,7 @@ const isAuth = (req, res, next) => {
         console.log('req.profile ', req.profile);
 
         let user =
-            req.profile && req.auth && req.profile._id == req.auth.user.id;
+            req.profile && req.auth && req.profile._id == req.auth.user._id;
         if (!user) {
             return res.status(403).json({
                 err: 'Access Denied',
@@ -253,7 +253,7 @@ const isAuth = (req, res, next) => {
 // TODO - Might need to remove
 const isAdmin = async (req, res, next) => {
     try {
-        let user = await User.findById(req.auth.user.id);
+        let user = await User.findById(req.auth.user._id);
 
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });

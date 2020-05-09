@@ -78,7 +78,7 @@ const CreatePost = ({
 
         console.log(...formData);
 
-        await createNewPost(user.id, formData);
+        await createNewPost(user._id, formData);
 
         history.push(`/`);
     };

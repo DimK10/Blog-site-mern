@@ -43,7 +43,7 @@ const Reply = ({
                             {/* TODO - STOP FETCHING DATA WITH FULL USER OBJECT!!! */}
                             {!loading &&
                                 isAuthenticated &&
-                                user.id === userId._id && (
+                                user._id === userId._id && (
                                     <Fragment>
                                         {loadingOnDeleteReply && (
                                             <SecondaryLoading width={'30px'} />
