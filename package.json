@@ -1,7 +1,11 @@
 {
-    "name": "blog_app",
+    "name": "nature_blog_app",
     "version": "1.0.0",
-    "description": "Api for a blog site",
+    "description": "A blog that is all about nature",
+    "engines": {
+        "node": "14.0.x",
+        "npm": "6.x"
+    },
     "main": "server.js",
     "scripts": {
         "start": "nodemon app.js",
