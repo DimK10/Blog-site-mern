@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Post = require('../models/post');
 const ObjectId = require('mongodb').ObjectID;
 const { createBucket } = require('mongoose-gridfs');
+const stream = require('stream');
 
 const userById = async (req, res, next, id) => {
     try {
@@ -103,7 +104,7 @@ const update = async (req, res) => {
                 user.avatarId = avatarId;
                 user.name = name;
                 user.email = email;
-                user.password = newPassword;
+                user.password = password;
                 user.about = about;
                 user.interests = interests;
 

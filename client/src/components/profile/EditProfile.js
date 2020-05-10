@@ -5,6 +5,8 @@ import Select from 'react-select';
 import { updateUser } from '../../actions/auth';
 import { setAlert } from '../../actions/alert';
 
+import Resizer from 'react-image-file-resizer';
+
 const EditProfile = ({
     updateUser,
     updatedOptions,
@@ -12,8 +14,33 @@ const EditProfile = ({
     setAlert,
     auth: { user },
 }) => {
+    // Helper function to convert base64 to blob
+    const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+
+        for (
+            let offset = 0;
+            offset < byteCharacters.length;
+            offset += sliceSize
+        ) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        const blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    };
+
     const [formValues, setFormValues] = useState({
-        avatar: user.avatarId ? user.avatar : null,
+        avatar: user.avatarId ? b64toBlob(user.avatar, 'jpeg') : null,
         name: user.name,
         email: user.email,
         oldPassword: '',
@@ -69,6 +96,21 @@ const EditProfile = ({
             // TODO - regiterUser
             // Creat formData object and add values
             let formData = new FormData();
+            // Resize image first to make file size also smaller
+
+            Resizer.imageFileResizer(
+                avatar,
+                320,
+                320,
+                'JPEG',
+                100,
+                0,
+                (uri) => {
+                    console.log(uri);
+                },
+                'base64'
+            );
+
             formData.append('avatar', avatar);
             formData.append('name', name);
             formData.append('email', email);
