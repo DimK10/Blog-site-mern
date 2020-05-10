@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import pulse from '../../images/loading/Pulse-1s-200px.gif';
 
-const Avatar = ({ url }) => {
+const Avatar = ({ url, width = '5em', height = '5em', withFlex = true }) => {
     const [avatar, setAvatar] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -43,17 +43,15 @@ const Avatar = ({ url }) => {
         <Fragment>
             {!loading ? (
                 <img
-                    className='d-flex mr-3 rounded-circle'
+                    className={`${
+                        withFlex ? 'd-flex mr-3' : ''
+                    } rounded-circle`}
                     src={`data:image/jpeg;base64,${avatar}`}
-                    style={{ width: '5em', height: '5em' }}
+                    style={{ width, height }}
                     alt=''
                 />
             ) : (
-                <img
-                    src={pulse}
-                    style={{ width: '5em', height: '5em' }}
-                    alt='loading...'
-                />
+                <img src={pulse} style={{ width, height }} alt='loading...' />
             )}
         </Fragment>
     );

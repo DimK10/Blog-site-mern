@@ -7,6 +7,8 @@ import Select from 'react-select';
 import { getAllCategories } from '../../actions/category';
 import { registerUser } from '../../actions/auth';
 
+import Resizer from 'react-image-file-resizer';
+
 const Signup = ({
     getAllCategories,
     registerUser,
@@ -74,6 +76,22 @@ const Signup = ({
             // TODO - regiterUser
             // Creat formData object and add values
             let formData = new FormData();
+            // Resize avatar first
+            Resizer.imageFileResizer(
+                avatar,
+                320,
+                320,
+                'JPEG',
+                100,
+                0,
+                (uri) => {
+                    setFormValues({
+                        ...formValues,
+                        avatar: uri,
+                    });
+                },
+                'base64'
+            );
             formData.append('avatar', avatar);
             formData.append('name', name);
             formData.append('email', email);

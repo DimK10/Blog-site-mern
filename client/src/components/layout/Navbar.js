@@ -20,11 +20,11 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                     Home
                 </NavLink>
             </li>
-            <li className='nav-item'>
+            {/* <li className='nav-item'>
                 <a className='nav-link' href='./nature-blog-about.html'>
                     About
                 </a>
-            </li>
+            </li> */}
             <li className='nav-item'>
                 <NavLink
                     className='nav-link'
@@ -71,15 +71,15 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                 </NavLink>
             </li>
             <li className='nav-item'>
-                <a className='nav-link' href='./nature-blog-view-profiles.html'>
+                <Link className='nav-link' to='/community'>
                     Community
-                </a>
+                </Link>
             </li>
-            <li className='nav-item'>
+            {/* <li className='nav-item'>
                 <a className='nav-link' href='./nature-blog-about.html'>
                     About
                 </a>
-            </li>
+            </li> */}
             <li className='nav-item'>
                 <NavLink
                     className='nav-link'
@@ -90,14 +90,14 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading } }) => {
                     Create a Post
                 </NavLink>
             </li>
-            <li className='nav-item'>
+            {/* <li className='nav-item'>
                 <a
                     className='nav-link'
                     href='./nature-blog-create-category.html'
                 >
                     Create a Category
                 </a>
-            </li>
+            </li> */}
             <li className='nav-item'>
                 <div
                     style={{ cursor: 'pointer' }}

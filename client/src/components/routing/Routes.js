@@ -6,6 +6,7 @@ import Signup from '../auth/Signup';
 import Post from '../post/Post';
 import CreatePost from '../post/CreatePost';
 import UpdatePost from '../post/UpdatePost';
+import Community from '../etc/Community';
 
 const Routes = () => {
     return (
@@ -17,6 +18,8 @@ const Routes = () => {
                     path='/post/update/:id'
                     component={UpdatePost}
                 />
+                <UserRoute exact path='/community' component={Community} />
+
                 <Route exact path='/signin' component={Signin} />
                 <Route exact path='/signup' component={Signup} />
                 <Route path='/post/:id' component={Post} />

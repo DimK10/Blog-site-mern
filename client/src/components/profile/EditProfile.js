@@ -106,7 +106,10 @@ const EditProfile = ({
                 100,
                 0,
                 (uri) => {
-                    console.log(uri);
+                    setFormValues({
+                        ...formValues,
+                        avatar: uri,
+                    });
                 },
                 'base64'
             );

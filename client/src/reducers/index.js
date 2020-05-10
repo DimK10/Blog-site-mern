@@ -4,6 +4,7 @@ import post from './post';
 import auth from './auth';
 import category from './category';
 import comment from './comment';
+import users from './users';
 
 export default combineReducers({
     alert,
@@ -11,4 +12,5 @@ export default combineReducers({
     auth,
     category,
     comment,
+    users,
 });

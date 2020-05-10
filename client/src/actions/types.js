@@ -42,3 +42,6 @@ export const REPLY_ERROR = 'REPLY_ERROR';
 // User
 export const UPDATE_USER = 'UPDATE_USER';
 export const USER_ERROR = 'USER_ERROR';
+// Users
+export const GET_ALL_USERS = 'GET_ALL_USERS';
+export const USERS_ERROR = 'USERS_ERROR';
