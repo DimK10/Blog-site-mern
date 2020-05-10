@@ -10,8 +10,10 @@ import TreeLoading from '../layout/TreeLoading';
 
 const UpdatePost = ({
     getAllCategories,
+    updatePost,
     category: { options, loading: categoriesLoading },
     post: { post },
+    auth: { user },
     match,
 }) => {
     useEffect(() => {
@@ -94,7 +96,8 @@ const UpdatePost = ({
         formData.append('description', description);
         formData.append('categories', JSON.stringify(postCategories));
 
-        console.log(...formData);
+        // console.log(...formData);
+        updatePost(post._id, user._id, formData);
     };
 
     return !categoriesLoading && updatedOptions.length > 0 ? (
@@ -243,12 +246,14 @@ UpdatePost.propTypes = {
     updatePost: PropTypes.func.isRequired,
     category: PropTypes.object.isRequired,
     post: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     category: state.category,
     post: state.post,
+    auth: state.auth,
 });
 
 export default connect(mapStateToProps, { getAllCategories, updatePost })(

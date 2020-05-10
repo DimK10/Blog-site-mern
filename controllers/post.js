@@ -51,7 +51,7 @@ const create = async (req, res) => {
         //TODO - Only for testing in postman - delete
         // console.log("categories ", typeof categories);
 
-        console.log('image ', image);
+        // console.log('image ', image);
 
         // TODO - might need to change the way I handle arrays
         let categories = JSON.parse(req.body.categories).map((catId) => catId);
@@ -62,7 +62,7 @@ const create = async (req, res) => {
             const readStream = new stream.PassThrough();
             readStream.end(image.buffer);
 
-            console.log(image);
+            // console.log(image);
 
             const options = {
                 filename: image.originalname,
@@ -80,7 +80,7 @@ const create = async (req, res) => {
 
                 // Save
                 imageId = file._id.toString();
-                console.log('imageId ', imageId);
+                // console.log('imageId ', imageId);
 
                 let post = new Post({
                     imageId,

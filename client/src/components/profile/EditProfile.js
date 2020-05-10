@@ -122,7 +122,7 @@ const EditProfile = ({
             formData.append('about', about);
             formData.append('interests', JSON.stringify(interests));
 
-            console.log(...formData);
+            // console.log(...formData);
 
             updateUser(formData, user._id);
         }
