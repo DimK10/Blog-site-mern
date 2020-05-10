@@ -1,6 +1,8 @@
 import axios from 'axios';
 import {
     USER_LOADED,
+    UPDATE_USER,
+    USER_ERROR,
     AUTH_ERROR,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
@@ -53,7 +55,6 @@ export const loadUser = () => async (dispatch) => {
         });
 
         // If user has an avatar, load it to redux as base64
-        console.log(res.data);
         if (res.data.user.avatarId) {
             dispatch(loadUserAvatar(res.data.user.avatarId));
         }
@@ -121,6 +122,37 @@ export const registerUser = (formData) => async (dispatch) => {
         if (errors) {
             errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
         }
+    }
+};
+
+// Update user
+export const updateUser = (formData, userId) => async (dispatch) => {
+    try {
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
+
+        let res = await axios.put(`/api/user/${userId}`, formData, config);
+
+        dispatch({
+            type: UPDATE_USER,
+            payload: res.data,
+        });
+
+        dispatch(
+            setAlert('Your profile has been updated successfully!', 'success')
+        );
+    } catch (err) {
+        const errors = err.response.data.errors;
+
+        if (errors) {
+            errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+        }
+        dispatch({
+            type: USER_ERROR,
+        });
     }
 };
 

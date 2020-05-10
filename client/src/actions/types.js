@@ -39,3 +39,6 @@ export const START_UPDATING_REPLY = 'START_UPDATING_REPLY';
 export const DELETE_REPLY = 'DELETE_REPLY';
 export const START_DELETING_REPLY = 'START_DELETING_REPLY';
 export const REPLY_ERROR = 'REPLY_ERROR';
+// User
+export const UPDATE_USER = 'UPDATE_USER';
+export const USER_ERROR = 'USER_ERROR';

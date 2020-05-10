@@ -1,37 +1,22 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAllCategories } from '../../actions/category';
 import Select from 'react-select';
+import { updateUser } from '../../actions/auth';
 import { setAlert } from '../../actions/alert';
 
 const EditProfile = ({
-    getAllCategories,
+    updateUser,
+    updatedOptions,
+    options,
     setAlert,
-    category: { options, loading },
     auth: { user },
 }) => {
-    useEffect(() => {
-        getAllCategories();
-    }, [getAllCategories]);
-
-    const [updatedOptions, setUpdatedOptions] = useState([]);
-
-    useEffect(() => {
-        setUpdatedOptions(
-            options.filter(
-                (option) =>
-                    user.interests
-                        .map((interest) => interest._id)
-                        .indexOf(option.value) !== -1
-            )
-        );
-    }, [options, user.interests]);
-
     const [formValues, setFormValues] = useState({
         avatar: user.avatarId ? user.avatar : null,
         name: user.name,
         email: user.email,
+        oldPassword: '',
         password: '',
         password2: '',
         about: user.about,
@@ -42,6 +27,7 @@ const EditProfile = ({
         avatar,
         name,
         email,
+        oldPassword,
         password,
         password2,
         about,
@@ -78,7 +64,7 @@ const EditProfile = ({
     const onSubmit = async (e) => {
         e.preventDefault();
         if (password !== password2) {
-            setAlert('Passwords do not match', 'danger');
+            setAlert('newPasswords do not match', 'danger');
         } else {
             // TODO - regiterUser
             // Creat formData object and add values
@@ -86,11 +72,14 @@ const EditProfile = ({
             formData.append('avatar', avatar);
             formData.append('name', name);
             formData.append('email', email);
+            formData.append('oldPassword', oldPassword);
             formData.append('password', password);
             formData.append('about', about);
             formData.append('interests', JSON.stringify(interests));
 
             console.log(...formData);
+
+            updateUser(formData, user._id);
         }
     };
 
@@ -181,6 +170,7 @@ const EditProfile = ({
                             className='form-control'
                             placeholder='Profile Name'
                             name='name'
+                            value={name}
                             onChange={(e) => onChange(e)}
                         ></input>
                     </div>
@@ -192,29 +182,41 @@ const EditProfile = ({
                             className='form-control'
                             placeholder='Email Address'
                             name='email'
+                            value={email}
                             onChange={(e) => onChange(e)}
                         ></input>
                     </div>
                     <div className='form-group'>
-                        <label htmlFor='passwordInput'>* Password</label>
+                        <label htmlFor='oldPasswordInput'>* oldPassword</label>
                         <input
                             type='password'
-                            id='passwordInput'
+                            id='oldPasswordInput'
                             className='form-control'
-                            placeholder='Password'
+                            placeholder='Old Password'
+                            name='oldPassword'
+                            onChange={(e) => onChange(e)}
+                        ></input>
+                    </div>
+                    <div className='form-group'>
+                        <label htmlFor='newPasswordInput'>* newPassword</label>
+                        <input
+                            type='password'
+                            id='newPasswordInput'
+                            className='form-control'
+                            placeholder='New Password'
                             name='password'
                             onChange={(e) => onChange(e)}
                         ></input>
                     </div>
                     <div className='form-group'>
-                        <label htmlFor='passwordInput2'>
-                            * Re-Type Password
+                        <label htmlFor='newPasswordInput2'>
+                            * Re-Type newPassword
                         </label>
                         <input
                             type='password'
-                            id='passwordInput2'
+                            id='newPasswordInput2'
                             className='form-control'
-                            placeholder='Confirm Password'
+                            placeholder='Confirm New Password'
                             name='password2'
                             onChange={(e) => onChange(e)}
                         ></input>
@@ -228,6 +230,7 @@ const EditProfile = ({
                             id='aboutTextarea'
                             name='about'
                             rows='3'
+                            value={about}
                             onChange={(e) => onChange(e)}
                         ></textarea>
                     </div>
@@ -235,35 +238,21 @@ const EditProfile = ({
                         <label htmlFor='interests'>
                             interests (Choose one or more - optional)
                         </label>
-                        {!loading && (
-                            <Select
-                                defaultValue={updatedOptions}
-                                isMulti={true}
-                                isSearchable={true}
-                                name='interests'
-                                onChange={(interests) => {
-                                    onSelectChange(interests);
-                                }}
-                                options={options}
-                            />
-                        )}
-                        {/* <select
-                            id='interests'
-                            className='js-example-basic-multiple'
-                            name='categories[]'
-                            multiple='multiple'
-                            style='width: 100%'
-                        >
-                            <option value='general'>General</option>
-                            ...
-                            <option value='animals'>Animals</option>
-                            <option value='nature'>Nature</option>
-                        </select> */}
+                        <Select
+                            defaultValue={updatedOptions}
+                            isMulti={true}
+                            isSearchable={true}
+                            name='interests'
+                            onChange={(interests) => {
+                                onSelectChange(interests);
+                            }}
+                            options={options}
+                        />
                     </div>
                     <div className='row mb-4'>
                         <div className='col'>
                             <button type='submit' className='btn btn-primary'>
-                                Submit
+                                Update Profile!
                             </button>
                         </div>
                     </div>
@@ -274,17 +263,13 @@ const EditProfile = ({
 };
 
 EditProfile.propTypes = {
-    getAllCategories: PropTypes.func.isRequired,
+    updateUser: PropTypes.func.isRequired,
     setAlert: PropTypes.func.isRequired,
-    category: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-    category: state.category,
     auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getAllCategories, setAlert })(
-    EditProfile
-);
+export default connect(mapStateToProps, { updateUser, setAlert })(EditProfile);

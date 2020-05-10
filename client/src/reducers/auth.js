@@ -2,6 +2,8 @@ import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     USER_LOADED,
+    UPDATE_USER,
+    USER_ERROR,
     AUTH_ERROR,
     REGISTER_SUCCESS,
     REGISTER_FAIL,
@@ -37,6 +39,13 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 user: { ...state.user, avatar: payload },
+                loading: false,
+            };
+        case UPDATE_USER:
+            return {
+                ...state,
+                user: { ...state.user, ...payload },
+                loading: false,
             };
         case REGISTER_SUCCESS:
         case LOGIN_SUCCESS:
@@ -61,6 +70,11 @@ export default function (state = initialState, action) {
                 loading: false,
             };
         case AVATAR_ERROR:
+        case USER_ERROR:
+            return {
+                ...state,
+                loading: false,
+            };
         default:
             return state;
     }

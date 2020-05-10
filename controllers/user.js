@@ -54,8 +54,8 @@ const update = async (req, res) => {
         let {
             name,
             email,
+            oldPassword,
             password,
-            newPassword,
             about = '',
             interests,
         } = req.body;
@@ -65,7 +65,7 @@ const update = async (req, res) => {
 
         let avatar = req.file;
 
-        if (!user.authenticate(password.toString())) {
+        if (!user.authenticate(oldPassword.toString())) {
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
 
@@ -120,7 +120,7 @@ const update = async (req, res) => {
         user.avatarId = null;
         user.name = name;
         user.email = email;
-        user.password = newPassword;
+        user.password = password;
         user.about = about;
         user.interests = interests;
 

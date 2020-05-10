@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
         hashed_password: {
             type: String,
             select: false,
-            required: true,
+            // required: true,
         },
         about: {
             type: String,
