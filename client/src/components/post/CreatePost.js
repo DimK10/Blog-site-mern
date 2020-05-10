@@ -57,8 +57,6 @@ const CreatePost = ({
     };
 
     const onImageChange = (e) => {
-        console.log('image e.target.files ', e.target.files);
-
         setFormValues({ ...formValues, image: e.target.files[0] });
     };
 
