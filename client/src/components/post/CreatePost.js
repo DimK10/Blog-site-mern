@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import { createNewPost } from '../../actions/post';
 import { getAllCategories } from '../../actions/category';
+import SecondaryLoading from '../layout/SecondaryLoading';
 
 const CreatePost = ({
     getAllCategories,
@@ -29,6 +30,8 @@ const CreatePost = ({
     });
 
     const { image, title, description, postCategories } = formValues;
+
+    const [creatingPost, setCreatingPost] = useState(false);
 
     const handleEditorChange = (e) => {
         // console.log('Content was updated:', e.target.getContent());
@@ -74,9 +77,13 @@ const CreatePost = ({
         formData.append('description', description);
         formData.append('categories', JSON.stringify(postCategories));
 
-        console.log(...formData);
+        // console.log(...formData);
+
+        setCreatingPost(true);
 
         await createNewPost(user._id, formData);
+
+        setCreatingPost(false);
 
         history.push(`/`);
     };
@@ -207,9 +214,24 @@ const CreatePost = ({
                     </div>
                     <div className='row mb-4'>
                         <div className='col'>
-                            <button type='submit' className='btn btn-primary'>
-                                Submit
-                            </button>
+                            {!creatingPost ? (
+                                <button
+                                    type='submit'
+                                    className='btn btn-primary'
+                                >
+                                    Submit
+                                </button>
+                            ) : (
+                                <div className='row'>
+                                    <button
+                                        type='submit'
+                                        className='btn btn-primary'
+                                    >
+                                        Creating post...
+                                    </button>
+                                    <SecondaryLoading />
+                                </div>
+                            )}
                             {/* <button className='btn btn-alert'>
                                 Preview Post
                             </button> */}

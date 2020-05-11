@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import loadingSecondary from '../../images/loading/loading-secondary.gif';
 
-export const SecondaryLoading = ({ width = '50px' }) => {
+export const SecondaryLoading = ({ width = '3em' }) => {
     return (
         <Fragment>
             <img
