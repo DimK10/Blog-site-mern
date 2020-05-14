@@ -61,7 +61,6 @@
     "devDependencies": {
         "enzyme": "^3.11.0",
         "enzyme-adapter-react-16": "^1.15.2",
-        "enzyme-to-json": "^3.4.4",
-        "redux-mock-store": "^1.5.4"
+        "enzyme-to-json": "^3.4.4"
     }
 }

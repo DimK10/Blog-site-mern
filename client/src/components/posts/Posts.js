@@ -1,19 +1,18 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { getPosts, getUserPosts } from '../../actions/post';
 import PostItem from './PostItem';
 
-const Posts = ({
+export const Posts = ({
     getPosts,
     getUserPosts,
-    location,
-    post: { posts, loading },
-    isForOnUser = false,
-    userId = '',
+    post: { posts },
+    isForOnUser,
+    userId,
 }) => {
-    useEffect(() => {
+    React.useEffect(() => {
         if (isForOnUser && userId !== '') {
             getUserPosts(userId);
         } else {
@@ -61,7 +60,6 @@ Posts.propTypes = {
     getPosts: PropTypes.func.isRequired,
     getUserPosts: PropTypes.func.isRequired,
     post: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

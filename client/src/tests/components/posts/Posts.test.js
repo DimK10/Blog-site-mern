@@ -1,33 +1,44 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import Posts from '../../../components/posts/Posts';
+import { Posts } from '../../../components/posts/Posts';
 import posts from '../../fixtures/posts';
-import toJson from 'enzyme-to-json';
-import { Provider } from 'react-redux';
-import renderer from 'react-test-renderer';
-import thunk from 'redux-thunk';
 
-import configureStore from 'redux-mock-store';
-const middlewares = [thunk];
-const mockStore = configureStore(middlewares);
+test('should render Posts Component (but not for a specific user) and call getPosts', () => {
+    let props = {
+        getPosts: jest.fn(),
+        getUserPosts: jest.fn(),
+        post: { posts },
+    };
 
-describe('My connected React-Redux Posts Component', () => {
-    let store;
-    let component;
+    let wrapper;
 
-    beforeEach(() => {
-        store = mockStore({
-            post: posts,
-        });
-    });
+    let useEffect = jest
+        .spyOn(React, 'useEffect')
+        .mockImplementation((f) => f());
 
-    component = renderer.create(
-        <Provider store={store}>
-            <Posts />
-        </Provider>
-    );
+    wrapper = shallow(<Posts {...props} />);
+    expect(wrapper).toMatchSnapshot();
+    expect(props.getPosts).toHaveBeenCalledTimes(1);
+    expect(props.getUserPosts).not.toHaveBeenCalled();
+});
 
-    it('should render Posts Component with given state from redux store', () => {
-        expect(component.toJson()).toMatchSnapShot();
-    });
+test('should render Posts Component for a specific user and call getUserPosts', () => {
+    let useEffect = jest
+        .spyOn(React, 'useEffect')
+        .mockImplementation((f) => f());
+
+    let props = {
+        getPosts: jest.fn(),
+        getUserPosts: jest.fn(),
+        post: { posts },
+        isForOnUser: true,
+        userId: 'some-user-id',
+    };
+
+    let wrapper = shallow(<Posts {...props} />);
+
+    expect(wrapper).toMatchSnapshot();
+    expect(props.getUserPosts).toHaveBeenCalledTimes(1);
+    expect(props.getUserPosts).toHaveBeenCalledWith(props.userId);
+    expect(props.getPosts).not.toHaveBeenCalled();
 });
