@@ -239,7 +239,7 @@ const addActionToUserHistory = async (
         });
 
         await user.save();
-        return res.json(data);
+        return res.status(200).send(data);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
@@ -247,7 +247,7 @@ const addActionToUserHistory = async (
 };
 
 // TODO - I should remove
-const deleteActionFromUserHistory = async (req, res, action, next) => {
+const deleteActionFromUserHistory = async (req, res, action) => {
     try {
         let user = req.profile;
         let removeIndex;
@@ -275,7 +275,9 @@ const deleteActionFromUserHistory = async (req, res, action, next) => {
         }
 
         await user.save();
-        next();
+        return res
+            .status(200)
+            .send(`${action} was removed from history successfully`);
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');

@@ -15,6 +15,7 @@ const Avatar = ({ url, width = '5em', height = '5em', withFlex = true }) => {
             try {
                 const config = {
                     responseType: 'arraybuffer',
+                    cancelToken: source.token,
                 };
                 setLoading(true);
                 let res = await axios.get(url, config);

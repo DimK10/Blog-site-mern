@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema;
 
 const postSchema = new mongoose.Schema(
     {
         imageId: {
             type: ObjectId,
-            ref: "Photo",
+            ref: 'Photo',
         },
 
         title: {
@@ -19,30 +19,29 @@ const postSchema = new mongoose.Schema(
         },
         author: {
             type: ObjectId,
-            ref: "User",
+            ref: 'User',
             required: true,
         },
         comments: [
             {
                 type: ObjectId,
-                ref: "Comment",
-                autopopulate: true,
+                ref: 'Comment',
             },
         ],
         categories: [
             {
                 type: ObjectId,
-                ref: "Category",
+                ref: 'Category',
             },
         ],
         upvotes: { type: Number },
         downvotes: { type: Number },
         timesShared: { type: Number },
     },
-    { timestamps: { createdAt: "created_at" } }
+    { timestamps: { createdAt: 'created_at' } }
 );
 
 // TODO - Change to like system
-postSchema.plugin(require("mongoose-autopopulate"));
+// postSchema.plugin(require("mongoose-autopopulate"));
 
-module.exports = mongoose.model("Post", postSchema);
+module.exports = mongoose.model('Post', postSchema);

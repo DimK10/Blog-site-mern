@@ -123,9 +123,17 @@ const create = async (req, res) => {
             author,
         });
 
-        await post.save();
-
-        res.json(post);
+        await post.save(); // Add to user history
+        addActionToUserHistory(
+            req,
+            res,
+            post._id,
+            null,
+            'post',
+            'create',
+            null,
+            post
+        );
     } catch (err) {
         console.error(err);
         return res.status(500).send('Server error');
@@ -172,7 +180,17 @@ const remove = async (req, res) => {
         }
 
         await Post.findByIdAndDelete(post.id);
-        res.status(200).send('Post deleted successfully');
+
+        addActionToUserHistory(
+            req,
+            res,
+            null,
+            null,
+            'post',
+            'remove',
+            null,
+            'post removed successfully'
+        );
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');
@@ -232,7 +250,16 @@ const update = async (req, res) => {
 
                 await post.save();
 
-                return res.json(post);
+                addActionToUserHistory(
+                    res,
+                    res,
+                    post._id,
+                    null,
+                    'post',
+                    'update',
+                    null,
+                    post
+                );
             });
             return;
         }
@@ -245,7 +272,16 @@ const update = async (req, res) => {
 
             await post.save();
 
-            return res.json(post);
+            addActionToUserHistory(
+                res,
+                res,
+                post._id,
+                null,
+                'post',
+                'update',
+                null,
+                post
+            );
         }
 
         // 3rd case
@@ -289,7 +325,16 @@ const update = async (req, res) => {
             post.categories = categories;
 
             await post.save();
-            return res.json(post);
+            addActionToUserHistory(
+                res,
+                res,
+                post._id,
+                null,
+                'post',
+                'update',
+                null,
+                post
+            );
         });
         return;
     } catch (err) {
@@ -314,38 +359,38 @@ const listByInterests = async (req, res) => {
         let interests = req.profile.interests;
         let posts = await Post.find({ categories: { $in: interests } })
             .sort({ updatedAt: 'desc' })
-            .populate('author')
-            .populate({
-                path: 'comments',
-                model: 'Comment',
-                populate: [
-                    {
-                        path: '_userId',
-                        select: '_id name',
-                        model: 'User',
-                    },
-                    {
-                        path: 'replies',
-                        select: 'text',
-                        model: 'Reply',
-                        populate: [
-                            {
-                                path: '_userId',
-                                select: '_id name',
-                                model: 'User',
-                            },
-                        ],
-                    },
-                ],
-            })
-            .populate({
-                path: 'categories',
-                populate: {
-                    path: '_createdFrom',
-                    select: '_id name',
-                    model: 'User',
-                },
-            });
+            .populate('author');
+        // .populate({
+        //     path: 'comments',
+        //     model: 'Comment',
+        //     populate: [
+        //         {
+        //             path: '_userId',
+        //             select: '_id name',
+        //             model: 'User',
+        //         },
+        //         {
+        //             path: 'replies',
+        //             select: 'text',
+        //             model: 'Reply',
+        //             populate: [
+        //                 {
+        //                     path: '_userId',
+        //                     select: '_id name',
+        //                     model: 'User',
+        //                 },
+        //             ],
+        //         },
+        //     ],
+        // })
+        // .populate({
+        //     path: 'categories',
+        //     populate: {
+        //         path: '_createdFrom',
+        //         select: '_id name',
+        //         model: 'User',
+        //     },
+        // });
 
         if (!posts) {
             return res.status(400).json({ msg: 'No posts found' });
@@ -398,13 +443,14 @@ const listAll = async (req, res, next) => {
     try {
         let posts = await Post.find()
             .sort({ updatedAt: 'desc' })
-            .populate('author')
+            .populate('author', 'name')
             .populate({
                 path: 'comments',
+                select: '_id text',
                 model: 'Comment',
                 populate: [
                     {
-                        path: '_userId',
+                        path: 'userId',
                         select: '_id name',
                         model: 'User',
                     },
@@ -422,14 +468,7 @@ const listAll = async (req, res, next) => {
                     },
                 ],
             })
-            .populate({
-                path: 'categories',
-                populate: {
-                    path: '_createdFrom',
-                    select: '_id name',
-                    model: 'User',
-                },
-            });
+            .populate('categories', 'id title');
 
         if (!posts) {
             return res.status(400).json({ msg: 'No posts found' });

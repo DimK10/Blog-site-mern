@@ -17,14 +17,12 @@ const CommentSchema = new mongoose.Schema(
         userId: {
             type: ObjectId,
             ref: 'User',
-            autopopulate: true,
             required: true,
         },
         replies: [
             {
                 type: ObjectId,
                 ref: 'Reply',
-                autopopulate: true,
             },
         ],
     },
@@ -32,6 +30,6 @@ const CommentSchema = new mongoose.Schema(
 );
 
 // TODO - This might be useless
-CommentSchema.plugin(require('mongoose-autopopulate'));
+// CommentSchema.plugin(require('mongoose-autopopulate'));
 
 module.exports = mongoose.model('Comment', CommentSchema);

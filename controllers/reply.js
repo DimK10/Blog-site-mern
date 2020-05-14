@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Reply = require('../models/reply');
+const addActionToUserHistory = require('./user');
 
 const replyById = async (req, res, next, id) => {
     try {
@@ -43,7 +44,16 @@ const createReply = async (req, res) => {
         comment.replies.unshift(reply.id);
         await comment.save();
 
-        res.json(comment);
+        addActionToUserHistory(
+            req,
+            res,
+            reply._id,
+            comment_id,
+            'reply',
+            'create',
+            comment,
+            'reply created successfully'
+        );
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');
@@ -64,7 +74,16 @@ const update = async (req, res) => {
 
         await reply.save();
 
-        res.json(reply);
+        addActionToUserHistory(
+            req,
+            res,
+            reply._id,
+            comment_id,
+            'reply',
+            'update',
+            comment,
+            'reply updated successfully'
+        );
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');
@@ -91,7 +110,16 @@ const remove = async (req, res) => {
         // Remove reply
         reply.remove();
 
-        res.json(comment);
+        addActionToUserHistory(
+            req,
+            res,
+            null,
+            null,
+            'reply',
+            'remove',
+            comment,
+            'reply created successfully'
+        );
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');

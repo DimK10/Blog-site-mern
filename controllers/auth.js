@@ -170,9 +170,11 @@ async function signin(req, res) {
     try {
         if (req.profile) {
             // Check if there is a user found from a provided Token
+
             let user = await User.findById(req.profile.id)
                 .select('-salt -hashed_password')
-                .populate('interests');
+                .populate('interests')
+                .populate('history.id');
 
             // User is already authenticated
             return res.json({ user });
@@ -213,7 +215,7 @@ async function signin(req, res) {
 
         return res.json({ token, user });
     } catch (err) {
-        console.error(err.message);
+        console.error(err);
         res.status(500).send('Server error');
     }
 }
