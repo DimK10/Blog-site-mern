@@ -9,7 +9,6 @@ const Posts = ({
     getPosts,
     getUserPosts,
     location,
-    auth: { user },
     post: { posts, loading },
     isForOnUser = false,
     userId = '',
@@ -62,13 +61,11 @@ Posts.propTypes = {
     getPosts: PropTypes.func.isRequired,
     getUserPosts: PropTypes.func.isRequired,
     post: PropTypes.object.isRequired,
-    auth: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     post: state.post,
-    auth: state.auth,
 });
 
 export default withRouter(
