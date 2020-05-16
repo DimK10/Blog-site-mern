@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Reply = require('../models/reply');
-const addActionToUserHistory = require('./user');
+const { addActionToUserHistory } = require('./user');
 
 const replyById = async (req, res, next, id) => {
     try {
@@ -48,7 +48,7 @@ const createReply = async (req, res) => {
             req,
             res,
             reply._id,
-            comment_id,
+            comment.postId._id,
             'reply',
             'create',
             comment,
@@ -68,7 +68,9 @@ const update = async (req, res) => {
             return res.status(400).json({ msg: 'A reply cannot be empty' });
         }
 
-        let reply = await Reply.findById(req.reply._id);
+        let reply = await (await Reply.findById(req.reply._id)).populated(
+            'commentId'
+        );
 
         reply.text = text;
 
@@ -78,7 +80,7 @@ const update = async (req, res) => {
             req,
             res,
             reply._id,
-            comment_id,
+            commentId.postId._id,
             'reply',
             'update',
             comment,
@@ -118,7 +120,7 @@ const remove = async (req, res) => {
             'reply',
             'remove',
             comment,
-            'reply created successfully'
+            'reply removed successfully'
         );
     } catch (err) {
         console.error(err.message);

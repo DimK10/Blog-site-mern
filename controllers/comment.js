@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
 const Reply = require('../models/reply');
-const addActionToUserHistory = require('./user');
+const { addActionToUserHistory } = require('./user');
 
 const commentById = async (req, res, next, id) => {
     try {
@@ -55,7 +55,7 @@ const create = async (req, res) => {
         addActionToUserHistory(
             req,
             res,
-            req.profile._id,
+            comment._id,
             req.post._id,
             'comment',
             'create',
@@ -123,7 +123,7 @@ const update = async (req, res) => {
         addActionToUserHistory(
             req,
             res,
-            req.profile._id,
+            comment._id,
             req.post._id,
             'comment',
             'update',

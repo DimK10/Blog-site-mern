@@ -11,7 +11,30 @@ const postById = async (req, res, next, id) => {
     try {
         let post = await Post.findById(id)
             .populate('author')
-            .populate('comments')
+            .populate({
+                path: 'comments',
+                select: '_id text',
+                model: 'Comment',
+                populate: [
+                    {
+                        path: 'userId',
+                        select: '_id name avatarId',
+                        model: 'User',
+                    },
+                    {
+                        path: 'replies',
+                        select: 'text',
+                        model: 'Reply',
+                        populate: [
+                            {
+                                path: '_userId',
+                                select: '_id name',
+                                model: 'User',
+                            },
+                        ],
+                    },
+                ],
+            })
             .populate('categories');
 
         if (!post) {

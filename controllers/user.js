@@ -221,7 +221,7 @@ const addActionToUserHistory = async (
     req,
     res,
     id,
-    parentId,
+    postId,
     type,
     action,
     parent,
@@ -232,7 +232,7 @@ const addActionToUserHistory = async (
 
         user.history.unshift({
             id,
-            parentId,
+            postId,
             type,
             action,
             parent,
