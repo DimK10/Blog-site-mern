@@ -37,6 +37,6 @@
         "nodemon": "^2.0.2",
         "react-image-file-resizer": "^0.2.3",
         "uuid": "^3.3.3",
-        "validator": "^12.1.0"
+        "validator": "^13.7.0"
     }
 }
